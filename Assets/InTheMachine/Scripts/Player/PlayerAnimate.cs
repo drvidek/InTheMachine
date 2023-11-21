@@ -1,0 +1,123 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerAnimate : MonoBehaviour
+{
+    [SerializeField] private Animator animator;
+    [SerializeField] private SpriteRenderer playerSprite;
+    [SerializeField] private SpriteRenderer pakSprite;
+    [SerializeField] private int pakAimUpYOffset;
+    [SerializeField] private float pakXOffset;
+    private Player myPlayer;
+    private PlayerGun myGun;
+    private PixelAligner pakPixelAligner;
+    private float pakOffsetBase;
+
+    public Action<bool> onPlayerFlip;
+    public int PakAimUpOffset => pakAimUpYOffset;
+
+    public Sprite CurrentPlayerSprite => playerSprite.sprite;
+
+    #region Singleton + Awake
+    private static PlayerAnimate _singleton;
+    public static PlayerAnimate main
+    {
+        get => _singleton;
+        private set
+        {
+            if (_singleton == null)
+            {
+                _singleton = value;
+            }
+            else if (_singleton != value)
+            {
+                Debug.LogWarning("PlayerAnimate instance already exists, destroy duplicate!");
+                Destroy(value);
+            }
+        }
+    }
+
+    private void Awake()
+    {
+        main = this;
+    }
+    #endregion
+
+
+    public Vector2 FacingDirection
+    {
+        get
+        {
+            return playerSprite.flipX ? Vector2.left : Vector2.right;
+        }
+    }
+
+    private void Start()
+    {
+        myPlayer = GetComponent<Player>();
+        myGun = GetComponent<PlayerGun>();
+        pakPixelAligner = pakSprite.GetComponent<PixelAligner>();
+        pakXOffset = Mathf.Abs(pakSprite.transform.localPosition.x);
+        pakOffsetBase = pakXOffset;
+        myPlayer.onIdleEnter += () => { animator.ResetTrigger("Rising"); animator.ResetTrigger("Falling"); };
+        myPlayer.onAscendEnter += () => animator.SetTrigger("Rising");
+        myPlayer.onDescendEnter += () => animator.SetTrigger("Falling");
+        myPlayer.onFlyEnter += () => AnimatePakFlip(true);
+        myPlayer.onFlyExit += () => { if (myPlayer.CurrentState != Player.PlayerState.Boost) AnimatePakFlip(false); };
+        myPlayer.onWalkEnter += () => animator.SetBool("IsWalking", true);
+        myPlayer.onWalkExit += () => animator.SetBool("IsWalking", false);
+        myGun.onShoot += () => animator.SetTrigger("Shoot");
+        AnimatePakForward(true);
+    }
+
+    private void Update()
+    {
+        bool updateHor = myPlayer.UserInputDir.x != 0;
+        AnimatePlayerDirection(updateHor, myPlayer.UserInputDir.x < 0);
+        AnimatePakForward(updateHor);
+        AnimatePakAimUp(myPlayer.UserInputDir.y > 0.5 && !myPlayer.IsFlying);
+        animator.SetBool("TractorActive", myPlayer.BeamActive);
+        animator.SetBool("IsGrounded", myPlayer.IsGrounded);
+    }
+
+    private void AnimatePakAimUp(bool aimUp)
+    {
+        if (aimUp)
+        {
+            pakSprite.transform.localPosition = new(0, PixelAligner.PixelsToWidth(pakAimUpYOffset), pakSprite.transform.localPosition.z);
+            pakPixelAligner.SetOffset(new(0, PixelAligner.PixelsToWidth(pakAimUpYOffset)));
+        }
+        else
+            AnimatePakForward(animator.GetBool("AimUp"));   //triggers only when the player releases up
+
+        animator.SetBool("AimUp", aimUp);
+    }
+
+    private void AnimatePakFlip(bool flying)
+    {
+        animator.SetBool("IsFlying", flying);
+        pakXOffset = flying ? -pakOffsetBase : pakOffsetBase;
+        AnimatePakForward(true);
+    }
+
+    private void AnimatePakForward(bool update)
+    {
+        if (update)
+        {
+            pakSprite.flipX = playerSprite.flipX;
+            pakSprite.transform.localPosition = new(FacingDirection.x * pakXOffset, 0, pakSprite.transform.localPosition.z);
+            pakPixelAligner.SetOffset(new(pakXOffset, 0));
+        }
+    }
+
+    private void AnimatePlayerDirection(bool update, bool left)
+    {
+        if (update)
+        {
+            playerSprite.flipX = left;
+            onPlayerFlip?.Invoke(left);
+        }
+    }
+}
