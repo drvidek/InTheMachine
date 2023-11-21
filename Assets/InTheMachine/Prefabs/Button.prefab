@@ -119,7 +119,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d07f8bce3e50da847b29c94c955acd8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stayPressed: 0
   onActiveChanged:
     m_PersistentCalls:
       m_Calls:
@@ -135,9 +134,13 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  stayPressed: 0
   buttonSprites:
   - {fileID: -1675052462, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}
   - {fileID: 1976051175, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}
+  blockingLayer:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!1 &4778762913057247801
 GameObject:
   m_ObjectHideFlags: 0

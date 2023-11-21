@@ -9,8 +9,8 @@ public class Button : LevelToggle
     private SpriteRenderer spriteRenderer;
 
     [SerializeField] private bool stayPressed;
-    
     [SerializeField] private Sprite[] buttonSprites;
+    [SerializeField] private LayerMask blockingLayer;
 
     private void Start()
     {
@@ -29,8 +29,12 @@ public class Button : LevelToggle
         if (active && stayPressed)
             return;
 
+        if (Physics2D.OverlapBox(transform.position, Vector2.one, 0, blockingLayer))
+            return;
+
         if (collision.isTrigger)
             return;
+
 
         Rigidbody2D rb = collision.attachedRigidbody;
         if (rb)
@@ -57,7 +61,9 @@ public class Button : LevelToggle
                 currentRigidbodies.Remove(rb);
         }
 
-        TriggerChange(currentRigidbodies.Count == 0);
+        if (currentRigidbodies.Count == 0)
+
+            TriggerChange(false);
     }
 
     override protected void TriggerChange(bool active, bool force = false)

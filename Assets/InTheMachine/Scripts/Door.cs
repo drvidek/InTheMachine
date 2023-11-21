@@ -8,7 +8,9 @@ public class Door : MonoBehaviour
     [SerializeField] private SpriteRenderer[] doorParts;
     [SerializeField] private float timeToClose;
     [SerializeField] private bool startOpen;
+    [SerializeField] private bool stayOpen;
     [SerializeField] private Sprite[] doorSprites;
+    [SerializeField] private ParticleSystem psysActive;
 
     private Collider2D[] colliders;
     private int partCount;
@@ -16,6 +18,7 @@ public class Door : MonoBehaviour
     private float currentOpen;
 
     private bool open;
+    private bool everOpened;
 
 
     private void Start()
@@ -71,8 +74,16 @@ public class Door : MonoBehaviour
 
     public void ChangeActiveState(bool active)
     {
+        if (stayOpen && everOpened)
+            return;
+
         open = active;
         if (startOpen)
             open = !active;
+
+        if (open)
+            everOpened = true;
+
+        psysActive.Play();
     }
 }

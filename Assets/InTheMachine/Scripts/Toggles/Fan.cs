@@ -13,6 +13,7 @@ public class Fan : LevelToggle, IProjectileTarget
     private void Start()
     {
         activeAlarm = Alarm.Get(duration, false, false);
+        activeAlarm.Stop();
         activeAlarm.onComplete = () => TriggerChange(false);
     }
 

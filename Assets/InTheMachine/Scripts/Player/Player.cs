@@ -99,6 +99,7 @@ public class Player : MonoBehaviour
     public float X => transform.position.x;
     public float Y => transform.position.y;
     public float Z => transform.position.z;
+    public float Height => _collider.size.y;
     public Vector2 UserInputDir => _userInputDir;
     public bool JumpPress => _userInputAction[0] && !lastInput.jump;
     public bool JumpHold => _userInputAction[0] && lastInput.jump;
@@ -191,7 +192,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void NextState()
     {
-        Debug.Log($"To State {CurrentState}");
+        //Debug.Log($"To State {CurrentState}");
         //start the state coroutine based on the name of our _currentState enum
         StartCoroutine(_currentState.ToString());
     }
