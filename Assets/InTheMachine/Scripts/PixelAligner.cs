@@ -10,6 +10,7 @@ public class PixelAligner : MonoBehaviour
     [SerializeField] private Vector2 animOffset = new(0, 0);
     [SerializeField] private Transform parent;
     public static float OnePixel => 1f / GameManager.pixelsPerUnit;
+    public Vector2 Offset => offset;
 
     private SpriteRenderer sprite;
 

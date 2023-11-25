@@ -7,7 +7,7 @@ public class Debris : MonoBehaviour, IProjectileTarget
 {
     [SerializeField] private ParticleSystem psysDust;
 
-    public void OnProjectileHit(float power)
+    public void OnProjectileHit(Projectile projectile)
     {
         GetComponent<Collider2D>().enabled = false;
         transform.GetChild(0).gameObject.SetActive(false);

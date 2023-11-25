@@ -29,7 +29,7 @@ public class MovingPlatform : EnvironmentBox, IActivate
     {
         if (rb == Player.main.StandingOn && lastPosition != transform.position)
         {
-            Player.main.AddVelocity(rb.velocity, rb);
+            Player.main.AddVelocityForOneFrame(rb.velocity, rb);
         }
 
         lastPosition = transform.position;

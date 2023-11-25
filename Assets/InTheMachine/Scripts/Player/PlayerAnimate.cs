@@ -3,14 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerAnimate : MonoBehaviour
+public class PlayerAnimate : AgentAnimator
 {
-    [SerializeField] private Animator animator;
-    [SerializeField] private SpriteRenderer playerSprite;
+   
     [SerializeField] private SpriteRenderer pakSprite;
     [SerializeField] private int pakAimUpYOffset;
     [SerializeField] private float pakXOffset;
-    private Player myPlayer;
+    private Player myPlayer => myAgent as Player;
     private PlayerGun myGun;
     private PixelAligner pakPixelAligner;
     private float pakOffsetBase;
@@ -18,7 +17,7 @@ public class PlayerAnimate : MonoBehaviour
     public Action<bool> onPlayerFlip;
     public int PakAimUpOffset => pakAimUpYOffset;
 
-    public Sprite CurrentPlayerSprite => playerSprite.sprite;
+    public Sprite CurrentPlayerSprite => spriteRenderer.sprite;
 
     #region Singleton + Awake
     private static PlayerAnimate _singleton;
@@ -50,13 +49,13 @@ public class PlayerAnimate : MonoBehaviour
     {
         get
         {
-            return playerSprite.flipX ? Vector2.left : Vector2.right;
+            return spriteRenderer.flipX ? Vector2.left : Vector2.right;
         }
     }
 
-    private void Start()
+    protected override void Start()
     {
-        myPlayer = GetComponent<Player>();
+        base.Start();
         myGun = GetComponent<PlayerGun>();
         pakPixelAligner = pakSprite.GetComponent<PixelAligner>();
         pakXOffset = Mathf.Abs(pakSprite.transform.localPosition.x);
@@ -114,7 +113,7 @@ public class PlayerAnimate : MonoBehaviour
     {
         if (update)
         {
-            pakSprite.flipX = playerSprite.flipX;
+            pakSprite.flipX = spriteRenderer.flipX;
             pakSprite.transform.localPosition = new(FacingDirection.x * pakXOffset, 0, pakSprite.transform.localPosition.z);
             pakPixelAligner.SetOffset(new(pakXOffset, 0));
         }
@@ -124,7 +123,7 @@ public class PlayerAnimate : MonoBehaviour
     {
         if (update)
         {
-            playerSprite.flipX = left;
+            spriteRenderer.flipX = left;
             onPlayerFlip?.Invoke(left);
         }
     }

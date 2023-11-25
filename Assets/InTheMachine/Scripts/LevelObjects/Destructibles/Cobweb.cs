@@ -34,7 +34,7 @@ public class Cobweb : Debris, IFlammable
             if (flameCurrent > flameMax * 4)
             {
                 burntOut = true;
-                OnProjectileHit(1f);
+                OnProjectileHit(null);
                 flames.Stop();
             }
         }

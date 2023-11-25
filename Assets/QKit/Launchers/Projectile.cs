@@ -151,7 +151,7 @@ namespace QKit
         {
             if (TryGet<IProjectileTarget>(collider.transform, out IProjectileTarget target))
             {
-                target.OnProjectileHit(_power);
+                target.OnProjectileHit(this);
                 return true;
             }
 

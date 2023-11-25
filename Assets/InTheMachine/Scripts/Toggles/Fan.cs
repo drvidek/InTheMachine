@@ -22,7 +22,7 @@ public class Fan : LevelToggle, IProjectileTarget
         animator.SetFloat("SpinSpeed", speed * activeAlarm.PercentRemaining);
     }
 
-    public void OnProjectileHit(float power)
+    public void OnProjectileHit(Projectile projectile)
     {
         TriggerChange(true);
     }

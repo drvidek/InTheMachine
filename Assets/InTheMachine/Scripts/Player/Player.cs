@@ -5,7 +5,7 @@ using UnityEngine;
 using QKit;
 using UnityEngine.UIElements;
 
-public class Player : MonoBehaviour
+public class Player : AgentMachine
 {
     public enum Ability
     {
@@ -14,16 +14,12 @@ public class Player : MonoBehaviour
         Tractor,
         Boost
     }
-
-
     public enum PlayerState { Idle, Walk, Ascend, Hang, Descend, Fly, Boost, Stun, Burn }
     [SerializeField] private PlayerState _currentState;
     [SerializeField] private List<Ability> abilities = new();
     [SerializeField] private bool allAbilities = false;
-    [SerializeField] protected Rigidbody2D _rigidbody;
-    [SerializeField] protected CapsuleCollider2D _collider;
     [SerializeField] private LayerMask groundedLayer;
-    [SerializeField] private float _walkSpeed, _walkAccel, _walkFric, _jumpPower, _jumpDecayRate, _jumpInputAllowance, _coyoteSec, _airAccelPenalty;
+    [SerializeField] private float _walkSpeed, _walkAccel, _walkFric, _jumpPower, _jumpDecayRate, _jumpInputAllowance, _coyoteSec, _airAccelPenalty, stunTimeMin = 1f;
     [SerializeField] private float _gravUp, _gravDown, _hangTime;
     [SerializeField] private float _airVertSpeed, _airHorSpeed, _airAccel, _airFric, _flightCost;
     [SerializeField] private float boostSpeed, boostDistance, boostCost, postBoostVelocityRate;
@@ -31,15 +27,16 @@ public class Player : MonoBehaviour
     [SerializeField] private TractorBeam beam;
     [SerializeField] private float powerChargeTime;
     [SerializeField] private Meter powerMeter;
-    private float _targetHorSpeed, _verSpeed, _fric, _accel, _grav;
+    private float _targetHorSpeed, _fric, _accel, _grav;
     private bool usingPower, outOfPower;
     private Vector3 boostDirection;
+    private Vector3 stunDirection;
     private PlayerState returnFromBoost;
     private Alarm coyoteTime;
     private Alarm triedToJump;
-    public bool IsGrounded => Physics2D.CapsuleCast(transform.position + (Vector3)_collider.offset, _collider.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.02f, groundedLayer);
-    public Rigidbody2D StandingOn => Physics2D.CapsuleCast(transform.position + (Vector3)_collider.offset, _collider.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.02f, groundedLayer).rigidbody;
-    public bool OutOfPower => outOfPower;
+    private Alarm stunMinAlarm;
+
+
     private float _currentGrav => _grav * Time.fixedDeltaTime;
 
     List<Rigidbody2D> externalVelocitySources = new();
@@ -106,7 +103,13 @@ public class Player : MonoBehaviour
     public Action onBurnStay;
     public Action onBurnExit;
     #endregion
+
+    public bool IsGrounded => Physics2D.CapsuleCast(transform.position + (Vector3)_collider.offset, CapsuleCollider.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.02f, groundedLayer);
+    public Rigidbody2D StandingOn => Physics2D.CapsuleCast(transform.position + (Vector3)_collider.offset, CapsuleCollider.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.02f, groundedLayer).rigidbody;
+    public bool IsStunned => CurrentState == PlayerState.Stun;
     public Meter PowerMeter => powerMeter;
+    public bool OutOfPower => outOfPower;
+    public CapsuleCollider2D CapsuleCollider => _collider as CapsuleCollider2D;
 
 
     private WaitForFixedUpdate waitForFixedUpdate = new();
@@ -115,7 +118,7 @@ public class Player : MonoBehaviour
     public float X => transform.position.x;
     public float Y => transform.position.y;
     public float Z => transform.position.z;
-    public float Height => _collider.size.y;
+    public float Height => CapsuleCollider.size.y;
     public Vector2 UserInputDir => _userInputDir;
     public bool JumpPress => _userInputAction[0] && !lastInput.jump;
     public bool JumpHold => _userInputAction[0] && lastInput.jump;
@@ -157,13 +160,14 @@ public class Player : MonoBehaviour
     }
     #endregion
 
-    private void Start()
+    override protected void Start()
     {
-        _collider = GetComponent<CapsuleCollider2D>();
+        base.Start();
         _targetHorSpeed = _walkSpeed;
         onActionPress += () => TryToBoost();
         coyoteTime = Alarm.Get(_coyoteSec, false, false);
         triedToJump = Alarm.Get(_jumpInputAllowance, false, false);
+        stunMinAlarm = Alarm.Get(stunTimeMin, false, false);
 
         powerMeter.onMin += () => { outOfPower = true; };
         powerMeter.onMax += () => { outOfPower = false; };
@@ -388,7 +392,7 @@ public class Player : MonoBehaviour
         MoveHorizontallyWithInput();
         MoveVerticallyWithGravity();
         if (!JumpHold)
-            _verSpeed *= _jumpDecayRate;
+            _targetVelocity.y *= _jumpDecayRate;
         if (JumpPress)
             TryToFly();
         //set our next state to...
@@ -550,7 +554,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void OnFlyEnter()
     {
-        _verSpeed = 0;
+        _targetVelocity.y = 0;
         _targetHorSpeed = _airHorSpeed;
         _accel = _airAccel;
         _fric = _airFric;
@@ -623,7 +627,7 @@ public class Player : MonoBehaviour
         boostDirection = PlayerAnimate.main.FacingDirection;
         Alarm boostEnd = Alarm.GetAndPlay(boostDistance / boostSpeed);
         boostEnd.onComplete = () => ChangeStateTo(returnFromBoost);
-        _verSpeed = 0f;
+        _targetVelocity.y = 0f;
     }
 
     /// <summary>
@@ -675,7 +679,9 @@ public class Player : MonoBehaviour
     /// </summary>
     private void OnStunEnter()
     {
-
+        stunMinAlarm.ResetAndPlay();
+        _targetVelocity = stunDirection;
+        _targetVelocity.y = stunDirection.y;
     }
 
     /// <summary>
@@ -683,8 +689,11 @@ public class Player : MonoBehaviour
     /// </summary>
     private void OnStunStay()
     {
+        MoveVerticallyWithGravity();
+        MoveHorizontallyWithInput();
         //set our next state to...
         PlayerState nextState =
+            IsGrounded && stunMinAlarm.IsStopped ? PlayerState.Idle :
             //stay as we are
             _currentState;
         //trigger the next state
@@ -756,7 +765,7 @@ public class Player : MonoBehaviour
     {
         float change = _fric;
 
-        if (UserInputDir.x != 0 && (IsGrounded || IsFlying))
+        if (!IsStunned && UserInputDir.x != 0 && (IsGrounded || IsFlying))
             change = Mathf.Max(_accel, _fric);
 
         if (!IsGrounded && !IsFlying)
@@ -782,13 +791,13 @@ public class Player : MonoBehaviour
 
     private void MoveVerticallyWithGravity()
     {
-        _verSpeed -= _currentGrav;
+        _targetVelocity.y -= _currentGrav;
         if (IsGrounded)
-            _verSpeed = Mathf.Clamp(_verSpeed, -0.05f, float.PositiveInfinity);
-        _targetVelocity.y = _verSpeed;
+            _targetVelocity.y = Mathf.Clamp(_targetVelocity.y, -0.05f, float.PositiveInfinity);
+
     }
 
-    public void AddVelocity(Vector2 velocity, Rigidbody2D rb)
+    public void AddVelocityForOneFrame(Vector2 velocity, Rigidbody2D rb)
     {
         if (externalVelocitySources.Contains(rb))
             return;
@@ -799,7 +808,7 @@ public class Player : MonoBehaviour
     private void AscendWithSpeed(float speed)
     {
         ChangeStateTo(PlayerState.Ascend);
-        _verSpeed = speed;
+        _targetVelocity.y = speed;
     }
 
     private bool TryToJump(float speed)
@@ -890,7 +899,7 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (_verSpeed > 0)
+        if (_targetVelocity.y > 0)
         {
             ContactPoint2D[] contactPoints = new ContactPoint2D[collision.contactCount];
             collision.GetContacts(contactPoints);
@@ -898,7 +907,8 @@ public class Player : MonoBehaviour
             {
                 if (item.point.y > transform.position.y && QMath.Difference(item.point.y, transform.position.y) > 0.45f)
                 {
-                    _verSpeed = 0;
+                    _targetVelocity.y = 0;
+                    _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, 0);
                     break;
                 }
             }
@@ -918,9 +928,17 @@ public class Player : MonoBehaviour
             if (c is PowerUp)
             {
                 var p = c as PowerUp;
-                
+
             }
             c.Collect();
+        }
+
+        if (collision.TryGetComponent<EnemyMachine>(out EnemyMachine enemy))
+        {
+            ChangeStateTo(PlayerState.Stun);
+            stunDirection.x = Mathf.Sign(transform.position.x - enemy.transform.position.x);
+            stunDirection.y = IsGrounded ? 1 : 0;
+            stunDirection *= enemy.ContactDamage;
         }
     }
 }

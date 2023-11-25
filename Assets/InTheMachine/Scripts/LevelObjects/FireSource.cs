@@ -42,9 +42,9 @@ public class FireSource : MonoBehaviour, IActivate, IFlammable, IProjectileTarge
         psysFlame.Clear();
     }
 
-    public void OnProjectileHit(float power)
+    public void OnProjectileHit(Projectile projectile)
     {
-        switch (power)
+        switch (projectile.Power)
         {
             case (float)GunProfileType.Air:
                 DouseFlame();
