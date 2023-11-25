@@ -15,6 +15,9 @@ public enum ColorType
     Elec,
     Slime,
     Liquid,
+    BurnIt,
+    ZapIt,
+
     _max
 }
 
@@ -22,5 +25,6 @@ public enum ColorType
 public class ColorPalette : ScriptableObject
 {
     public Color[] color = new Color[(int)ColorType._max];
+
 }
 

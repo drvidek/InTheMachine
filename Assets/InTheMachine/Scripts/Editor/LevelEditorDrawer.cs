@@ -40,6 +40,8 @@ public class LevelEditorDrawer : Editor
 
     private void OnEnable()
     {
+        GameObject go = (target as LevelEditor).gameObject;
+        go.SetActive(true);
         //initialise fields
         currentCategory = serializedObject.FindProperty("currentCategory");
         currentToggleType = serializedObject.FindProperty("currentToggleType");
@@ -53,6 +55,11 @@ public class LevelEditorDrawer : Editor
         environmentType = serializedObject.FindProperty("environmentType");
         blockSize = serializedObject.FindProperty("blockSize");
 
+    }
+
+    private void OnDisable()
+    {
+        (target as LevelEditor).gameObject.SetActive(false);
     }
 
     public override void OnInspectorGUI()

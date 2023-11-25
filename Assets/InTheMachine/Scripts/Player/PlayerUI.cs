@@ -12,8 +12,9 @@ public class PlayerUI : MonoBehaviour
     private void Start()
     {
         player = GetComponent<Player>();
-        player.PowerMeter.onMax += () => { powerMeter.color = Color.green; };
-        player.PowerMeter.onMin += () => { powerMeter.color = Color.grey; };
+        player.PowerMeter.onMax += () => { powerMeter.color = player.PowerMeter.CurrentColor; };
+        player.PowerMeter.onMin += () => { powerMeter.color = player.PowerMeter.BackgroundColor; };
+        powerMeter.color = player.PowerMeter.CurrentColor;
     }
 
     private void Update()

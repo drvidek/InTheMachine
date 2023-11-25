@@ -28,12 +28,23 @@ public class EnvironmentBox : MonoBehaviour
 #endif
     }
 
-    protected void SetColliderAndSprite()
+    protected virtual void SetColliderAndSprite()
+    {
+        SetCollider();
+        SetSprite();
+    }
+
+    protected virtual void SetCollider()
     {
         if (!boxCollider) boxCollider = GetComponent<BoxCollider2D>();
-        if (!sprite) sprite = GetComponentInChildren<SpriteRenderer>();
-
         boxCollider.size = new(size.x - 0.1f, size.y);
+
+    }
+
+    protected virtual void SetSprite()
+    {
+        if (!sprite) sprite = GetComponentInChildren<SpriteRenderer>();
         sprite.size = size;
+
     }
 }

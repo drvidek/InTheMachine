@@ -16,6 +16,12 @@ public class OneWayPlatform : EnvironmentBox
         playerHalfHeight = Player.main.Height / 2;
     }
 
+    protected override void SetSprite()
+    {
+        base.SetSprite();
+        sprite.size = new Vector2(size.x, size.y);
+    }
+
     private void SetYPos()
     {
         yPos = transform.position.y + boxCollider.size.y / 2;

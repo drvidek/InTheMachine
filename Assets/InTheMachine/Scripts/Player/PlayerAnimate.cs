@@ -71,7 +71,7 @@ public class PlayerAnimate : MonoBehaviour
         myGun.onShoot += () => animator.SetTrigger("Shoot");
         AnimatePakForward(true);
 
-        if (!Player.main.HasAbility(Player.AbilityType.Gun))
+        if (!Player.main.HasAbility(Player.Ability.Gun))
         pakSprite.enabled = false;
     }
 

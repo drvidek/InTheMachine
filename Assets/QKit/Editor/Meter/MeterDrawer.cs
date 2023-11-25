@@ -80,6 +80,7 @@ namespace QKit
             Rect maxRect = new Rect(x - 2 + w - fieldWidth, y + (lineBreak * line) + extraSpace / 2, fieldWidth, lineH);
             line++;
 
+            Rect showAllRect = new Rect(x, y + (lineBreak * line), w, lineH + extraSpace);
             Rect minLabelRect = new Rect(x + 2, y + (lineBreak * line) + extraSpace / 2, fieldWidth, lineH);
             Rect rateButtonRect = new Rect(x + w / 2 - fieldWidth * 1.5f / 2, y + (lineBreak * line) + extraSpace / 2 + 2, fieldWidth * 1.5f, lineH);
 
@@ -164,7 +165,7 @@ namespace QKit
                         max.floatValue = min.floatValue;
                 }
 
-                showAll = EditorGUI.Foldout(bgRect, showAll, "", false);
+                showAll = EditorGUI.Foldout(showAllRect, showAll, "", false);
                 if (showAll)
                 {
                     EditorGUIUtility.labelWidth = defaultLabelWidth / 2;

@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
-    public enum AbilityType
+    public enum Ability
     {
         Gun,
         Flight,
@@ -15,16 +15,10 @@ public class Player : MonoBehaviour
         Boost
     }
 
-    [System.Serializable]
-    public struct Ability
-    {
-        public AbilityType type;
-        public bool unlocked;
-    }
 
     public enum PlayerState { Idle, Walk, Ascend, Hang, Descend, Fly, Boost, Stun, Burn }
     [SerializeField] private PlayerState _currentState;
-    [SerializeField] private Ability[] abilities;
+    [SerializeField] private List<Ability> abilities = new();
     [SerializeField] private bool allAbilities = false;
     [SerializeField] protected Rigidbody2D _rigidbody;
     [SerializeField] protected CapsuleCollider2D _collider;
@@ -74,7 +68,7 @@ public class Player : MonoBehaviour
     }
 
     #region Events
-    public Action<AbilityType> onAbilityUnlock;
+    public Action<Ability> onAbilityUnlock;
     public Action onJumpPress;
     public Action onJumpHold;
     public Action onJumpRelease;
@@ -832,7 +826,7 @@ public class Player : MonoBehaviour
             return false;
         }
 
-        if (!HasAbility(AbilityType.Flight))
+        if (!HasAbility(Ability.Flight))
             return false;
 
         ChangeStateTo(PlayerState.Fly);
@@ -840,7 +834,7 @@ public class Player : MonoBehaviour
     }
 
 
-    public bool TryToUsePower(float power, bool checkMin = true)
+    public bool TryToUsePower(float power, bool checkMin = false)
     {
         if (outOfPower)
             return false;
@@ -855,7 +849,7 @@ public class Player : MonoBehaviour
 
     private bool TryToBoost()
     {
-        if (!HasAbility(AbilityType.Boost))
+        if (!HasAbility(Ability.Boost))
             return false;
 
         if (CurrentState == PlayerState.Boost)
@@ -870,34 +864,30 @@ public class Player : MonoBehaviour
         return false;
     }
 
-    public bool HasAbility(AbilityType ability)
+    public bool HasAbility(Ability ability)
     {
-        bool has = false;
-        foreach (var item in abilities)
+        return allAbilities || abilities.Contains(ability);
+    }
+
+    private void UnlockAbility(Ability ability)
+    {
+        abilities.Add(ability);
+        onAbilityUnlock?.Invoke(ability);
+    }
+
+    private void AddPowerUp(PowerUp.Type type)
+    {
+        switch (type)
         {
-            if (item.type == ability)
-            {
-                has = item.unlocked;
+            case PowerUp.Type.Power:
+                powerMeter.SetNewBounds(0, powerMeter.Max + 5);
+                powerMeter.Fill();
                 break;
-            }
-        }
-        if (allAbilities)
-            has = true;
-        return has;
-    }
-
-    private void UnlockAbility(AbilityType ability)
-    {
-        for (int i = 0; i < abilities.Length; i++)
-        {
-            if (abilities[i].type != ability)
-                continue;
-
-            abilities[i] = new() { type = ability, unlocked = true };
-            onAbilityUnlock?.Invoke(ability);
-            return;
+            default:
+                break;
         }
     }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (_verSpeed > 0)
@@ -917,10 +907,20 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent<Upgrade>(out Upgrade upgrade))
+
+        if (collision.TryGetComponent<Collectible>(out Collectible c))
         {
-            UnlockAbility(upgrade.Ability);
-            upgrade.Collect();
+            if (c is AbilityUnlock)
+            {
+                var a = c as AbilityUnlock;
+                UnlockAbility(a.Ability);
+            }
+            if (c is PowerUp)
+            {
+                var p = c as PowerUp;
+                
+            }
+            c.Collect();
         }
     }
 }

@@ -7,7 +7,6 @@ public class PlayerGun : Launcher
 {
     [SerializeField] private GunProfile[] gunProfile;
     [SerializeField] private GunProfileType currentProfile;
-    private bool unlocked;
     private Player myPlayer;
     private PlayerAnimate myAnimator;
     private bool canShoot = true;
@@ -71,7 +70,7 @@ public class PlayerGun : Launcher
         myPlayer.onShootPress += () => TryToShoot();
         SetProfile(currentProfile);
 
-        myPlayer.onAbilityUnlock += UnlockGun;
+        myPlayer.onAbilityUnlock += UnlockPak;
     }
 
     private void Update()
@@ -111,7 +110,7 @@ public class PlayerGun : Launcher
 
     protected override bool CanShoot()
     {
-        return myPlayer.HasAbility(Player.AbilityType.Gun) && canShoot && myPlayer.PowerRemaining >= cost && !myPlayer.OutOfPower;
+        return myPlayer.HasAbility(Player.Ability.Gun) && canShoot && myPlayer.PowerRemaining >= cost && !myPlayer.OutOfPower;
     }
 
     protected override Vector3 GetDirection()
@@ -140,11 +139,10 @@ public class PlayerGun : Launcher
         costOnShot = gun.costOnShot;
     }
 
-    private void UnlockGun(Player.AbilityType ability)
+    private void UnlockPak(Player.Ability ability)
     {
-        if (ability == Player.AbilityType.Gun)
+        if (ability == Player.Ability.Gun)
         {
-            unlocked = true;
             myAnimator.EnablePak();
         }
     }

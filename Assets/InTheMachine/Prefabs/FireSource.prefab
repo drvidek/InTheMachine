@@ -190,10 +190,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 4179091660087799505}
     m_Modifications:
     - target: {fileID: 1151706372022462068, guid: 4c2bfe1ea3bf3184680e43294ad51757, type: 3}
-      propertyPath: prewarm
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1151706372022462068, guid: 4c2bfe1ea3bf3184680e43294ad51757, type: 3}
       propertyPath: ShapeModule.type
       value: 12
       objectReference: {fileID: 0}

@@ -2,33 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Upgrade : MonoBehaviour
+public abstract class Collectible : MonoBehaviour
 {
-    [SerializeField] private Player.AbilityType ability;
-    [SerializeField] private Sprite sprite;
-    [SerializeField] private SpriteRenderer spriteRenderer;
-    [SerializeField] private Collider2D _collider;
+    [SerializeField] protected Sprite sprite;
+    [SerializeField] protected SpriteRenderer spriteRenderer;
+    [SerializeField] protected ParticleSystem psysSparkle;
+    [SerializeField] protected Collider2D _collider;
 
-    public Player.AbilityType Ability => ability;
-
-    private void OnValidate()
+    protected virtual void OnValidate()
     {
         SetSprite();
     }
 
-    private void Start()
+    protected virtual void Start()
     {
         SetSprite();
         _collider = GetComponent<Collider2D>();
     }
 
-    public void Collect()
+    public virtual void Collect()
     {
         spriteRenderer.enabled = false;
         _collider.enabled = false;
+        psysSparkle.Stop();
     }
 
-    private void SetSprite()
+    protected  virtual void SetSprite()
     {
         if (!spriteRenderer)
         {
