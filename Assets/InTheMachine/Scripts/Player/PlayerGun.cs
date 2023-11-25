@@ -5,13 +5,15 @@ using QKit;
 
 public class PlayerGun : Launcher
 {
-    [SerializeField] private soGunProfile[] gunProfile;
-    [SerializeField] private GunProfile currentProfile;
+    [SerializeField] private GunProfile[] gunProfile;
+    [SerializeField] private GunProfileType currentProfile;
+    private bool unlocked;
     private Player myPlayer;
     private PlayerAnimate myAnimator;
     private bool canShoot = true;
-    private GunProfile lastProfile;
+    private GunProfileType lastProfile;
     private float cost;
+    private bool costOnShot;
 
     public float Cost => cost;
 
@@ -68,15 +70,17 @@ public class PlayerGun : Launcher
         lastProfile = currentProfile;
         myPlayer.onShootPress += () => TryToShoot();
         SetProfile(currentProfile);
+
+        myPlayer.onAbilityUnlock += UnlockGun;
     }
 
     private void Update()
     {
         currentProfile =
-            Input.GetKeyDown(KeyCode.Alpha1) ? GunProfile.Air :
-            Input.GetKeyDown(KeyCode.Alpha2) ? GunProfile.Fire :
-            Input.GetKeyDown(KeyCode.Alpha3) ? GunProfile.Air :
-            Input.GetKeyDown(KeyCode.Alpha4) ? GunProfile.Air :
+            Input.GetKeyDown(KeyCode.Alpha1) ? GunProfileType.Air :
+            Input.GetKeyDown(KeyCode.Alpha2) ? GunProfileType.Fire :
+            Input.GetKeyDown(KeyCode.Alpha3) ? GunProfileType.Air :
+            Input.GetKeyDown(KeyCode.Alpha4) ? GunProfileType.Air :
             currentProfile;
 
         if (lastProfile != currentProfile)
@@ -95,6 +99,11 @@ public class PlayerGun : Launcher
             return;
         }
 
+        if (costOnShot)
+        {
+            if (!Player.main.TryToUsePower(cost))
+                return;
+        }
         Projectile projectile = Instantiate(_projectilePrefab, SpawnPosition, Quaternion.identity, null);
         ApplyPropertiesToProjectile(projectile, direction);
 
@@ -102,7 +111,7 @@ public class PlayerGun : Launcher
 
     protected override bool CanShoot()
     {
-        return canShoot && myPlayer.PowerRemaining >= cost;
+        return myPlayer.HasAbility(Player.AbilityType.Gun) && canShoot && myPlayer.PowerRemaining >= cost && !myPlayer.OutOfPower;
     }
 
     protected override Vector3 GetDirection()
@@ -117,9 +126,9 @@ public class PlayerGun : Launcher
 
     }
 
-    private void SetProfile(GunProfile profile)
+    private void SetProfile(GunProfileType profile)
     {
-        soGunProfile gun = gunProfile[(int)profile];
+        GunProfile gun = gunProfile[(int)profile];
         _size = gun.size;
         _speed = gun.speed;
         _power = gun.power;
@@ -128,5 +137,15 @@ public class PlayerGun : Launcher
         _piercingLayer = gun.piercingLayer;
         _projectilePrefab = gun.projectilePrefab;
         cost = gun.cost;
+        costOnShot = gun.costOnShot;
+    }
+
+    private void UnlockGun(Player.AbilityType ability)
+    {
+        if (ability == Player.AbilityType.Gun)
+        {
+            unlocked = true;
+            myAnimator.EnablePak();
+        }
     }
 }

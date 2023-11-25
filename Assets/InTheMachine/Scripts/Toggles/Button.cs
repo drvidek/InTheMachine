@@ -15,6 +15,8 @@ public class Button : LevelToggle
     private void Start()
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        int col = stayPressed ? (int)ColorType.Button : (int)ColorType.ButtonLoose;
+        spriteRenderer.color = GameManager.currentColorPalette.color[col];
         onActiveChanged.AddListener(AnimateButton);
     }
 
@@ -72,5 +74,12 @@ public class Button : LevelToggle
             return;
 
         base.TriggerChange(active);
+    }
+
+    private void OnDrawGizmos()
+    {
+        int col = stayPressed ? (int)ColorType.Button : (int)ColorType.ButtonLoose;
+        Gizmos.color = GameManager.currentColorPalette.color[col];
+        Gizmos.DrawCube(transform.position, Vector2.one * 0.5f);
     }
 }

@@ -14,15 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: 1
   speed: 30
-  power: 1
+  power: 0
   lifetime: 0.5
   count: 1
   spread: 0
   collidingLayer:
     serializedVersion: 2
-    m_Bits: 1974
+    m_Bits: 1940
   piercingLayer:
     serializedVersion: 2
     m_Bits: 0
   projectilePrefab: {fileID: 160887198981946752, guid: 1bebb8bcbfc57224b9a7c0567e275410, type: 3}
   cost: 0
+  costOnShot: 0

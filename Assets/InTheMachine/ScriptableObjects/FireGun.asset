@@ -20,7 +20,7 @@ MonoBehaviour:
   spread: 0
   collidingLayer:
     serializedVersion: 2
-    m_Bits: 1462
+    m_Bits: 1968
   piercingLayer:
     serializedVersion: 2
     m_Bits: 0

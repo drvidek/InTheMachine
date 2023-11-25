@@ -7,8 +7,25 @@ using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
+    public enum AbilityType
+    {
+        Gun,
+        Flight,
+        Tractor,
+        Boost
+    }
+
+    [System.Serializable]
+    public struct Ability
+    {
+        public AbilityType type;
+        public bool unlocked;
+    }
+
     public enum PlayerState { Idle, Walk, Ascend, Hang, Descend, Fly, Boost, Stun, Burn }
     [SerializeField] private PlayerState _currentState;
+    [SerializeField] private Ability[] abilities;
+    [SerializeField] private bool allAbilities = false;
     [SerializeField] protected Rigidbody2D _rigidbody;
     [SerializeField] protected CapsuleCollider2D _collider;
     [SerializeField] private LayerMask groundedLayer;
@@ -21,14 +38,18 @@ public class Player : MonoBehaviour
     [SerializeField] private float powerChargeTime;
     [SerializeField] private Meter powerMeter;
     private float _targetHorSpeed, _verSpeed, _fric, _accel, _grav;
-    private bool usingPower;
+    private bool usingPower, outOfPower;
     private Vector3 boostDirection;
     private PlayerState returnFromBoost;
     private Alarm coyoteTime;
     private Alarm triedToJump;
     public bool IsGrounded => Physics2D.CapsuleCast(transform.position + (Vector3)_collider.offset, _collider.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.02f, groundedLayer);
-
+    public Rigidbody2D StandingOn => Physics2D.CapsuleCast(transform.position + (Vector3)_collider.offset, _collider.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.02f, groundedLayer).rigidbody;
+    public bool OutOfPower => outOfPower;
     private float _currentGrav => _grav * Time.fixedDeltaTime;
+
+    List<Rigidbody2D> externalVelocitySources = new();
+    Vector2 oneFrameVelocity = Vector2.zero;
 
     private struct UserInput
     {
@@ -53,6 +74,7 @@ public class Player : MonoBehaviour
     }
 
     #region Events
+    public Action<AbilityType> onAbilityUnlock;
     public Action onJumpPress;
     public Action onJumpHold;
     public Action onJumpRelease;
@@ -148,6 +170,10 @@ public class Player : MonoBehaviour
         onActionPress += () => TryToBoost();
         coyoteTime = Alarm.Get(_coyoteSec, false, false);
         triedToJump = Alarm.Get(_jumpInputAllowance, false, false);
+
+        powerMeter.onMin += () => { outOfPower = true; };
+        powerMeter.onMax += () => { outOfPower = false; };
+
         NextState();
     }
     private void Update()
@@ -160,7 +186,9 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _rigidbody.velocity = _targetVelocity;
+        _rigidbody.velocity = _targetVelocity + oneFrameVelocity;
+        oneFrameVelocity = Vector2.zero;
+        externalVelocitySources.Clear();
 
         if (ShootPress)
             onShootPress?.Invoke();
@@ -766,9 +794,23 @@ public class Player : MonoBehaviour
         _targetVelocity.y = _verSpeed;
     }
 
+    public void AddVelocity(Vector2 velocity, Rigidbody2D rb)
+    {
+        if (externalVelocitySources.Contains(rb))
+            return;
+        oneFrameVelocity += velocity;
+        externalVelocitySources.Add(rb);
+    }
+
+    private void AscendWithSpeed(float speed)
+    {
+        ChangeStateTo(PlayerState.Ascend);
+        _verSpeed = speed;
+    }
+
     private bool TryToJump(float speed)
     {
-        if (!IsGrounded && coyoteTime.IsStopped)
+        if (!IsGrounded && coyoteTime.IsStopped && triedToJump.IsStopped)
         {
             triedToJump.ResetAndPlay();
             return false;
@@ -781,23 +823,81 @@ public class Player : MonoBehaviour
 
     private bool TryToFly()
     {
+        triedToJump.ResetAndPlay();
+
         if (coyoteTime.IsPlaying)
         {
-            Debug.Log("CaughtCoyote During Flight");
+            Debug.Log("Caught Coyote During Flight");
             TryToJump(_jumpPower);
             return false;
         }
-        triedToJump.ResetAndPlay();
+
+        if (!HasAbility(AbilityType.Flight))
+            return false;
+
         ChangeStateTo(PlayerState.Fly);
         return true;
     }
 
-    private void AscendWithSpeed(float speed)
+
+    public bool TryToUsePower(float power, bool checkMin = true)
     {
-        ChangeStateTo(PlayerState.Ascend);
-        _verSpeed = speed;
+        if (outOfPower)
+            return false;
+
+        if (PowerRemaining < power && checkMin)
+            return false;
+
+        powerMeter.Adjust(-power);
+        usingPower = true;
+        return true;
     }
 
+    private bool TryToBoost()
+    {
+        if (!HasAbility(AbilityType.Boost))
+            return false;
+
+        if (CurrentState == PlayerState.Boost)
+            return false;
+
+        if (TryToUsePower(boostCost, false))
+        {
+            returnFromBoost = CurrentState;
+            ChangeStateTo(PlayerState.Boost);
+            return true;
+        }
+        return false;
+    }
+
+    public bool HasAbility(AbilityType ability)
+    {
+        bool has = false;
+        foreach (var item in abilities)
+        {
+            if (item.type == ability)
+            {
+                has = item.unlocked;
+                break;
+            }
+        }
+        if (allAbilities)
+            has = true;
+        return has;
+    }
+
+    private void UnlockAbility(AbilityType ability)
+    {
+        for (int i = 0; i < abilities.Length; i++)
+        {
+            if (abilities[i].type != ability)
+                continue;
+
+            abilities[i] = new() { type = ability, unlocked = true };
+            onAbilityUnlock?.Invoke(ability);
+            return;
+        }
+    }
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (_verSpeed > 0)
@@ -815,28 +915,12 @@ public class Player : MonoBehaviour
         }
     }
 
-    public bool TryToUsePower(float power)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (PowerRemaining < power)
-            return false;
-
-        powerMeter.Adjust(-power);
-        usingPower = true;
-        return true;
-    }
-
-    private bool TryToBoost()
-    {
-        if (CurrentState == PlayerState.Boost)
-            return false;
-
-        if (PowerRemaining > 0)
+        if (collision.TryGetComponent<Upgrade>(out Upgrade upgrade))
         {
-            powerMeter.Adjust(-boostCost);
-            returnFromBoost = CurrentState;
-            ChangeStateTo(PlayerState.Boost);
-            return true;
+            UnlockAbility(upgrade.Ability);
+            upgrade.Collect();
         }
-        return false;
     }
 }

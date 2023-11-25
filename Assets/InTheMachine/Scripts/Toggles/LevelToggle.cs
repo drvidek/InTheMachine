@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public abstract class LevelToggle : MonoBehaviour
 {
     protected bool active;
-    [SerializeField] protected UnityEvent<bool> onActiveChanged;
+    [SerializeField] public UnityEvent<bool> onActiveChanged;
 
     protected virtual void TriggerChange(bool active, bool force = false)
     {

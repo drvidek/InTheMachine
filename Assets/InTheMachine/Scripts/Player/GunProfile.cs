@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum GunProfile
+public enum GunProfileType
 {
     Air,
     Fire,
@@ -11,8 +11,8 @@ public enum GunProfile
     Slime
 }
 
-[CreateAssetMenu(fileName = "Gun Profile", menuName = "ScriptableObjects")]
-public class soGunProfile : ScriptableObject
+[CreateAssetMenu(fileName = "GunProfile", menuName = "Scriptable Objects/Gun Profile")]
+public class GunProfile : ScriptableObject
 {
     public float size, speed, power, lifetime;
     public int count;
@@ -21,4 +21,5 @@ public class soGunProfile : ScriptableObject
     public LayerMask piercingLayer;
     public Projectile projectilePrefab;
     public float cost;
+    public bool costOnShot;
 }

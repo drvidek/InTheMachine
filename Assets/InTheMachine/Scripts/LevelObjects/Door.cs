@@ -3,30 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using QKit;
 
-public class Door : MonoBehaviour
+public class Door : MonoBehaviour, IActivate
 {
+    [SerializeField] private int doorLength = 2;
     [SerializeField] private SpriteRenderer[] doorParts;
     [SerializeField] private float timeToClose;
     [SerializeField] private bool startOpen;
-    [SerializeField] private bool stayOpen;
     [SerializeField] private Sprite[] doorSprites;
     [SerializeField] private ParticleSystem psysActive;
 
     private Collider2D[] colliders;
-    private int partCount;
 
+    private bool stayOpen;
     private float currentOpen;
 
     private bool open;
     private bool everOpened;
 
+    private void OnValidate()
+    {
+        Initialise();
+    }
 
     private void Start()
     {
-        doorParts = transform.GetComponentsInChildren<SpriteRenderer>();
+        Initialise();
 
-        partCount = doorParts.Length;
-        currentOpen = partCount;
+        currentOpen = doorLength;
         colliders = new Collider2D[doorParts.Length];
         var i = 0;
         foreach (var part in doorParts)
@@ -34,13 +37,33 @@ public class Door : MonoBehaviour
             colliders[i] = part.GetComponent<Collider2D>();
             i++;
         }
-        ChangeActiveState(false);
+        ToggleActive(false);
+    }
+
+    public void SetValues(int length, float rotation)
+    {
+#if UNITY_EDITOR
+        doorLength = length;
+        transform.localEulerAngles = new(0, 0, rotation);
+#endif
+    }
+
+    public void Initialise()
+    {
+        doorParts = transform.GetComponentsInChildren<SpriteRenderer>();
+
+        while (doorParts.Length < doorLength)
+        {
+            Transform door = Instantiate(transform.GetChild(0), transform);
+            door.localPosition = Vector3.down * (doorParts.Length);
+            doorParts = transform.GetComponentsInChildren<SpriteRenderer>();
+        }
     }
 
     private void Update()
     {
-        float target = open ? 0 : partCount;
-        currentOpen = Mathf.MoveTowards(currentOpen, target, partCount / timeToClose * Time.deltaTime);
+        float target = open ? 0 : doorLength;
+        currentOpen = Mathf.MoveTowards(currentOpen, target, doorLength / timeToClose * Time.deltaTime);
         for (int i = 0; i < doorParts.Length; i++)
         {
             if (currentOpen <= i)
@@ -67,12 +90,12 @@ public class Door : MonoBehaviour
                     else
                     if (currentOpen < i + 1)
                         doorParts[i].sprite = doorSprites[1];
-                    }
+                }
             }
         }
     }
 
-    public void ChangeActiveState(bool active)
+    public void ToggleActive(bool active)
     {
         if (stayOpen && everOpened)
             return;
@@ -85,5 +108,11 @@ public class Door : MonoBehaviour
             everOpened = true;
 
         psysActive.Play();
+    }
+
+    public void ToggleActiveAndLock(bool active)
+    {
+        ToggleActive(active);
+        stayOpen = true;
     }
 }

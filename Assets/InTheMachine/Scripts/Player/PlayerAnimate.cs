@@ -70,6 +70,14 @@ public class PlayerAnimate : MonoBehaviour
         myPlayer.onWalkExit += () => animator.SetBool("IsWalking", false);
         myGun.onShoot += () => animator.SetTrigger("Shoot");
         AnimatePakForward(true);
+
+        if (!Player.main.HasAbility(Player.AbilityType.Gun))
+        pakSprite.enabled = false;
+    }
+
+    public void EnablePak()
+    {
+        pakSprite.enabled = true;
     }
 
     private void Update()
