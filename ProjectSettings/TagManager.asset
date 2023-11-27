@@ -17,8 +17,8 @@ TagManager:
   - Debris
   - Block
   - BlockPlayer
-  - 
-  - 
+  - BlockAgent
+  - EnemyPathfind
   - 
   - 
   - 

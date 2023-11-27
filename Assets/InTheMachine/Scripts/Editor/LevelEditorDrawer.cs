@@ -25,6 +25,7 @@ public class LevelEditorDrawer : Editor
     SerializedProperty doorRotation;
     SerializedProperty selectToggleToUse;
     SerializedProperty toggleToUse;
+    SerializedProperty buttonStayPressed;
     SerializedProperty parentTransformInScene;
     SerializedProperty environmentType;
     SerializedProperty blockSize;
@@ -51,6 +52,7 @@ public class LevelEditorDrawer : Editor
         doorRotation = serializedObject.FindProperty("doorRotation");
         selectToggleToUse = serializedObject.FindProperty("selectToggleToUse");
         toggleToUse = serializedObject.FindProperty("toggleToUse");
+        buttonStayPressed = serializedObject.FindProperty("buttonStayPressed");
         parentTransformInScene = serializedObject.FindProperty("parentTransformInScene");
         environmentType = serializedObject.FindProperty("environmentType");
         blockSize = serializedObject.FindProperty("blockSize");
@@ -74,6 +76,8 @@ public class LevelEditorDrawer : Editor
         {
             case LevelEditor.Category.Toggles:
                 EditorGUILayout.PropertyField(currentToggleType);
+                if (editor.currentToggleType == LevelEditor.ToggleType.Button)
+                    EditorGUILayout.PropertyField(buttonStayPressed);
                 EditorGUILayout.PropertyField(selectObjectsToActivate);
                 if (selectObjectsToActivate.boolValue)
                 {
@@ -263,6 +267,10 @@ public class LevelEditorDrawer : Editor
                 break;
             case LevelEditor.Category.Toggles:
                 LevelToggle toggleSpawned = obSpawnedjInScene.GetComponent<LevelToggle>();
+                if (buttonStayPressed.boolValue)
+                {
+                    (toggleSpawned as Button).SetStayPressed();
+                }
                 foreach (var objToActivate in editor.objectsToActivate)
                 {
                     if (QMath.TryGet<IActivate>(objToActivate.transform, out IActivate activate))

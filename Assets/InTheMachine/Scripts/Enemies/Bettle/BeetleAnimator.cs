@@ -5,6 +5,8 @@ using UnityEngine;
 public class BeetleAnimator : AgentAnimator
 {
     private EnemyMachine myEnemy => myAgent as EnemyMachine;
+    private Beetle myBeetle => myAgent as Beetle;
+
     protected override void Start()
     {
         base.Start();
@@ -13,7 +15,14 @@ public class BeetleAnimator : AgentAnimator
         myEnemy.onWalkStay += () => { pixelAligner.SetOffset(transform.up * 0.5f); };
         myEnemy.onWalkExit += () => { animator.SetBool("Walking",false); };
 
-        myEnemy.onStunEnter += () => { animator.SetBool("Stunned", true); };
+        myEnemy.onStunEnter += () => { animator.SetBool("Stunned", true); pixelAligner.SetOffset(Vector2.zero); };
         myEnemy.onStunExit += () => { animator.SetBool("Stunned", false); };
+        
+        myEnemy.onBurnEnter += () => { pixelAligner.SetOffset(Vector2.up * 0.5f); };
+    }
+
+    private void Update()
+    {
+        spriteRenderer.flipX = !myBeetle.WalkingRight;
     }
 }

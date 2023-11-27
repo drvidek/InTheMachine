@@ -4,6 +4,8 @@ using UnityEngine;
 
 public interface IFlammable
 {
+    public static GameObject psysObjFire = Resources.Load("PSysFire") as GameObject;
+
     public static List<IFlammable> FindFlammableNeighbours(Collider2D collider)
     {
         List<IFlammable> neighbours = new();

@@ -12,6 +12,13 @@ public class Button : LevelToggle
     [SerializeField] private Sprite[] buttonSprites;
     [SerializeField] private LayerMask blockingLayer;
 
+    public void SetStayPressed()
+    {
+#if UNITY_EDITOR
+        stayPressed = true;
+#endif
+    }
+
     private void Start()
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using QKit;
 
-public class BasicProjectile : Projectile
+public class AirProjectile : Projectile
 {
     private float baseSpeed;
     private bool lifeOver;

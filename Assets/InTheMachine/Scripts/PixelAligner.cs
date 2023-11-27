@@ -6,6 +6,7 @@ using UnityEngine;
 public class PixelAligner : MonoBehaviour
 {
     private Vector2 offset;
+    [SerializeField] private bool objectRotates;
     [HideInInspector]
     [SerializeField] private Vector2 animOffset = new(0, 0);
     [SerializeField] private Transform parent;
@@ -54,7 +55,7 @@ public class PixelAligner : MonoBehaviour
         Vector3 animOffsetConverted = new(PixelsToWidth(animOffset.x), PixelsToWidth(animOffset.y));
 
         Vector3 addedOffset = animOffsetConverted + new Vector3(offset.x, offset.y);
-        Vector3 finalOffset = new Vector3(addedOffset.x * (sprite.flipX ? -1 : 1), addedOffset.y * (sprite.flipY ? -1 : 1));
+        Vector3 finalOffset = new Vector3(addedOffset.x * (!objectRotates && sprite.flipX ? -1 : 1), addedOffset.y * (!objectRotates && sprite.flipY ? -1 : 1));
 
         transform.position = PixelPosition + finalOffset;
     }

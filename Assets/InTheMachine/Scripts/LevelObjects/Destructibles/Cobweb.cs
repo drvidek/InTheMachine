@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class Cobweb : Debris, IFlammable
 {
-    [SerializeField] private float flameMax;
+    [SerializeField] private float timeToLight;
+    [SerializeField] private float burnTime;
     [SerializeField] private ParticleSystem flames;
-    [SerializeField] private float flameCurrent;
+    private float flameCurrent;
     private bool catching;
     private bool burning;
     private bool burntOut;
@@ -18,7 +19,7 @@ public class Cobweb : Debris, IFlammable
             //DouseFlame();
         }
 
-        if (flameCurrent > flameMax)
+        if (flameCurrent > timeToLight)
         {
             if (!burning)
             {
@@ -31,7 +32,7 @@ public class Cobweb : Debris, IFlammable
         {
             PropagateFlame(transform.position, Vector2.one);
             flameCurrent += Time.fixedDeltaTime;
-            if (flameCurrent > flameMax * 4)
+            if (flameCurrent > burnTime + timeToLight)
             {
                 burntOut = true;
                 OnProjectileHit(null);

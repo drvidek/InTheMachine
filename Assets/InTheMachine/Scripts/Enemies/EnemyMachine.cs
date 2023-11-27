@@ -8,7 +8,7 @@ public abstract class EnemyMachine : AgentMachine
     public enum EnemyState { Idle, Walk, Fly, Ascend, Descend, Attack, Die, Stun, Burn }
     [SerializeField] protected EnemyState _currentState;
     [SerializeField] protected float contactDamage;
-    protected Vector2 _targetVelocity;
+    
 
     #region Events
     public Action onIdleEnter;
@@ -40,19 +40,14 @@ public abstract class EnemyMachine : AgentMachine
     public Action onBurnExit;
     #endregion
 
-    private WaitForFixedUpdate waitForFixedUpdate = new();
     public EnemyState CurrentState => _currentState;
     public float ContactDamage => contactDamage;
 
     protected override void Start()
     {
         base.Start();
+        healthMeter.onMin += () => { Destroy(gameObject); };
         NextState();
-    }
-
-    protected virtual void FixedUpdate()
-    {
-        _rigidbody.velocity = _targetVelocity;
     }
 
     #region State Machine

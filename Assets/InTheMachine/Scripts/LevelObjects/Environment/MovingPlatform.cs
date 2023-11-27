@@ -10,9 +10,11 @@ public class MovingPlatform : EnvironmentBox, IActivate
     private Rigidbody2D rb;
     private bool active;
 
-    private Vector3 lastPosition;
+    //private Vector3 lastPosition;
 
     private Vector3 startPosition;
+
+    //public bool IsMoving => lastPosition != transform.position;
 
     override protected void Start()
     {
@@ -27,12 +29,12 @@ public class MovingPlatform : EnvironmentBox, IActivate
 
     private void Update()
     {
-        if (rb == Player.main.StandingOn && lastPosition != transform.position)
-        {
-            Player.main.AddVelocityForOneFrame(rb.velocity, rb);
-        }
-
-        lastPosition = transform.position;
+        //if (rb == Player.main.GetStandingOnRigidbody() && lastPosition != transform.position)
+        //{
+        //    Player.main.AddVelocityForOneFrame(rb.velocity, rb);
+        //}
+        //
+        //lastPosition = transform.position;
     }
 
     private void FixedUpdate()

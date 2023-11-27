@@ -129,6 +129,16 @@ namespace QKit
             return Mathf.Ceil(f * precision) / precision;
         }
 
+        /// <summary>
+        /// Round float f to the nearest multiple of a provided fraction
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="fraction"></param>
+        /// <returns></returns>
+        public static float RoundToNearestFraction(float f, float fraction)
+        {
+            return Mathf.Round(f * (1 / fraction)) / (1 / fraction);
+        }
 
         /// <summary>
         /// Returns a vector based on a source vector, replacing a single value using enum VectorValue.x, .y, or .z

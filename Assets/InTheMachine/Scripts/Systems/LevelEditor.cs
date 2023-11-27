@@ -71,6 +71,7 @@ public class LevelEditor : MonoBehaviour
     public LevelToggle toggleToUse;
     public Transform parentTransformInScene;
     public GameObject[] objectsToActivate = new GameObject[0];
+    public bool buttonStayPressed;
 
     private void OnValidate()
     {

@@ -193,8 +193,8 @@ CapsuleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 2, y: 0}
-  m_Size: {x: 4, y: 1}
+  m_Offset: {x: 2.25, y: 0}
+  m_Size: {x: 4.5, y: 1}
   m_Direction: 1
 --- !u!114 &368035853384299023
 MonoBehaviour:
@@ -208,6 +208,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2623ee494ba270d49b0c4c67e21e39ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectRotates: 0
   animOffset: {x: 0, y: 0}
   parent: {fileID: 0}
 --- !u!1001 &3720212187877345013
@@ -219,12 +220,24 @@ PrefabInstance:
     m_TransformParent: {fileID: 7243579514734921581}
     m_Modifications:
     - target: {fileID: 377963491157219174, guid: c4c281f8003132a4da7924be2a33a52a, type: 3}
+      propertyPath: looping
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 377963491157219174, guid: c4c281f8003132a4da7924be2a33a52a, type: 3}
       propertyPath: lengthInSec
       value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 377963491157219174, guid: c4c281f8003132a4da7924be2a33a52a, type: 3}
       propertyPath: ShapeModule.type
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 377963491157219174, guid: c4c281f8003132a4da7924be2a33a52a, type: 3}
+      propertyPath: moveWithTransform
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 377963491157219174, guid: c4c281f8003132a4da7924be2a33a52a, type: 3}
+      propertyPath: CollisionModule.enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 377963491157219174, guid: c4c281f8003132a4da7924be2a33a52a, type: 3}
       propertyPath: ShapeModule.m_Rotation.z
@@ -236,7 +249,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 377963491157219174, guid: c4c281f8003132a4da7924be2a33a52a, type: 3}
       propertyPath: InitialModule.startSpeed.scalar
-      value: 5
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 377963491157219174, guid: c4c281f8003132a4da7924be2a33a52a, type: 3}
+      propertyPath: CollisionModule.collidesWith.m_Bits
+      value: 7479
       objectReference: {fileID: 0}
     - target: {fileID: 1975222557107015871, guid: c4c281f8003132a4da7924be2a33a52a, type: 3}
       propertyPath: m_Name

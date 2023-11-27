@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8695623347242236099}
   - component: {fileID: 4787372012177266978}
   - component: {fileID: 1242467650389172794}
-  m_Layer: 11
+  m_Layer: 12
   m_Name: MovingFanPlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -221,6 +221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2623ee494ba270d49b0c4c67e21e39ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectRotates: 0
   animOffset: {x: 0, y: 0}
   parent: {fileID: 0}
 --- !u!1001 &7399889235762024718
@@ -309,5 +310,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2623ee494ba270d49b0c4c67e21e39ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectRotates: 0
   animOffset: {x: 0, y: 0}
   parent: {fileID: 0}

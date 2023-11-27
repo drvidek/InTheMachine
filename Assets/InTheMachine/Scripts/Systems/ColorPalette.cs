@@ -24,7 +24,7 @@ public enum ColorType
 [CreateAssetMenu(fileName = "NewPalette", menuName = "Scriptable Objects/Color Palette")]
 public class ColorPalette : ScriptableObject
 {
-    public Color[] color = new Color[(int)ColorType._max];
+    public Color[] color;
 
 }
 

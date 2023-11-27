@@ -18,12 +18,10 @@ public class Player : AgentMachine
     [SerializeField] private PlayerState _currentState;
     [SerializeField] private List<Ability> abilities = new();
     [SerializeField] private bool allAbilities = false;
-    [SerializeField] private LayerMask groundedLayer;
     [SerializeField] private float _walkSpeed, _walkAccel, _walkFric, _jumpPower, _jumpDecayRate, _jumpInputAllowance, _coyoteSec, _airAccelPenalty, stunTimeMin = 1f;
     [SerializeField] private float _gravUp, _gravDown, _hangTime;
     [SerializeField] private float _airVertSpeed, _airHorSpeed, _airAccel, _airFric, _flightCost;
     [SerializeField] private float boostSpeed, boostDistance, boostCost, postBoostVelocityRate;
-    [SerializeField] private Vector2 _targetVelocity;
     [SerializeField] private TractorBeam beam;
     [SerializeField] private float powerChargeTime;
     [SerializeField] private Meter powerMeter;
@@ -39,8 +37,6 @@ public class Player : AgentMachine
 
     private float _currentGrav => _grav * Time.fixedDeltaTime;
 
-    List<Rigidbody2D> externalVelocitySources = new();
-    Vector2 oneFrameVelocity = Vector2.zero;
 
     private struct UserInput
     {
@@ -104,15 +100,13 @@ public class Player : AgentMachine
     public Action onBurnExit;
     #endregion
 
-    public bool IsGrounded => Physics2D.CapsuleCast(transform.position + (Vector3)_collider.offset, CapsuleCollider.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.02f, groundedLayer);
-    public Rigidbody2D StandingOn => Physics2D.CapsuleCast(transform.position + (Vector3)_collider.offset, CapsuleCollider.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.02f, groundedLayer).rigidbody;
+    public bool IsGrounded => Physics2D.CapsuleCast(transform.position + (Vector3)_collider.offset, CapsuleCollider.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.02f, groundedMask);
     public bool IsStunned => CurrentState == PlayerState.Stun;
     public Meter PowerMeter => powerMeter;
     public bool OutOfPower => outOfPower;
     public CapsuleCollider2D CapsuleCollider => _collider as CapsuleCollider2D;
 
 
-    private WaitForFixedUpdate waitForFixedUpdate = new();
     public PlayerState CurrentState => _currentState;
     public Vector3 Position => transform.position;
     public float X => transform.position.x;
@@ -174,19 +168,19 @@ public class Player : AgentMachine
 
         NextState();
     }
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
         _userInputAction[0] = Input.GetButton("Jump") || _userInputAction[0];
         _userInputAction[1] = Input.GetButton("Fire1") || _userInputAction[1];
         _userInputAction[2] = Input.GetButton("Fire2") || _userInputAction[2];
         _userInputDir = new(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+
     }
 
-    private void FixedUpdate()
+    override protected void FixedUpdate()
     {
-        _rigidbody.velocity = _targetVelocity + oneFrameVelocity;
-        oneFrameVelocity = Vector2.zero;
-        externalVelocitySources.Clear();
+        base.FixedUpdate();
 
         if (ShootPress)
             onShootPress?.Invoke();
@@ -797,14 +791,6 @@ public class Player : AgentMachine
 
     }
 
-    public void AddVelocityForOneFrame(Vector2 velocity, Rigidbody2D rb)
-    {
-        if (externalVelocitySources.Contains(rb))
-            return;
-        oneFrameVelocity += velocity;
-        externalVelocitySources.Add(rb);
-    }
-
     private void AscendWithSpeed(float speed)
     {
         ChangeStateTo(PlayerState.Ascend);
@@ -897,6 +883,20 @@ public class Player : AgentMachine
         }
     }
 
+    protected override void CheckForExternalVelocity()
+    {
+        Rigidbody2D rb = GetStandingOnRigidbody();
+        if (!rb)
+            return;
+        if (rb.velocity.magnitude == 0)
+            return;
+        if (externalVelocitySources.ContainsKey(rb))
+            return;
+
+        Debug.Log("Adding rigidbody");
+        externalVelocitySources.Add(rb, rb.position);
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (_targetVelocity.y > 0)
@@ -940,5 +940,10 @@ public class Player : AgentMachine
             stunDirection.y = IsGrounded ? 1 : 0;
             stunDirection *= enemy.ContactDamage;
         }
+    }
+
+    public override Rigidbody2D GetStandingOnRigidbody()
+    {
+        return Physics2D.CapsuleCast(transform.position + (Vector3)_collider.offset, CapsuleCollider.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.02f, groundedMask).rigidbody;
     }
 }
