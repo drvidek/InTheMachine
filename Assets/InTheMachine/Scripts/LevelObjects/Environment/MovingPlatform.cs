@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class MovingPlatform : EnvironmentBox, IActivate
 {
@@ -13,6 +14,7 @@ public class MovingPlatform : EnvironmentBox, IActivate
     //private Vector3 lastPosition;
 
     private Vector3 startPosition;
+    public TilemapCollider2D tileCollider;
 
     //public bool IsMoving => lastPosition != transform.position;
 

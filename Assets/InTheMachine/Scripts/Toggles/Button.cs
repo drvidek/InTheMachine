@@ -22,8 +22,8 @@ public class Button : LevelToggle
     private void Start()
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-        int col = stayPressed ? (int)ColorType.Button : (int)ColorType.ButtonLoose;
-        spriteRenderer.color = GameManager.currentColorPalette.color[col];
+        //int col = stayPressed ? (int)ColorType.Button : (int)ColorType.ButtonLoose;
+        //spriteRenderer.color = GameManager.currentColorPalette.color[col];
         onActiveChanged.AddListener(AnimateButton);
     }
 
@@ -52,7 +52,7 @@ public class Button : LevelToggle
                 currentRigidbodies.Add(rb);
         }
 
-        TriggerChange(currentRigidbodies.Count > 0);
+        ToggleActive(currentRigidbodies.Count > 0);
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -72,20 +72,20 @@ public class Button : LevelToggle
 
         if (currentRigidbodies.Count == 0)
 
-            TriggerChange(false);
+            ToggleActive(false);
     }
 
-    override protected void TriggerChange(bool active, bool force = false)
+    override protected void ToggleActive(bool active, bool force = false)
     {
         if (this.active == active && !force)
             return;
 
-        base.TriggerChange(active);
+        base.ToggleActive(active);
     }
 
     private void OnDrawGizmos()
     {
-        int col = stayPressed ? (int)ColorType.Button : (int)ColorType.ButtonLoose;
+        int col = (int)ColorType.Button;
         Gizmos.color = GameManager.currentColorPalette.color[col];
         Gizmos.DrawCube(transform.position, Vector2.one * 0.5f);
     }

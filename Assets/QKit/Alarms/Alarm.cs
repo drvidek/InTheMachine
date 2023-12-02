@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace QKit
 {
+    [Serializable]
     public class Alarm
     {
         /// <summary>

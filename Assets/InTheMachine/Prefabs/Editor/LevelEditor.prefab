@@ -46,18 +46,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spritePreview: {fileID: 5933900689233821187}
-  currentCategory: 10
+  currentCategory: 6
   environmentGrid: {fileID: 0}
   interactibleGrid: {fileID: 0}
-  currentToggleType: 0
+  objectRotation: 0
+  currentToggleType: 2
   levelToggles:
   - {fileID: 3246324398310642350, guid: 6fb3be6748bc93d48a2c2933e5f33055, type: 3}
   - {fileID: 7463873018067421434, guid: b337ced7add5e62408ac33c24dd2911d, type: 3}
-  selectObjectsToActivate: 1
+  - {fileID: 7260826727322002727, guid: f5e28a4346344bd478aedfe397751113, type: 3}
+  selectObjectsFromSceneToActivate: 0
+  buttonStayPressed: 0
   door: {fileID: 3696660229750350240, guid: cd08e6f61214e424a8bbb5ff78d49d8c, type: 3}
-  doorLength: 3
-  doorRotation: 0
-  selectToggleToUse: 1
+  doorLength: 4
+  selectToggleInSceneToUse: 0
   debris:
     prefab: {fileID: 8451997271787077418, guid: 99e6d3036967c284a9c408f02df4fb4c, type: 3}
     sprites:
@@ -74,14 +76,23 @@ MonoBehaviour:
     - {fileID: 1741535603, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}
     - {fileID: -1430174196, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}
   physicsObject: {fileID: 4163983211913900757, guid: e7f2c2b9432a87d459fe3b96f047d58f, type: 3}
-  environmentType: 0
+  environmentType: 2
   environmentPrefabs:
   - {fileID: 5474666113130398102, guid: 36ee50f33e1862b42bcf6eeb10dc4552, type: 3}
   - {fileID: 4433875083684222568, guid: 12cc94d7dfb0b394988f79265062d3b5, type: 3}
+  - {fileID: 1258410108051585767, guid: 198b6bedf6904684383cf93406afde0f, type: 3}
   blockSize: {x: 1, y: 1}
-  toggleToUse: {fileID: 0}
+  currentPlayerType: 0
+  upgradePrefabs:
+  - {fileID: 6448807981197934538, guid: 867def8317fa61e4da65610f771105f7, type: 3}
+  - {fileID: 3112658931652264891, guid: d77eddd05dbcbcc4b8f23263f1aaef6b, type: 3}
+  currentAbility: 0
+  currentPowerUp: 0
+  currentEnemy: 1
+  enemyList: {fileID: 11400000, guid: 97c57bd77e5b4f44ea7dbdcc69d8d966, type: 2}
+  toggleInSceneToUse: {fileID: 0}
   parentTransformInScene: {fileID: 0}
-  objectsToActivate: []
+  objectsInSceneToActivate: []
 --- !u!1 &6154305564773805272
 GameObject:
   m_ObjectHideFlags: 0

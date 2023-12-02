@@ -8,11 +8,12 @@ public class RevealSecret : MonoBehaviour
     private Color currentColor = Color.white;
     private bool revealed;
     private Tilemap map;
+    private Collider2D _collider;
 
     private void Start()
     {
         map = GetComponent<Tilemap>();
-
+        _collider = GetComponent<Collider2D>();
     }
 
     private void Update()
@@ -21,10 +22,10 @@ public class RevealSecret : MonoBehaviour
         map.color = currentColor;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.GetComponent<Player>())
-            revealed = true;
+        if (collision.TryGetComponent<Player>(out Player p))
+            revealed = _collider.OverlapPoint(p.transform.position);
     }
 
     private void OnTriggerExit2D(Collider2D collision)

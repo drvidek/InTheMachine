@@ -232,20 +232,20 @@ CompositeCollider2D:
   m_ColliderPaths:
   - m_Collider: {fileID: 4830404521187078216}
     m_ColliderPaths:
-    - - X: 2500001
-        Y: -4999999
-      - X: 2499999
+    - - X: 2500000
         Y: 5000000
-      - X: -2500001
-        Y: 4999999
-      - X: -2499999
+      - X: -2500000
+        Y: 5000000
+      - X: -2500000
+        Y: -5000000
+      - X: 2500000
         Y: -5000000
   m_CompositePaths:
     m_Paths:
-    - - {x: -0.2499999, y: -0.4999707}
-      - {x: 0.2500001, y: -0.49997061}
-      - {x: 0.2499706, y: 0.5}
-      - {x: -0.2500001, y: 0.49997061}
+    - - {x: 0.2499707, y: -0.5}
+      - {x: 0.2499707, y: 0.5}
+      - {x: -0.25, y: 0.4999707}
+      - {x: -0.2499707, y: -0.5}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
   m_UseDelaunayMesh: 0
@@ -265,7 +265,7 @@ MonoBehaviour:
   doorLength: 1
   doorParts:
   - {fileID: 2513028403457363269}
-  timeToClose: 0.4
+  timeToClose: 0.25
   startOpen: 0
   doorSprites:
   - {fileID: 178510650, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}

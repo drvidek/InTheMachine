@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class EnvironmentBox : MonoBehaviour
 {
-    protected BoxCollider2D boxCollider;
+    protected Collider2D _collider;
     protected SpriteRenderer sprite;
     [SerializeField] protected Vector2 size;
     // Start is called before the first frame update
+
+    public BoxCollider2D boxCollider => _collider as BoxCollider2D;
 
     protected void OnValidate()
     {
@@ -36,9 +38,9 @@ public class EnvironmentBox : MonoBehaviour
 
     protected virtual void SetCollider()
     {
-        if (!boxCollider) boxCollider = GetComponent<BoxCollider2D>();
+        if (!_collider) _collider = GetComponent<Collider2D>();
+        if (_collider is BoxCollider2D)
         boxCollider.size = new(size.x - 0.1f, size.y);
-
     }
 
     protected virtual void SetSprite()

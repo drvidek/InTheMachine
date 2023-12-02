@@ -7,11 +7,7 @@ public class Beetle : EnemyMachine, IProjectileTarget, IFlammable
 {
     [SerializeField] protected Collider2D hardCollider;
     [SerializeField] protected float _walkSpeed;
-    [SerializeField] protected float _fric;
-    [SerializeField] protected float _grv;
-
-    private bool burning;
-    private GameObject burnEffect;
+    
 
     protected bool walkingRight = true;
     public bool WalkingRight => walkingRight;
@@ -100,10 +96,12 @@ public class Beetle : EnemyMachine, IProjectileTarget, IFlammable
     protected override void OnStunEnter()
     {
         hardCollider.enabled = true;
+        rb.velocity = _targetVelocity;
     }
 
     protected override void OnStunStay()
     {
+        _targetVelocity = rb.velocity;
         _targetVelocity.x = Mathf.MoveTowards(_targetVelocity.x, 0, _fric * Time.fixedDeltaTime);
         _targetVelocity.y -= _grv * Time.fixedDeltaTime;
         if (IsGrounded && _targetVelocity.y < 0)
@@ -122,23 +120,22 @@ public class Beetle : EnemyMachine, IProjectileTarget, IFlammable
     {
         transform.eulerAngles = Vector3.zero;
         hardCollider.enabled = true;
-        burnEffect = Instantiate(IFlammable.psysObjFire, transform);
-}
+    }
 
     protected override void OnBurnStay()
     {
-        PropagateFlame(boxCollider);
+        PropagateFlame(_collider);
 
         if (ColliderAhead)
             walkingRight = !walkingRight;
         MoveWithGravity(CurrentDirection, _walkSpeed * 4);
-        TakeDamage(1f*Time.fixedDeltaTime);
+        TakeDamage(1f * Time.fixedDeltaTime);
         base.OnBurnStay();
     }
 
     protected override void OnBurnExit()
     {
-
+        DouseFlame();
     }
 
     public void OnProjectileHit(Projectile projectile)
@@ -150,10 +147,10 @@ public class Beetle : EnemyMachine, IProjectileTarget, IFlammable
             _targetVelocity.x = Mathf.Sign(projectile.Direction.x) * projectile.Speed * 0.4f;
             _targetVelocity.y = projectile.Speed * 0.4f;
         }
-        if (projectile is FireProjectile)
-        {
-            CatchFlame();
-        }
+        //if (projectile is FireProjectile)
+        //{
+        //    CatchFlame();
+        //}
     }
 
     override protected void Move(Vector3 direction, float speed)
@@ -183,7 +180,7 @@ public class Beetle : EnemyMachine, IProjectileTarget, IFlammable
         foreach (var flammable in IFlammable.FindFlammableNeighbours(collider))
         {
             if (flammable != thisFlam)
-                flammable.CatchFlame();
+                flammable.CatchFlame(collider);
         }
     }
 
@@ -192,16 +189,14 @@ public class Beetle : EnemyMachine, IProjectileTarget, IFlammable
 
     }
 
-    public void CatchFlame()
+    public void CatchFlame(Collider2D flameSource)
     {
-        ChangeStateTo(EnemyState.Burn);
-        burning = true;
+        EnemyCatchFlame(flameSource);
     }
 
     public void DouseFlame()
     {
-        burning = false;
-        Destroy(burnEffect);
+        EnemyDouseFlame();
     }
 
     protected override void CheckForExternalVelocity()
@@ -214,6 +209,11 @@ public class Beetle : EnemyMachine, IProjectileTarget, IFlammable
         if (externalVelocitySources.ContainsKey(rb))
             return;
 
-        externalVelocitySources.Add(rb,rb.position);
+        externalVelocitySources.Add(rb, rb.position);
+    }
+
+    public bool IsFlaming()
+    {
+        return CurrentState == EnemyState.Burn;
     }
 }

@@ -52,6 +52,10 @@ public class Door : MonoBehaviour, IActivate
     {
         doorParts = transform.GetComponentsInChildren<SpriteRenderer>();
 
+        ///Future Aeon -
+        ///DestroyImmediate cannot be called by OnValidate
+        ///So annoying and boring
+
         while (doorParts.Length < doorLength)
         {
             Transform door = Instantiate(transform.GetChild(0), transform);

@@ -5,6 +5,13 @@ using UnityEngine;
 public interface IFlammable
 {
     public static GameObject psysObjFire = Resources.Load("PSysFire") as GameObject;
+    public static GameObject psysObjSmoke = Resources.Load("PSysSmoke") as GameObject;
+
+    public static void ClearFireAndSmoke(GameObject obj)
+    {
+        obj.GetComponentInChildren<ParticleSystem>().Stop();
+        GameObject.Destroy(obj, 5f);
+    }
 
     public static List<IFlammable> FindFlammableNeighbours(Collider2D collider)
     {
@@ -55,6 +62,8 @@ public interface IFlammable
     //            flammable.CatchFlame();
     //    }
     //}
-    public void CatchFlame();
+    public void CatchFlame(Collider2D collider);
     public void DouseFlame();
+
+    public bool IsFlaming();
 }

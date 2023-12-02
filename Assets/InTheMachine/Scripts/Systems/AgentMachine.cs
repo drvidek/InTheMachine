@@ -15,10 +15,15 @@ public abstract class AgentMachine : MonoBehaviour
 
     protected WaitForFixedUpdate waitForFixedUpdate = new();
 
+    protected bool burning;
+    protected GameObject burnEffect;
+
     protected Dictionary<Rigidbody2D,Vector2> externalVelocitySources = new();
     protected List<Rigidbody2D> lastExternalVelocitySources = new();
     protected Vector2 _targetVelocity = new();
     protected Vector2 oneFrameVelocity = new();
+
+    public Rigidbody2D rb => _rigidbody;
 
     public abstract Rigidbody2D GetStandingOnRigidbody();
 
@@ -67,6 +72,9 @@ public abstract class AgentMachine : MonoBehaviour
         return totalVelocity;
     }
 
+    /// <summary>
+    /// Override to determine how external forces should apply to an agent
+    /// </summary>
     protected abstract void CheckForExternalVelocity();
 
     public void TakeDamage(float damage)

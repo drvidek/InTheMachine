@@ -2,17 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using QKit;
-public class FireSource : MonoBehaviour, IActivate, IFlammable, IProjectileTarget
+public class FireSource : MonoBehaviour, IActivate, IFlammable
 {
     [SerializeField] private Collider2D _collider;
-    [SerializeField] private ParticleSystem psysFlame, psysGas;
+    [SerializeField] private ParticleSystem psysFlame, psysGas, psysSpark;
     [SerializeField] private bool isLit;
+    [SerializeField] private float timeToRelight;
     private bool isLocked;
+    private Alarm relightAlarm;
+
+    public bool IsLit => isLit;
 
     private void Start()
     {
+        if (timeToRelight > 0)
+        {
+            relightAlarm = Alarm.Get(timeToRelight, false, false);
+            relightAlarm.onComplete += () =>
+            {
+                CatchFlame(_collider);
+                psysSpark.Play();
+            };
+        }
         if (isLit)
-            CatchFlame();
+            CatchFlame(_collider);
         else
             DouseFlame();
     }
@@ -23,7 +36,7 @@ public class FireSource : MonoBehaviour, IActivate, IFlammable, IProjectileTarge
             PropagateFlame(_collider);
     }
 
-    public void CatchFlame()
+    public void CatchFlame(Collider2D collider)
     {
         if (isLocked)
             return;
@@ -40,21 +53,8 @@ public class FireSource : MonoBehaviour, IActivate, IFlammable, IProjectileTarge
         psysGas.Play();
         psysFlame.Stop();
         psysFlame.Clear();
-    }
+        relightAlarm?.ResetAndPlay();
 
-    public void OnProjectileHit(Projectile projectile)
-    {
-        switch (projectile.Power)
-        {
-            case (float)GunProfileType.Air:
-                DouseFlame();
-                break;
-            case (float)GunProfileType.Fire:
-                CatchFlame();
-                break;
-            default:
-                break;
-        }
     }
 
     public void PropagateFlame(Collider2D collider)
@@ -63,7 +63,7 @@ public class FireSource : MonoBehaviour, IActivate, IFlammable, IProjectileTarge
         foreach (var flammable in IFlammable.FindFlammableNeighbours(collider))
         {
             if (flammable != thisFlam)
-                flammable.CatchFlame();
+                flammable.CatchFlame(collider);
         }
     }
 
@@ -74,13 +74,17 @@ public class FireSource : MonoBehaviour, IActivate, IFlammable, IProjectileTarge
 
     public void ToggleActive(bool active)
     {
-        CatchFlame();
+        CatchFlame(_collider);
     }
 
     public void ToggleActiveAndLock(bool active)
     {
-        CatchFlame();
+        CatchFlame(_collider);
         isLocked = true;
     }
 
+    public bool IsFlaming()
+    {
+        return isLit;
+    }
 }

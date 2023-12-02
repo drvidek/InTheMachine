@@ -67,6 +67,8 @@ public class PlayerAnimate : AgentAnimator
         myPlayer.onFlyExit += () => { if (myPlayer.CurrentState != Player.PlayerState.Boost) AnimatePakFlip(false); };
         myPlayer.onWalkEnter += () => animator.SetBool("IsWalking", true);
         myPlayer.onWalkExit += () => animator.SetBool("IsWalking", false);
+        myPlayer.onStunEnter += () => { animator.SetBool("IsStunned", true); pakPixelAligner.SetOffset(Vector2.zero); };
+        myPlayer.onStunExit += () => animator.SetBool("IsStunned", false);
         myGun.onShoot += () => animator.SetTrigger("Shoot");
         AnimatePakForward(true);
 
@@ -81,12 +83,17 @@ public class PlayerAnimate : AgentAnimator
 
     private void Update()
     {
+        animator.SetBool("TractorActive", myPlayer.BeamActive);
+        animator.SetBool("IsGrounded", myPlayer.IsGrounded);
+        if (myPlayer.IsStunned)
+        {
+            return;
+        }
+
         bool updateHor = myPlayer.UserInputDir.x != 0;
         AnimatePlayerDirection(updateHor, myPlayer.UserInputDir.x < 0);
         AnimatePakForward(updateHor);
         AnimatePakAimUp(myPlayer.UserInputDir.y > 0.5 && !myPlayer.IsFlying);
-        animator.SetBool("TractorActive", myPlayer.BeamActive);
-        animator.SetBool("IsGrounded", myPlayer.IsGrounded);
     }
 
     private void AnimatePakAimUp(bool aimUp)

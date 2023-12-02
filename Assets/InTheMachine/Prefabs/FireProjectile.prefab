@@ -75,6 +75,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _psysFire: {fileID: 3935603520496734611}
+  blockingLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &3756124289452620859
 GameObject:
   m_ObjectHideFlags: 0

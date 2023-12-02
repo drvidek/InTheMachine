@@ -8,7 +8,8 @@ public abstract class EnemyMachine : AgentMachine
     public enum EnemyState { Idle, Walk, Fly, Ascend, Descend, Attack, Die, Stun, Burn }
     [SerializeField] protected EnemyState _currentState;
     [SerializeField] protected float contactDamage;
-    
+    [SerializeField] protected float _fric;
+    [SerializeField] protected float _grv;
 
     #region Events
     public Action onIdleEnter;
@@ -42,11 +43,12 @@ public abstract class EnemyMachine : AgentMachine
 
     public EnemyState CurrentState => _currentState;
     public float ContactDamage => contactDamage;
+    public bool IsAttacking => CurrentState == EnemyState.Attack;
 
     protected override void Start()
     {
         base.Start();
-        healthMeter.onMin += () => { Destroy(gameObject); };
+        healthMeter.onMin += () => { ChangeStateTo(EnemyState.Die); };
         NextState();
     }
 
@@ -399,7 +401,9 @@ public abstract class EnemyMachine : AgentMachine
     /// </summary>
     protected virtual void OnDieEnter()
     {
-
+        rb.simulated = false;
+        rb.velocity = Vector2.zero;
+        _targetVelocity = Vector2.zero;
     }
 
     /// <summary>
@@ -530,5 +534,34 @@ public abstract class EnemyMachine : AgentMachine
     protected virtual void Move(Vector3 direction, float speed)
     {
 
+    }
+
+    protected virtual bool CheckAttackCondition()
+    {
+        return false;
+    }
+
+    protected virtual void TryToAttack()
+    {
+        if (CheckAttackCondition())
+            ChangeStateTo(EnemyState.Attack);
+    }
+
+    protected virtual void EnemyCatchFlame(Collider2D collider)
+    {
+        ChangeStateTo(EnemyState.Burn);
+        burning = true;
+        if (!burnEffect)
+        {
+            burnEffect = Instantiate(IFlammable.psysObjFire, transform);
+            Instantiate(IFlammable.psysObjSmoke, burnEffect.transform);
+        }
+    }
+
+    protected virtual void EnemyDouseFlame()
+    {
+        burning = false;
+        if (burnEffect)
+            IFlammable.ClearFireAndSmoke(burnEffect);
     }
 }

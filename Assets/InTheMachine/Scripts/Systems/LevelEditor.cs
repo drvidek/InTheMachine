@@ -29,30 +29,40 @@ public class LevelEditor : MonoBehaviour
     public enum ToggleType
     {
         Button,
-        Fan
+        Fan,
+        HeatSensor
+    }
+
+    public enum PlayerType
+    {
+        Ability,
+        PowerUp
     }
 
     public enum EnvironmentType
     {
         OneWay,
-        Moving
+        Moving,
+        FireSource
     }
 
     [Header("Main guts")]
     public SpriteRenderer spritePreview;
     public Category currentCategory;
     public Grid environmentGrid, interactibleGrid;
+    public float objectRotation;
+    public bool startActive;
 
     [Header("Toggles")]
     public ToggleType currentToggleType;
     public GameObject[] levelToggles;
-    public bool selectObjectsToActivate;
+    public bool selectObjectsFromSceneToActivate;
+    public bool buttonStayPressed;
 
     [Header("Doors")]
     public GameObject door;
     public int doorLength;
-    public float doorRotation;
-    public bool selectToggleToUse;
+    public bool selectToggleInSceneToUse;
 
     [Header("Debris")]
     public PrefabInfo debris;
@@ -66,12 +76,20 @@ public class LevelEditor : MonoBehaviour
     public GameObject[] environmentPrefabs;
     public Vector2Int blockSize = Vector2Int.one;
 
+    [Header("Player")]
+    public PlayerType currentPlayerType;
+    public GameObject[] upgradePrefabs;
+    public Player.Ability currentAbility;
+    public PowerUp.Type currentPowerUp;
+
+    [Header("Enemies")]
+    public EnemyList.Type currentEnemy;
+    public EnemyList enemyList;
 
     [Header("Scene objects")]
-    public LevelToggle toggleToUse;
+    public LevelToggle toggleInSceneToUse;
     public Transform parentTransformInScene;
-    public GameObject[] objectsToActivate = new GameObject[0];
-    public bool buttonStayPressed;
+    public GameObject[] objectsInSceneToActivate = new GameObject[0];
 
     private void OnValidate()
     {

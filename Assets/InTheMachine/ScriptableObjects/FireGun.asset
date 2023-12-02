@@ -23,6 +23,7 @@ MonoBehaviour:
     m_Bits: 1968
   piercingLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   projectilePrefab: {fileID: 5911450181065757125, guid: 73b7a5629b009a74db1e7e9cd9747af0, type: 3}
   cost: 20
+  costOnShot: 0

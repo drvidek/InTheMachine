@@ -6,6 +6,7 @@ using UnityEngine.U2D;
 public class FireProjectile : Projectile, IFlammable
 {
     [SerializeField] private ParticleSystem _psysFire;
+    [SerializeField] private LayerMask blockingLayer;
     private bool lifeOver;
     private float cost;
     private CapsuleCollider2D _collider;
@@ -86,12 +87,12 @@ public class FireProjectile : Projectile, IFlammable
         Vector3 start = transform.position;
         foreach (var flammable in IFlammable.FindFlammableNeighbours(collider))
         {
-            Vector3 end = (flammable as MonoBehaviour).transform.position;
-            if (flammable != thisFlam && !Physics2D.Raycast(start, QMath.Direction(start, end), Vector3.Distance(start, end), 1 << 10))
-                flammable.CatchFlame();
+            Vector3 end = (flammable as MonoBehaviour).GetComponent<Collider2D>().bounds.center;
+            if (flammable != thisFlam &&
+                !Physics2D.Raycast(start, QMath.Direction(start, end), Vector3.Distance(start, end), blockingLayer))
+                flammable.CatchFlame(collider);
             i++;
         }
-        Debug.Log(i);
     }
 
     public void PropagateFlame(Vector3 position, Vector2 size)
@@ -99,7 +100,7 @@ public class FireProjectile : Projectile, IFlammable
 
     }
 
-    public void CatchFlame()
+    public void CatchFlame(Collider2D collider)
     {
 
     }
@@ -107,5 +108,10 @@ public class FireProjectile : Projectile, IFlammable
     public void DouseFlame()
     {
 
+    }
+
+    public bool IsFlaming()
+    {
+        return true;
     }
 }

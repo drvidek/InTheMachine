@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,6 @@ public enum ColorType
     Actor,
     World,
     Button,
-    ButtonLoose,
     Physics,
     Debris,
     Air,
@@ -16,15 +16,15 @@ public enum ColorType
     Slime,
     Liquid,
     BurnIt,
-    ZapIt,
-
-    _max
+    ZapIt
 }
 
 [CreateAssetMenu(fileName = "NewPalette", menuName = "Scriptable Objects/Color Palette")]
 public class ColorPalette : ScriptableObject
 {
     public Color[] color;
+
+    public static int Length => Enum.GetNames(typeof(ColorType)).Length;
 
 }
 

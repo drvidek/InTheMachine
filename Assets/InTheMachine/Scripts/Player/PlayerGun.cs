@@ -110,7 +110,7 @@ public class PlayerGun : Launcher
 
     protected override bool CanShoot()
     {
-        return myPlayer.HasAbility(Player.Ability.Gun) && canShoot && myPlayer.PowerRemaining >= cost && !myPlayer.OutOfPower;
+        return myPlayer.HasAbility(Player.Ability.Gun) && canShoot && !myPlayer.OutOfPower;
     }
 
     protected override Vector3 GetDirection()

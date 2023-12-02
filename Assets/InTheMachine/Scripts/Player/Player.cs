@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using QKit;
-using UnityEngine.UIElements;
 
-public class Player : AgentMachine
+public class Player : AgentMachine, IFlammable
 {
     public enum Ability
     {
@@ -28,7 +27,6 @@ public class Player : AgentMachine
     private float _targetHorSpeed, _fric, _accel, _grav;
     private bool usingPower, outOfPower;
     private Vector3 boostDirection;
-    private Vector3 stunDirection;
     private PlayerState returnFromBoost;
     private Alarm coyoteTime;
     private Alarm triedToJump;
@@ -102,6 +100,7 @@ public class Player : AgentMachine
 
     public bool IsGrounded => Physics2D.CapsuleCast(transform.position + (Vector3)_collider.offset, CapsuleCollider.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.02f, groundedMask);
     public bool IsStunned => CurrentState == PlayerState.Stun;
+    public bool IsBoosting => CurrentState == PlayerState.Boost;
     public Meter PowerMeter => powerMeter;
     public bool OutOfPower => outOfPower;
     public CapsuleCollider2D CapsuleCollider => _collider as CapsuleCollider2D;
@@ -674,8 +673,7 @@ public class Player : AgentMachine
     private void OnStunEnter()
     {
         stunMinAlarm.ResetAndPlay();
-        _targetVelocity = stunDirection;
-        _targetVelocity.y = stunDirection.y;
+        rb.velocity = _targetVelocity;
     }
 
     /// <summary>
@@ -765,7 +763,7 @@ public class Player : AgentMachine
         if (!IsGrounded && !IsFlying)
             change /= _airAccelPenalty;
 
-        _targetVelocity.x = Mathf.MoveTowards(_targetVelocity.x, _targetHorSpeed * UserInputDir.x, change * Time.fixedDeltaTime);
+        _targetVelocity.x = Mathf.MoveTowards(_targetVelocity.x, (IsStunned ? 0 : _targetHorSpeed) * UserInputDir.x, change * Time.fixedDeltaTime);
 
     }
 
@@ -928,22 +926,51 @@ public class Player : AgentMachine
             if (c is PowerUp)
             {
                 var p = c as PowerUp;
-
+                AddPowerUp(p.TypeHeld);
             }
             c.Collect();
         }
-
-        if (collision.TryGetComponent<EnemyMachine>(out EnemyMachine enemy))
+        if (!IsBoosting && collision.TryGetComponent<EnemyMachine>(out EnemyMachine enemy))
         {
-            ChangeStateTo(PlayerState.Stun);
-            stunDirection.x = Mathf.Sign(transform.position.x - enemy.transform.position.x);
-            stunDirection.y = IsGrounded ? 1 : 0;
-            stunDirection *= enemy.ContactDamage;
+            GetStunned(collision, enemy.ContactDamage);
         }
+    }
+
+    public void GetStunned(Collider2D stunSource,float stunPower)
+    {
+        ChangeStateTo(PlayerState.Stun);
+        _targetVelocity.x = Mathf.Sign(transform.position.x - stunSource.transform.position.x);
+        _targetVelocity.y = IsGrounded ? 1 : 0;
+        _targetVelocity *= stunPower;
     }
 
     public override Rigidbody2D GetStandingOnRigidbody()
     {
         return Physics2D.CapsuleCast(transform.position + (Vector3)_collider.offset, CapsuleCollider.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.02f, groundedMask).rigidbody;
+    }
+
+    public void PropagateFlame(Collider2D collider)
+    {
+        
+    }
+
+    public void PropagateFlame(Vector3 position, Vector2 size)
+    {
+        
+    }
+
+    public void CatchFlame(Collider2D collider)
+    {
+        GetStunned(collider,12f);
+    }
+
+    public void DouseFlame()
+    {
+        
+    }
+
+    public bool IsFlaming()
+    {
+        return false;
     }
 }

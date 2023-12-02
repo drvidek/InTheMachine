@@ -97,7 +97,7 @@ namespace QKit
 
                 if (CheckForCollision(hitLayer))
                 {
-                    DoCollision();
+                    DoCollision(hits[i].collider);
                     return hits[i].point;
                 }
             }
@@ -119,7 +119,7 @@ namespace QKit
 
                 if (CheckForCollision(hitLayer))
                 {
-                    DoCollision();
+                    DoCollision(hits[i].collider);
                     return hits[i].point;
                 }
             }
@@ -138,7 +138,7 @@ namespace QKit
 
             if (collision)
             {
-                DoCollision();
+                DoCollision(other);
             }
         }
 
@@ -161,7 +161,7 @@ namespace QKit
         /// <summary>
         /// Executes when a projectile hits a collider through Move or Hitscan
         /// </summary>
-        protected virtual void DoCollision()
+        protected virtual void DoCollision(Collider2D collider)
         {
             EndOfLife();
         }

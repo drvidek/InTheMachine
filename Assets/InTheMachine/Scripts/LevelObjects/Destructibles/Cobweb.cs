@@ -11,6 +11,12 @@ public class Cobweb : Debris, IFlammable
     private bool catching;
     private bool burning;
     private bool burntOut;
+    private Collider2D _collider;
+
+    private void Start()
+    {
+        _collider = GetComponentInChildren<Collider2D>();
+    }
 
     private void FixedUpdate()
     {
@@ -43,7 +49,7 @@ public class Cobweb : Debris, IFlammable
         catching = false;
     }
 
-    public void CatchFlame()
+    public void CatchFlame(Collider2D flameSource)
     {
         catching = true;
         flameCurrent += Time.fixedDeltaTime;
@@ -65,7 +71,12 @@ public class Cobweb : Debris, IFlammable
         foreach (var flammable in IFlammable.FindFlammableNeighbours(position, size))
         {
             if (flammable != thisFlam)
-                flammable.CatchFlame();
+                flammable.CatchFlame(_collider);
         }
+    }
+
+    public bool IsFlaming()
+    {
+        return burning;
     }
 }

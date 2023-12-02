@@ -17,18 +17,26 @@ public class LevelEditorDrawer : Editor
 
     SerializedProperty currentCategory;
 
+    SerializedProperty parentTransformInScene;
+    SerializedProperty objectRotation;
+
     SerializedProperty currentToggleType;
-    SerializedProperty selectObjectsToActivate;
-    SerializedProperty objectsToActivate;
+    SerializedProperty objectsInSceneToActivate;
+    SerializedProperty selectObjectsFromSceneToActivate;
+    SerializedProperty buttonStayPressed;
 
     SerializedProperty doorLength;
-    SerializedProperty doorRotation;
-    SerializedProperty selectToggleToUse;
-    SerializedProperty toggleToUse;
-    SerializedProperty buttonStayPressed;
-    SerializedProperty parentTransformInScene;
+    SerializedProperty selectToggleInSceneToUse;
+    SerializedProperty toggleInSceneToUse;
+
     SerializedProperty environmentType;
     SerializedProperty blockSize;
+
+    SerializedProperty currentEnemy;
+
+    SerializedProperty currentPlayerType;
+    SerializedProperty currentAbility;
+    SerializedProperty currentPowerUp;
 
 
     public enum CobwebDir
@@ -46,16 +54,20 @@ public class LevelEditorDrawer : Editor
         //initialise fields
         currentCategory = serializedObject.FindProperty("currentCategory");
         currentToggleType = serializedObject.FindProperty("currentToggleType");
-        selectObjectsToActivate = serializedObject.FindProperty("selectObjectsToActivate");
-        objectsToActivate = serializedObject.FindProperty("objectsToActivate");
+        selectObjectsFromSceneToActivate = serializedObject.FindProperty("selectObjectsFromSceneToActivate");
+        objectsInSceneToActivate = serializedObject.FindProperty("objectsInSceneToActivate");
         doorLength = serializedObject.FindProperty("doorLength");
-        doorRotation = serializedObject.FindProperty("doorRotation");
-        selectToggleToUse = serializedObject.FindProperty("selectToggleToUse");
-        toggleToUse = serializedObject.FindProperty("toggleToUse");
+        objectRotation = serializedObject.FindProperty("objectRotation");
+        selectToggleInSceneToUse = serializedObject.FindProperty("selectToggleInSceneToUse");
+        toggleInSceneToUse = serializedObject.FindProperty("toggleInSceneToUse");
         buttonStayPressed = serializedObject.FindProperty("buttonStayPressed");
         parentTransformInScene = serializedObject.FindProperty("parentTransformInScene");
         environmentType = serializedObject.FindProperty("environmentType");
         blockSize = serializedObject.FindProperty("blockSize");
+        currentEnemy = serializedObject.FindProperty("currentEnemy");
+        currentPlayerType = serializedObject.FindProperty("currentPlayerType");
+        currentAbility = serializedObject.FindProperty("currentAbility");
+        currentPowerUp = serializedObject.FindProperty("currentPowerUp");
 
     }
 
@@ -78,15 +90,30 @@ public class LevelEditorDrawer : Editor
                 EditorGUILayout.PropertyField(currentToggleType);
                 if (editor.currentToggleType == LevelEditor.ToggleType.Button)
                     EditorGUILayout.PropertyField(buttonStayPressed);
-                EditorGUILayout.PropertyField(selectObjectsToActivate);
-                if (selectObjectsToActivate.boolValue)
+                if (editor.currentToggleType != LevelEditor.ToggleType.Fan)
+                    EditorGUILayout.PropertyField(objectRotation);
+                EditorGUILayout.PropertyField(selectObjectsFromSceneToActivate);
+                if (selectObjectsFromSceneToActivate.boolValue)
                 {
-                    EditorGUILayout.PropertyField(objectsToActivate);
+                    EditorGUILayout.PropertyField(objectsInSceneToActivate);
                 }
                 break;
             case LevelEditor.Category.Player:
+                EditorGUILayout.PropertyField(currentPlayerType);
+                switch (editor.currentPlayerType)
+                {
+                    case LevelEditor.PlayerType.Ability:
+                        EditorGUILayout.PropertyField(currentAbility);
+                        break;
+                    case LevelEditor.PlayerType.PowerUp:
+                        EditorGUILayout.PropertyField(currentPowerUp);
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case LevelEditor.Category.Enemy:
+                EditorGUILayout.PropertyField(currentEnemy);
                 break;
             case LevelEditor.Category.PhysicsObject:
                 break;
@@ -94,15 +121,23 @@ public class LevelEditorDrawer : Editor
                 break;
             case LevelEditor.Category.Environment:
                 EditorGUILayout.PropertyField(environmentType);
-                EditorGUILayout.PropertyField(blockSize);
+                if (editor.environmentType < LevelEditor.EnvironmentType.FireSource)
+                {
+                    EditorGUILayout.PropertyField(blockSize);
+                }
+                else
+                {
+                    EditorGUILayout.PropertyField(objectRotation);
+                    blockSize.vector2IntValue = Vector2Int.one;
+                }
                 break;
             case LevelEditor.Category.Door:
                 EditorGUILayout.PropertyField(doorLength);
-                EditorGUILayout.PropertyField(doorRotation);
-                EditorGUILayout.PropertyField(selectToggleToUse);
-                if (selectToggleToUse.boolValue)
+                EditorGUILayout.PropertyField(objectRotation);
+                EditorGUILayout.PropertyField(selectToggleInSceneToUse);
+                if (selectToggleInSceneToUse.boolValue)
                 {
-                    EditorGUILayout.PropertyField(toggleToUse);
+                    EditorGUILayout.PropertyField(toggleInSceneToUse);
                 }
                 break;
             default:
@@ -154,12 +189,25 @@ public class LevelEditorDrawer : Editor
         switch (editor.currentCategory)
         {
             case LevelEditor.Category.Toggles:
-
+                if (editor.currentToggleType == LevelEditor.ToggleType.Button)
+                    editor.spritePreview.transform.localEulerAngles = new Vector3(0, 0, editor.objectRotation);
                 editor.spritePreview.sprite = editor.levelToggles[currentToggleType.intValue].GetComponentInChildren<SpriteRenderer>().sprite;
                 break;
             case LevelEditor.Category.Player:
+                switch (editor.currentPlayerType)
+                {
+                    case LevelEditor.PlayerType.Ability:
+                editor.spritePreview.sprite = editor.upgradePrefabs[currentPlayerType.intValue].GetComponentInChildren<SpriteRenderer>().sprite;
+                        break;
+                    case LevelEditor.PlayerType.PowerUp:
+                editor.spritePreview.sprite = editor.upgradePrefabs[currentPlayerType.intValue].GetComponentInChildren<SpriteRenderer>().sprite;
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case LevelEditor.Category.Enemy:
+                editor.spritePreview.sprite = editor.enemyList.enemyPrefabs[(int)editor.currentEnemy].GetComponentInChildren<SpriteRenderer>().sprite;
                 break;
             case LevelEditor.Category.PhysicsObject:
                 editor.spritePreview.sprite = editor.physicsObject.GetComponentInChildren<SpriteRenderer>().sprite;
@@ -176,13 +224,20 @@ public class LevelEditorDrawer : Editor
                 editor.spritePreview.size = new(editor.blockSize.x, editor.blockSize.y);
                 editor.spritePreview.tileMode = SpriteTileMode.Adaptive;
                 editor.spritePreview.transform.localScale = Vector3.one;
+                if (editor.environmentType == LevelEditor.EnvironmentType.FireSource)
+                {
+                    editor.spritePreview.transform.localEulerAngles = new Vector3(0, 0, editor.objectRotation);
+                }
+                else
+                    editor.spritePreview.transform.localEulerAngles = Vector3.zero;
+
 
                 break;
             case LevelEditor.Category.Door:
                 editor.spritePreview.sprite = editor.door.GetComponentInChildren<SpriteRenderer>().sprite;
                 editor.spritePreview.drawMode = SpriteDrawMode.Tiled;
                 editor.spritePreview.size = new(1, editor.doorLength);
-                editor.spritePreview.transform.parent.localEulerAngles = new Vector3(0, 0, editor.doorRotation);
+                editor.spritePreview.transform.parent.localEulerAngles = new Vector3(0, 0, editor.objectRotation);
                 editor.spritePreview.transform.localPosition = Vector3.down * (editor.doorLength / 2f - 0.5f);
                 editor.spritePreview.transform.localScale = Vector3.one;
 
@@ -204,7 +259,7 @@ public class LevelEditorDrawer : Editor
 
     private GameObject SpawnObject(LevelEditor editor, Vector3 position)
     {
-        GameObject go = null;
+        GameObject finalPrefab = null;
         Collider2D debris = CheckForOverlap(position, Vector2.one, (int)LevelEditor.Category.Debris);
         Collider2D toggle = CheckForOverlap(position, Vector2.one, (int)LevelEditor.Category.Toggles);
         Collider2D block = CheckForOverlap(position, Vector2.one, (int)LevelEditor.Category.Environment);
@@ -216,62 +271,80 @@ public class LevelEditorDrawer : Editor
         switch (editor.currentCategory)
         {
             case LevelEditor.Category.Environment:
-                go = editor.environmentPrefabs[(int)editor.environmentType];
+                finalPrefab = editor.environmentPrefabs[(int)editor.environmentType];
                 break;
             case LevelEditor.Category.Toggles:
                 if (toggle)
                     break;
                 if (editor.currentToggleType == LevelEditor.ToggleType.Button && walls.y != -1)
                     break;
-                go = editor.levelToggles[(int)editor.currentToggleType];
+                finalPrefab = editor.levelToggles[(int)editor.currentToggleType];
                 break;
             case LevelEditor.Category.Debris:
                 if (debris)
                     break;
                 if (toggle && toggle.GetComponent<Button>())
                 {
-                    go = editor.debris.prefab;
+                    finalPrefab = editor.debris.prefab;
                 }
                 else
                 {
                     if (walls.x == 0 && walls.y == -1)
-                        go = editor.debris.prefab;
+                        finalPrefab = editor.debris.prefab;
                     else
-                        go = editor.cobweb.prefab;
+                        finalPrefab = editor.cobweb.prefab;
                 }
                 break;
             case LevelEditor.Category.Player:
+                switch (editor.currentPlayerType)
+                {
+                    case LevelEditor.PlayerType.Ability:
+                        finalPrefab = editor.upgradePrefabs[0];
+                        break;
+                    case LevelEditor.PlayerType.PowerUp:
+                        finalPrefab = editor.upgradePrefabs[1];
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case LevelEditor.Category.Enemy:
+                finalPrefab = editor.enemyList.enemyPrefabs[(int)editor.currentEnemy];
                 break;
             case LevelEditor.Category.PhysicsObject:
                 break;
             case LevelEditor.Category.Door:
-                go = editor.door;
+                finalPrefab = editor.door;
                 break;
             default:
                 break;
         }
-        if (go == null)
+        if (finalPrefab == null)
             return null;
 
-        GameObject obSpawnedjInScene = PrefabUtility.InstantiatePrefab(go, editor.parentTransformInScene != null ? editor.parentTransformInScene : editor.interactibleGrid.transform) as GameObject;
+        GameObject objSpawnedjInScene = PrefabUtility.InstantiatePrefab(finalPrefab, editor.parentTransformInScene != null ? editor.parentTransformInScene : editor.interactibleGrid.transform) as GameObject;
 
-        obSpawnedjInScene.transform.position = position;
+        objSpawnedjInScene.transform.position = position;
 
         switch (editor.currentCategory)
         {
             case LevelEditor.Category.Environment:
-                if (QMath.TryGet<EnvironmentBox>(obSpawnedjInScene.transform, out EnvironmentBox box))
+                if (QMath.TryGet<EnvironmentBox>(objSpawnedjInScene.transform, out EnvironmentBox box))
                     box.SetSize(editor.blockSize);
+                if (editor.environmentType >= LevelEditor.EnvironmentType.FireSource)
+                {
+                    objSpawnedjInScene.transform.localEulerAngles = new Vector3(0, 0, editor.objectRotation);
+                }
                 break;
             case LevelEditor.Category.Toggles:
-                LevelToggle toggleSpawned = obSpawnedjInScene.GetComponent<LevelToggle>();
+                LevelToggle toggleSpawned = objSpawnedjInScene.GetComponent<LevelToggle>();
                 if (buttonStayPressed.boolValue)
                 {
                     (toggleSpawned as Button).SetStayPressed();
                 }
-                foreach (var objToActivate in editor.objectsToActivate)
+                if (toggleSpawned is Button)
+                    objSpawnedjInScene.transform.localEulerAngles = new Vector3(0, 0, editor.objectRotation);
+                foreach (var objToActivate in editor.objectsInSceneToActivate)
                 {
                     if (QMath.TryGet<IActivate>(objToActivate.transform, out IActivate activate))
                     {
@@ -282,7 +355,7 @@ public class LevelEditorDrawer : Editor
                 break;
             case LevelEditor.Category.Debris:
                 Vector2 wallDir = CheckOnNeighbouringCells(position, Vector2.one, (int)LevelEditor.Category.Environment);
-                SpriteRenderer renderer = obSpawnedjInScene.GetComponentInChildren<SpriteRenderer>();
+                SpriteRenderer renderer = objSpawnedjInScene.GetComponentInChildren<SpriteRenderer>();
                 renderer.sprite =
                     //is there a button? if so, big dust
                     CheckForOverlap(position, Vector2.one, (int)LevelEditor.Category.Toggles) ? editor.debris.sprites[^1] :
@@ -307,28 +380,43 @@ public class LevelEditorDrawer : Editor
                 renderer.flipY = wallDir.y == 0 && QMath.Choose<bool>(true, false);
                 break;
             case LevelEditor.Category.Player:
+                switch (editor.currentPlayerType)
+                {
+                    case LevelEditor.PlayerType.Ability:
+                        objSpawnedjInScene.GetComponent<AbilityUnlock>().SetType(editor.currentAbility);
+                        break;
+                    case LevelEditor.PlayerType.PowerUp:
+                        objSpawnedjInScene.GetComponent<PowerUp>().SetType(editor.currentPowerUp);
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case LevelEditor.Category.Enemy:
+                if (editor.currentEnemy == EnemyList.Type.Beetle)
+                {
+                    objSpawnedjInScene.transform.position += Vector3.down * 0.5f;
+                }
                 break;
             case LevelEditor.Category.PhysicsObject:
                 break;
             case LevelEditor.Category.Door:
-                Door door = obSpawnedjInScene.GetComponent<Door>();
-                door.SetValues(doorLength.intValue, doorRotation.floatValue);
+                Door door = objSpawnedjInScene.GetComponent<Door>();
+                door.SetValues(doorLength.intValue, objectRotation.floatValue);
                 door.Initialise();
-                if (selectToggleToUse.boolValue)
+                if (selectToggleInSceneToUse.boolValue)
                 {
-                    UnityEventTools.AddPersistentListener(editor.toggleToUse.onActiveChanged, door.ToggleActive);
-                    PrefabUtility.RecordPrefabInstancePropertyModifications(editor.toggleToUse);
+                    UnityEventTools.AddPersistentListener(editor.toggleInSceneToUse.onActiveChanged, door.ToggleActive);
+                    PrefabUtility.RecordPrefabInstancePropertyModifications(editor.toggleInSceneToUse);
                 }
                 break;
             default:
                 break;
         }
 
-        PrefabUtility.RecordPrefabInstancePropertyModifications(obSpawnedjInScene);
+        PrefabUtility.RecordPrefabInstancePropertyModifications(objSpawnedjInScene);
 
-        return obSpawnedjInScene;
+        return objSpawnedjInScene;
     }
 
     private Vector2 CheckOnNeighbouringCells(Vector3 position, Vector2 size, int layer)

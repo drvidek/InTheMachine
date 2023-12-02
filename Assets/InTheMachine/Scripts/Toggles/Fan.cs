@@ -14,7 +14,7 @@ public class Fan : LevelToggle, IProjectileTarget
     {
         activeAlarm = Alarm.Get(duration, false, false);
         activeAlarm.Stop();
-        activeAlarm.onComplete = () => TriggerChange(false);
+        activeAlarm.onComplete = () => ToggleActive(false);
     }
 
     private void Update()
@@ -24,14 +24,14 @@ public class Fan : LevelToggle, IProjectileTarget
 
     public void OnProjectileHit(Projectile projectile)
     {
-        TriggerChange(true);
+        ToggleActive(true);
     }
 
-    protected override void TriggerChange(bool active, bool force = false)
+    protected override void ToggleActive(bool active, bool force = false)
     {
         if (active)
             activeAlarm.ResetAndPlay();
-        base.TriggerChange(active);
+        base.ToggleActive(active);
     }
 
 }

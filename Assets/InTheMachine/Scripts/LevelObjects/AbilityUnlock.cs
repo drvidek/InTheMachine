@@ -8,4 +8,11 @@ public class AbilityUnlock : Collectible
 
     public Player.Ability Ability => ability;
 
+    public void SetType(Player.Ability type)
+    {
+#if UNITY_EDITOR
+        ability = type;
+#endif
+    }
+
 }

@@ -8,7 +8,7 @@ public abstract class LevelToggle : MonoBehaviour
     protected bool active;
     [SerializeField] public UnityEvent<bool> onActiveChanged;
 
-    protected virtual void TriggerChange(bool active, bool force = false)
+    protected virtual void ToggleActive(bool active, bool force = false)
     {
         this.active = active;
         onActiveChanged?.Invoke(active);

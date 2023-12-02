@@ -20,6 +20,13 @@ public abstract class AgentAnimator : MonoBehaviour
             animator = GetComponent<Animator>();
         if (!pixelAligner)
             pixelAligner = GetComponentInChildren<PixelAligner>();
+
     }
 
+    public static void Vibrate(PixelAligner pixelAligner, int amount)
+    {
+        float x = Random.Range(-amount, amount+1);
+        float y = Random.Range(-amount, amount+1);
+        pixelAligner.AddTempOffset(new(x, y));
+    }
 }
