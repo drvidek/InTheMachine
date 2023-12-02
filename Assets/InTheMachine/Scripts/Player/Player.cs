@@ -411,8 +411,14 @@ public class Player : AgentMachine, IFlammable
         //on entry
         OnHangEnter();
         onHangEnter?.Invoke();
-        Alarm hang = Alarm.GetAndPlay(_hangTime);
-        hang.onComplete = () => ChangeStateTo(PlayerState.Descend);
+        Alarm hang = Alarm.Get(_hangTime); ;
+        if (_hangTime > 0)
+        {
+            hang.Play();
+            hang.onComplete = () => ChangeStateTo(PlayerState.Descend);
+        }
+        else
+            ChangeStateTo(PlayerState.Descend);
         //every frame while we're in this state
         while (_currentState == PlayerState.Hang)
         {
@@ -922,11 +928,13 @@ public class Player : AgentMachine, IFlammable
             {
                 var a = c as AbilityUnlock;
                 UnlockAbility(a.Ability);
+                PopupText.main.DisplayAbilityText(a.Ability);
             }
             if (c is PowerUp)
             {
                 var p = c as PowerUp;
                 AddPowerUp(p.TypeHeld);
+                PopupText.main.DisplayPowerupText(p.TypeHeld);
             }
             c.Collect();
         }
@@ -936,8 +944,12 @@ public class Player : AgentMachine, IFlammable
         }
     }
 
-    public void GetStunned(Collider2D stunSource,float stunPower)
+    public void GetStunned(Collider2D stunSource, float stunPower)
     {
+        if (IsStunned)
+        {
+            return;
+        }
         ChangeStateTo(PlayerState.Stun);
         _targetVelocity.x = Mathf.Sign(transform.position.x - stunSource.transform.position.x);
         _targetVelocity.y = IsGrounded ? 1 : 0;
@@ -951,22 +963,23 @@ public class Player : AgentMachine, IFlammable
 
     public void PropagateFlame(Collider2D collider)
     {
-        
+
     }
 
     public void PropagateFlame(Vector3 position, Vector2 size)
     {
-        
+
     }
 
     public void CatchFlame(Collider2D collider)
     {
-        GetStunned(collider,12f);
+        if (collider.gameObject.layer != gameObject.layer)
+        GetStunned(collider, 12f);
     }
 
     public void DouseFlame()
     {
-        
+
     }
 
     public bool IsFlaming()

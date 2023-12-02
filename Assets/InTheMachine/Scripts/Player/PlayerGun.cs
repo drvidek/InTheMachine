@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using QKit;
@@ -7,12 +7,17 @@ public class PlayerGun : Launcher
 {
     [SerializeField] private GunProfile[] gunProfile;
     [SerializeField] private GunProfileType currentProfile;
+    [SerializeField] private List<GunProfileType> availableTypes = new();
     private Player myPlayer;
     private PlayerAnimate myAnimator;
     private bool canShoot = true;
     private GunProfileType lastProfile;
     private float cost;
     private bool costOnShot;
+
+
+    public Action<GunProfileType> onProfileChange;
+    public Action<GunProfileType> onProfileUnlock;
 
     public float Cost => cost;
 
@@ -66,8 +71,11 @@ public class PlayerGun : Launcher
         myPlayer.onFlyExit += () => canShoot = true;
         myPlayer.onBoostEnter += () => canShoot = false;
         myPlayer.onBoostExit += () => canShoot = true;
+        myPlayer.onStunEnter += () => canShoot = false;
+        myPlayer.onStunExit += () => canShoot = true;
         lastProfile = currentProfile;
         myPlayer.onShootPress += () => TryToShoot();
+
         SetProfile(currentProfile);
 
         myPlayer.onAbilityUnlock += UnlockPak;
@@ -127,6 +135,9 @@ public class PlayerGun : Launcher
 
     private void SetProfile(GunProfileType profile)
     {
+        if (!availableTypes.Contains(profile))
+            return;
+
         GunProfile gun = gunProfile[(int)profile];
         _size = gun.size;
         _speed = gun.speed;
@@ -137,6 +148,8 @@ public class PlayerGun : Launcher
         _projectilePrefab = gun.projectilePrefab;
         cost = gun.cost;
         costOnShot = gun.costOnShot;
+
+        onProfileChange?.Invoke(profile);
     }
 
     private void UnlockPak(Player.Ability ability)
@@ -144,6 +157,14 @@ public class PlayerGun : Launcher
         if (ability == Player.Ability.Gun)
         {
             myAnimator.EnablePak();
+            UnlockGunType(GunProfileType.Air);
         }
+    }
+
+    private void UnlockGunType(GunProfileType type)
+    {
+        availableTypes.Add(type);
+        onProfileUnlock?.Invoke(type);
+        SetProfile(type);
     }
 }

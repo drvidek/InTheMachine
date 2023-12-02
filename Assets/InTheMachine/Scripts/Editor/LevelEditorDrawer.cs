@@ -177,7 +177,7 @@ public class LevelEditorDrawer : Editor
         Vector3 cellPosition = editor.interactibleGrid.CellToWorld(relativeCell);
 
         LevelEditor.currentPosition = cellPosition;
-        Vector2 wallDir = CheckOnNeighbouringCells(cellPosition, Vector2.one, (int)LevelEditor.Category.Environment);
+        Vector2 wallDir = CheckOnNeighbouringCells(cellPosition, Vector2.one, editor.groundLayer);
         bool toggleHere = CheckForOverlap(cellPosition, Vector2.one, (int)LevelEditor.Category.Toggles);
         editor.spritePreview.transform.parent.position = cellPosition;
         editor.spritePreview.transform.position = cellPosition;
@@ -262,8 +262,8 @@ public class LevelEditorDrawer : Editor
         GameObject finalPrefab = null;
         Collider2D debris = CheckForOverlap(position, Vector2.one, (int)LevelEditor.Category.Debris);
         Collider2D toggle = CheckForOverlap(position, Vector2.one, (int)LevelEditor.Category.Toggles);
-        Collider2D block = CheckForOverlap(position, Vector2.one, (int)LevelEditor.Category.Environment);
-        Vector2 walls = CheckOnNeighbouringCells(position, Vector2.one, (int)LevelEditor.Category.Environment);
+        Collider2D block = CheckForOverlap(position, Vector2.one, editor.groundLayer);
+        Vector2 walls = CheckOnNeighbouringCells(position, Vector2.one, editor.groundLayer);
 
         if (block)
             return null;
@@ -433,6 +433,28 @@ public class LevelEditorDrawer : Editor
             y--;
 
         return new(x, y);
+    }
+
+    private Vector2 CheckOnNeighbouringCells(Vector3 position, Vector2 size, LayerMask layer)
+    {
+        int x = 0;
+        int y = 0;
+        if (Physics2D.BoxCast(position, size * 0.95f, 0, Vector2.left, 0.02f, layer))
+            x--;
+        if (Physics2D.BoxCast(position, size * 0.95f, 0, Vector2.right, 0.02f, layer))
+            x++;
+        if (Physics2D.BoxCast(position, size * 0.95f, 0, Vector2.up, 0.02f, layer))
+            y++;
+        if (Physics2D.BoxCast(position, size * 0.95f, 0, Vector2.down, 0.02f, layer))
+            y--;
+
+        return new(x, y);
+    }
+
+    private Collider2D CheckForOverlap(Vector3 position, Vector2 size, LayerMask layer)
+    {
+        Collider2D toggle = Physics2D.OverlapBox(position, size * 0.95f, 0, layer);
+        return toggle;
     }
 
     private Collider2D CheckForOverlap(Vector3 position, Vector2 size, int layer)

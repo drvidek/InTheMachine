@@ -50,15 +50,19 @@ MonoBehaviour:
   environmentGrid: {fileID: 0}
   interactibleGrid: {fileID: 0}
   objectRotation: 0
+  startActive: 0
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 7424
   currentToggleType: 2
   levelToggles:
   - {fileID: 3246324398310642350, guid: 6fb3be6748bc93d48a2c2933e5f33055, type: 3}
   - {fileID: 7463873018067421434, guid: b337ced7add5e62408ac33c24dd2911d, type: 3}
   - {fileID: 7260826727322002727, guid: f5e28a4346344bd478aedfe397751113, type: 3}
-  selectObjectsFromSceneToActivate: 0
-  buttonStayPressed: 0
+  selectObjectsFromSceneToActivate: 1
+  buttonStayPressed: 1
   door: {fileID: 3696660229750350240, guid: cd08e6f61214e424a8bbb5ff78d49d8c, type: 3}
-  doorLength: 4
+  doorLength: 3
   selectToggleInSceneToUse: 0
   debris:
     prefab: {fileID: 8451997271787077418, guid: 99e6d3036967c284a9c408f02df4fb4c, type: 3}
@@ -76,19 +80,19 @@ MonoBehaviour:
     - {fileID: 1741535603, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}
     - {fileID: -1430174196, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}
   physicsObject: {fileID: 4163983211913900757, guid: e7f2c2b9432a87d459fe3b96f047d58f, type: 3}
-  environmentType: 2
+  environmentType: 0
   environmentPrefabs:
   - {fileID: 5474666113130398102, guid: 36ee50f33e1862b42bcf6eeb10dc4552, type: 3}
   - {fileID: 4433875083684222568, guid: 12cc94d7dfb0b394988f79265062d3b5, type: 3}
   - {fileID: 1258410108051585767, guid: 198b6bedf6904684383cf93406afde0f, type: 3}
-  blockSize: {x: 1, y: 1}
+  blockSize: {x: 3, y: 1}
   currentPlayerType: 0
   upgradePrefabs:
   - {fileID: 6448807981197934538, guid: 867def8317fa61e4da65610f771105f7, type: 3}
   - {fileID: 3112658931652264891, guid: d77eddd05dbcbcc4b8f23263f1aaef6b, type: 3}
-  currentAbility: 0
+  currentAbility: 1
   currentPowerUp: 0
-  currentEnemy: 1
+  currentEnemy: 2
   enemyList: {fileID: 11400000, guid: 97c57bd77e5b4f44ea7dbdcc69d8d966, type: 2}
   toggleInSceneToUse: {fileID: 0}
   parentTransformInScene: {fileID: 0}
@@ -118,7 +122,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6154305564773805272}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -166,11 +170,11 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 21171d9811b5f44448637abfcdda0d70, type: 3}
+  m_Sprite: {fileID: -485713701, guid: 3437976066e289e48af5547b961f149a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 2
+  m_DrawMode: 0
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0
   m_SpriteTileMode: 1
@@ -202,7 +206,7 @@ Transform:
   m_GameObject: {fileID: 7999296081145852225}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 45, y: -10.5, z: 0}
+  m_LocalPosition: {x: 97, y: -6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

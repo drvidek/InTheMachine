@@ -52,6 +52,7 @@ public class LevelEditor : MonoBehaviour
     public Grid environmentGrid, interactibleGrid;
     public float objectRotation;
     public bool startActive;
+    public LayerMask groundLayer;
 
     [Header("Toggles")]
     public ToggleType currentToggleType;

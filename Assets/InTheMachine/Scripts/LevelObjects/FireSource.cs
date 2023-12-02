@@ -4,17 +4,24 @@ using UnityEngine;
 using QKit;
 public class FireSource : MonoBehaviour, IActivate, IFlammable
 {
-    [SerializeField] private Collider2D _collider;
-    [SerializeField] private ParticleSystem psysFlame, psysGas, psysSpark;
+    [SerializeField] private float length = 1;
     [SerializeField] private bool isLit;
     [SerializeField] private float timeToRelight;
+    [SerializeField] private BoxCollider2D _collider;
+    [SerializeField] private ParticleSystem psysFlame, psysGas, psysSpark;
     private bool isLocked;
     private Alarm relightAlarm;
 
     public bool IsLit => isLit;
 
+    private void OnValidate()
+    {
+        SetLength();
+    }
+
     private void Start()
     {
+        SetLength();
         if (timeToRelight > 0)
         {
             relightAlarm = Alarm.Get(timeToRelight, false, false);
@@ -30,6 +37,17 @@ public class FireSource : MonoBehaviour, IActivate, IFlammable
             DouseFlame();
     }
 
+    private void SetLength()
+    {
+        if (!_collider)
+            _collider = GetComponent<BoxCollider2D>();
+        _collider.size = new(_collider.size.x, length);
+        _collider.offset = new Vector2(0, (length - 1) /2);
+        var main = psysFlame.main;
+        main.startSpeed = length * 1.2f;
+        main.duration = 0.25f / length;
+    }
+
     private void FixedUpdate()
     {
         if (isLit)
@@ -43,6 +61,7 @@ public class FireSource : MonoBehaviour, IActivate, IFlammable
         isLit = true;
         psysFlame.Play();
         psysGas.Stop();
+        _collider.enabled = true;
     }
 
     public void DouseFlame()
@@ -54,7 +73,7 @@ public class FireSource : MonoBehaviour, IActivate, IFlammable
         psysFlame.Stop();
         psysFlame.Clear();
         relightAlarm?.ResetAndPlay();
-
+        _collider.enabled = false;
     }
 
     public void PropagateFlame(Collider2D collider)
