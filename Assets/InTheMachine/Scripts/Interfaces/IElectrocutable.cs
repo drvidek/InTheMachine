@@ -5,7 +5,7 @@ using UnityEngine;
 
 public interface IElectrocutable
 {
-    public void RecieveElectricity();
+    public void RecieveElectricity(Collider2D collider);
 
     public static List<IElectrocutable> FindCircuit(Collider2D collider)
     {
@@ -44,14 +44,34 @@ public interface IElectrocutable
     public static List<Collider2D> FindImmediateNeighbours(Collider2D collider)
     {
         List<Collider2D> neighbours = new();
-
         Collider2D[] colliders = new Collider2D[10];
         ContactFilter2D filter = new();
         Physics2D.OverlapCollider(collider, filter.NoFilter(), colliders);
         foreach (var item in colliders)
         {
-            if ((item != null) && (item.GetComponent<IElectrocutable>() != null) && !neighbours.Contains(item))
+            if ((item != null) && (item.TryGetComponent<IElectrocutable>(out IElectrocutable e)) && !neighbours.Contains(item))
+            {
                 neighbours.Add(item);
+            }
+        }
+
+        return neighbours;
+    }
+
+    public static List<Collider2D> FindImmediateNeighbours(Collider2D collider, out List<IElectrocutable> contacts)
+    {
+        List<Collider2D> neighbours = new();
+        contacts = new();
+        Collider2D[] colliders = new Collider2D[10];
+        ContactFilter2D filter = new();
+        Physics2D.OverlapCollider(collider, filter.NoFilter(), colliders);
+        foreach (var item in colliders)
+        {
+            if ((item != null) && (item.TryGetComponent<IElectrocutable>(out IElectrocutable e)) && !neighbours.Contains(item))
+            {
+                neighbours.Add(item);
+                contacts.Add(e);
+            }
         }
 
         return neighbours;

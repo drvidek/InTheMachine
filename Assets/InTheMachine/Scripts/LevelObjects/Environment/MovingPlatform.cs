@@ -11,12 +11,14 @@ public class MovingPlatform : EnvironmentBox, IActivate
     private Rigidbody2D rb;
     private bool active;
 
-    //private Vector3 lastPosition;
-
-    private Vector3 startPosition;
-    public TilemapCollider2D tileCollider;
 
     //public bool IsMoving => lastPosition != transform.position;
+
+    protected override void SetCollider()
+    {
+        base.SetCollider();
+        boxCollider.size = new Vector2(size.x - Mathf.Abs(0.1f * direction.y), size.y - Mathf.Abs(0.1f * direction.x));
+    }
 
     override protected void Start()
     {
@@ -26,7 +28,7 @@ public class MovingPlatform : EnvironmentBox, IActivate
             rb.constraints = rb.constraints | RigidbodyConstraints2D.FreezePositionX;
         if (direction.y == 0)
             rb.constraints = rb.constraints | RigidbodyConstraints2D.FreezePositionY;
-        startPosition = transform.position;
+        // startPosition = transform.position;
     }
 
     private void Update()
@@ -42,11 +44,11 @@ public class MovingPlatform : EnvironmentBox, IActivate
     private void FixedUpdate()
     {
         rb.velocity = direction * (active ? ascendSpeed :
-            Vector3.Distance(transform.position, startPosition) <= 0.05f ? 0 :
+            //Vector3.Distance(transform.position, startPosition) <= 0.05f ? 0 :
             descendSpeed);
 
-        if (!active && Vector3.Distance(transform.position, startPosition) < 0.05f)
-            transform.position = startPosition;
+        //if (!active && Vector3.Distance(transform.position, startPosition) < 0.05f)
+        //   transform.position = startPosition;
     }
 
     public void ToggleActive(bool active)

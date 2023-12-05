@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using QKit;
 
-public class Player : AgentMachine, IFlammable
+public class Player : AgentMachine, IFlammable, IElectrocutable
 {
     public enum Ability
     {
@@ -938,7 +938,7 @@ public class Player : AgentMachine, IFlammable
             }
             c.Collect();
         }
-        if (!IsBoosting && collision.TryGetComponent<EnemyMachine>(out EnemyMachine enemy))
+        if (collision.TryGetComponent<EnemyMachine>(out EnemyMachine enemy))
         {
             GetStunned(collision, enemy.ContactDamage);
         }
@@ -946,7 +946,7 @@ public class Player : AgentMachine, IFlammable
 
     public void GetStunned(Collider2D stunSource, float stunPower)
     {
-        if (IsStunned)
+        if (IsStunned || IsBoosting)
         {
             return;
         }
@@ -985,5 +985,10 @@ public class Player : AgentMachine, IFlammable
     public bool IsFlaming()
     {
         return false;
+    }
+
+    public void RecieveElectricity(Collider2D collider)
+    {
+        GetStunned(collider,15f);
     }
 }

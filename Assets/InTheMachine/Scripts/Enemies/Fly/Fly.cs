@@ -58,7 +58,7 @@ public class Fly : EnemyMachine, IProjectileTarget, IFlammable
 
     protected override void OnStunEnter()
     {
-        Alarm stunAlarm = Alarm.GetAndPlay(2f);
+        Alarm stunAlarm = Alarm.GetAndPlay(stunTimeMin);
         stunAlarm.onComplete = () => { if (CurrentState == EnemyState.Stun) ChangeStateTo(EnemyState.Idle); };
     }
 

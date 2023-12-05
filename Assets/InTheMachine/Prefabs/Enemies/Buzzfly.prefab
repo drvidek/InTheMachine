@@ -141,7 +141,7 @@ MonoBehaviour:
   agentAnimator: {fileID: 0}
   healthMeter:
     _min: 0
-    _max: 10
+    _max: 8
     _value: 10
     _rateUp: 1
     _rateDown: 1

@@ -25,5 +25,5 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   projectilePrefab: {fileID: 160887198981946752, guid: 1bebb8bcbfc57224b9a7c0567e275410, type: 3}
-  cost: 6
+  cost: 5
   costOnShot: 1

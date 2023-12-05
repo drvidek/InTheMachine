@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using QKit;
 
-public class Electricity : MonoBehaviour, IElectrocutable
+public class Electricity : MonoBehaviour, IActivate, IElectrocutable
 {
     [SerializeField] private bool active;
     [SerializeField] private SpriteRenderer spriteRenderer;
@@ -31,7 +32,7 @@ public class Electricity : MonoBehaviour, IElectrocutable
         }
     }
 
-    public void RecieveElectricity()
+    public void RecieveElectricity(Collider2D collider)
     {
 
     }
@@ -43,8 +44,30 @@ public class Electricity : MonoBehaviour, IElectrocutable
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
+        if (active)
+        {
+            UpdateSpriteAndBox();
+            IElectrocutable.FindImmediateNeighbours(boxCollider, out List<IElectrocutable> list);
+            foreach (var item in list)
+            {
+                item.RecieveElectricity(boxCollider);
+            }
+            spriteRenderer.flipY = QMath.Choose<bool>(true,false);
+            spriteRenderer.flipX = QMath.Choose<bool>(true, false);
+        }
+    }
 
+    public void ToggleActive(bool active)
+    {
+        this.active = active;
+        boxCollider.enabled = active;
+        spriteRenderer.enabled = active;
+    }
+
+    public void ToggleActiveAndLock(bool active)
+    {
+        throw new System.NotImplementedException();
     }
 }

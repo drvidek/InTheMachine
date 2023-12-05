@@ -17,7 +17,7 @@ public class Buzzfly : Fly
     private float currentDistanceToPlayer => Vector3.Distance(transform.position, Player.main.Position);
     private bool playerInRange => currentDistanceToPlayer < attackRange;
     private bool playerInSight => !Physics2D.Raycast(transform.position,QMath.Direction(transform.position,Player.main.Position),currentDistanceToPlayer,groundedMask);
-    private bool playerInSameRoom => RoomGridManager.main.GetCurrentRoom(transform) == RoomGridManager.main.GetCurrentRoom(Player.main.transform);
+    private bool playerInSameRoom => RoomManager.main.GetRoom(transform) == RoomManager.main.GetRoom(Player.main.transform);
 
     protected override void Start()
     {

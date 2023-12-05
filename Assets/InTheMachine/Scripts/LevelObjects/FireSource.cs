@@ -21,6 +21,7 @@ public class FireSource : MonoBehaviour, IActivate, IFlammable
 
     private void Start()
     {
+        
         SetLength();
         if (timeToRelight > 0)
         {
@@ -41,11 +42,20 @@ public class FireSource : MonoBehaviour, IActivate, IFlammable
     {
         if (!_collider)
             _collider = GetComponent<BoxCollider2D>();
+        psysFlame.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
         _collider.size = new(_collider.size.x, length);
         _collider.offset = new Vector2(0, (length - 1) /2);
+        
         var main = psysFlame.main;
         main.startSpeed = length * 1.2f;
         main.duration = 0.25f / length;
+
+        var gasMain = psysGas.main;
+        gasMain.startSpeed = length;
+        gasMain.duration = 0.25f / length;
+
+        //make sure the system has stopped
     }
 
     private void FixedUpdate()

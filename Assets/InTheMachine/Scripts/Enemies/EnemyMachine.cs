@@ -10,6 +10,7 @@ public abstract class EnemyMachine : AgentMachine
     [SerializeField] protected float contactDamage;
     [SerializeField] protected float _fric;
     [SerializeField] protected float _grv;
+    [SerializeField] protected float stunTimeMin;
 
     #region Events
     public Action onIdleEnter;
