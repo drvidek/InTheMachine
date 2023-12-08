@@ -181,7 +181,7 @@ MonoBehaviour:
   boxCollider: {fileID: 6967110801462305184}
   contactMask:
     serializedVersion: 2
-    m_Bits: 7168
+    m_Bits: 7424
 --- !u!1 &8638501848875487060
 GameObject:
   m_ObjectHideFlags: 0

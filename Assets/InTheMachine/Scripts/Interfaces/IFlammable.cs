@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using QKit;
 
 public interface IFlammable
 {
@@ -22,7 +23,7 @@ public interface IFlammable
         Physics2D.OverlapCollider(collider, filter.NoFilter(), colliders);
         foreach (var item in colliders)
         {
-            if (item != null && item.TryGetComponent<IFlammable>(out IFlammable f) && !neighbours.Contains(f))
+            if (item != null && QMath.TryGet<IFlammable>(item.transform, out IFlammable f) && !neighbours.Contains(f))
                 neighbours.Add(f);
         }
 
@@ -36,7 +37,7 @@ public interface IFlammable
         Collider2D[] colliders = Physics2D.OverlapBoxAll(position, size, 0);
         foreach (var item in colliders)
         {
-            if (item != null && item.TryGetComponent<IFlammable>(out IFlammable f) && !neighbours.Contains(f))
+            if (item != null && QMath.TryGet<IFlammable>(item.transform, out IFlammable f) && !neighbours.Contains(f))
                 neighbours.Add(f);
         }
 

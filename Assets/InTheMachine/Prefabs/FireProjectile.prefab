@@ -77,7 +77,7 @@ MonoBehaviour:
   _psysFire: {fileID: 3935603520496734611}
   blockingLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 5376
 --- !u!1 &3756124289452620859
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,6 +237,10 @@ PrefabInstance:
     - target: {fileID: 377963491157219174, guid: c4c281f8003132a4da7924be2a33a52a, type: 3}
       propertyPath: moveWithTransform
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 377963491157219174, guid: c4c281f8003132a4da7924be2a33a52a, type: 3}
+      propertyPath: ShapeModule.arc.value
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 377963491157219174, guid: c4c281f8003132a4da7924be2a33a52a, type: 3}
       propertyPath: CollisionModule.enabled

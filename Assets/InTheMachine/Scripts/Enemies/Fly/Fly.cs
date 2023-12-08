@@ -91,12 +91,9 @@ public class Fly : EnemyMachine, IProjectileTarget, IFlammable
     protected override void OnBurnExit()
     {
         DouseFlame();
+        base.OnBurnExit();
     }
 
-    public override Rigidbody2D GetStandingOnRigidbody()
-    {
-        return null;
-    }
     protected override void CheckForExternalVelocity()
     {
 

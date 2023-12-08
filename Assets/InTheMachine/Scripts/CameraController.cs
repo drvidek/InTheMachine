@@ -6,73 +6,106 @@ using QKit;
 [RequireComponent(typeof(Camera))]
 public class CameraController : MonoBehaviour
 {
-	[SerializeField] private Vector2 resolution = new(4,3);
+    [SerializeField] private Vector2 resolution = new(4, 3);
+    [SerializeField] private float zoomTime, zoomDelay;
     public static float screenWidth, screenHeight;
-	private Camera _camera;
-   
+    private Camera _camera;
+
+    bool specialCamLock = false;
+    private Vector3 lockedPosition = new();
+    private Vector3 lerpBasePosition = new();
+    private Vector3 specialRoomSize;
+
+    private Vector3 cameraOffset;
+
+    private Alarm zoomAlarm;
+    private Alarm zoomDelayAlarm;
 
     new public Camera camera => _camera;
 
-	#region Singleton + Awake
-	private static CameraController _singleton;
-	public static CameraController main
-	{
-		get => _singleton;
-		private set
-		{
-			if (_singleton == null)
-			{
-				_singleton = value;
-			}
-			else if (_singleton != value)
-			{
-				Debug.LogWarning("CameraController instance already exists, destroy duplicate!");
-				Destroy(value);
-			}
-		}
-	}
+    #region Singleton + Awake
+    private static CameraController _singleton;
+    public static CameraController main
+    {
+        get => _singleton;
+        private set
+        {
+            if (_singleton == null)
+            {
+                _singleton = value;
+            }
+            else if (_singleton != value)
+            {
+                Debug.LogWarning("CameraController instance already exists, destroy duplicate!");
+                Destroy(value);
+            }
+        }
+    }
 
-	private void Awake()
-	{
-		main = this;
-	}
+    private void Awake()
+    {
+        main = this;
+    }
     #endregion
 
     private void Start()
     {
-		_camera = GetComponent<Camera>();
-		screenHeight = camera.orthographicSize * 2;
-		screenWidth = screenHeight / resolution.y * resolution.x;
+        zoomAlarm = Alarm.Get(zoomTime, false, false);
+        zoomDelayAlarm = Alarm.Get(zoomDelay, false, false);
+        zoomDelayAlarm.onComplete += () => zoomAlarm.ResetAndPlay();
+
+        _camera = GetComponent<Camera>();
+        screenHeight = camera.orthographicSize * 2;
+        screenWidth = screenHeight / resolution.y * resolution.x;
+        cameraOffset = new Vector3(screenWidth / 2f, screenHeight / 2f, -50f);
+        RoomManager.main.onPlayerMovedRoom += SnapToRoom;
+
+        SnapToRoom(RoomManager.main.currentRoom);
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
-		float xDist = QMath.Difference(Player.main.X, transform.position.x);
-		float yDist = QMath.Difference(Player.main.Y, transform.position.y);
-
-		MoveCameraHorizontal(xDist > screenWidth / 2);
-		MoveCameraVertical(yDist > screenHeight / 2);
-		
-    }
-
-	private void MoveCameraHorizontal(bool move)
-	{
-		if (!move)
-			return;
-		Vector2 direction = new Vector2(Mathf.Sign(Player.main.X - transform.position.x),0) * screenWidth;
-		MoveCamera(direction);
-	}
-
-    private void MoveCameraVertical(bool move)
-    {
-        if (!move)
+        if (!specialCamLock)
             return;
-        Vector2 direction = new Vector2(0,Mathf.Sign(Player.main.Y - transform.position.y)) * screenHeight;
-        MoveCamera(direction);
+
+        if (zoomAlarm.IsPlaying)
+        {
+            transform.position = Vector3.Lerp(lerpBasePosition, lockedPosition, zoomAlarm.PercentComplete);
+            camera.orthographicSize = Mathf.Lerp(screenHeight / 2, screenHeight, zoomAlarm.PercentComplete);
+        }
+
+        if (QMath.Difference(lockedPosition.x, Player.main.X) > specialRoomSize.x / 2f || QMath.Difference(lockedPosition.y, Player.main.Y) > specialRoomSize.y / 2f)
+        {
+            specialCamLock = false;
+            camera.orthographicSize = screenHeight / 2f;
+            SnapToRoom(RoomManager.main.currentRoom);
+            zoomDelayAlarm.Stop();
+            zoomAlarm.Stop();
+        }
     }
 
-    private void MoveCamera(Vector2 direction)
-	{
-		transform.position += (Vector3)direction;
-	}
+    public void SnapToRoom(Vector3Int room)
+    {
+        if (specialCamLock)
+            return;
+
+        transform.position = RoomManager.main.RoomGrid.CellToWorld(room) + cameraOffset;
+        BoxCollider2D collider = FindCameraVolume() as BoxCollider2D;
+        if (collider)
+        {
+            lockedPosition = collider.transform.position;
+            lerpBasePosition = transform.position;
+            zoomDelayAlarm.ResetAndPlay();
+            specialCamLock = true;
+            specialRoomSize = collider.size;
+        }
+    }
+
+    private Collider2D FindCameraVolume()
+    {
+        return Physics2D.OverlapPoint(transform.position, 1 << 5);
+    }
+
+
+
 }

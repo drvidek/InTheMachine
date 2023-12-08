@@ -548,6 +548,10 @@ public abstract class EnemyMachine : AgentMachine
             ChangeStateTo(EnemyState.Attack);
     }
 
+    /// <summary>
+    /// Change state to Burning and instantiate a flame effect
+    /// </summary>
+    /// <param name="collider"></param>
     protected virtual void EnemyCatchFlame(Collider2D collider)
     {
         ChangeStateTo(EnemyState.Burn);
@@ -564,5 +568,13 @@ public abstract class EnemyMachine : AgentMachine
         burning = false;
         if (burnEffect)
             IFlammable.ClearFireAndSmoke(burnEffect);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (CurrentState == EnemyState.Stun && _rigidbody.velocity.y < 0)
+        {
+            TakeDamage(_rigidbody.velocity.magnitude);
+        }
     }
 }

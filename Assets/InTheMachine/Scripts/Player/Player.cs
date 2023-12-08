@@ -956,7 +956,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         _targetVelocity *= stunPower;
     }
 
-    public override Rigidbody2D GetStandingOnRigidbody()
+    public Rigidbody2D GetStandingOnRigidbody()
     {
         return Physics2D.CapsuleCast(transform.position + (Vector3)_collider.offset, CapsuleCollider.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.02f, groundedMask).rigidbody;
     }

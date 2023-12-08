@@ -140,9 +140,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1106206266181522437}
+  - component: {fileID: 8466560812714781428}
   - component: {fileID: 324781788559572235}
   - component: {fileID: 4601295960968008206}
   - component: {fileID: 3576163197384508897}
+  - component: {fileID: 3811553840589610835}
   m_Layer: 0
   m_Name: Hive
   m_TagString: Untagged
@@ -167,6 +169,33 @@ Transform:
   - {fileID: 5941951745946214325}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &8466560812714781428
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8133943437897383955}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!61 &324781788559572235
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -196,7 +225,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -245,6 +274,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8f7a5c052ef0454aaa8c3303525ee65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  groundedMask:
+    serializedVersion: 2
+    m_Bits: 0
+  _rigidbody: {fileID: 0}
+  _collider: {fileID: 0}
+  agentAnimator: {fileID: 0}
+  healthMeter:
+    _min: 0
+    _max: 10
+    _value: 10
+    _rateUp: 1
+    _rateDown: 1
+    _colorMain: {r: 0, g: 1, b: 1, a: 1}
+    _colorBackground: {r: 0.7, g: 0.7, b: 0.7, a: 0.7}
+    _meterGradient:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_ColorSpace: -1
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    _colorType: 0
+  _currentState: 0
+  contactDamage: 0
+  _fric: 0
+  _grv: 0
+  stunTimeMin: 0
   spawnAlarm:
     _name: 
     _id: 0
@@ -260,3 +339,19 @@ MonoBehaviour:
   spawnPoint: {fileID: 5941951745946214325}
   waitToSpawn: 1
   animator: {fileID: 0}
+--- !u!114 &3811553840589610835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8133943437897383955}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 716f71f60eb5fc34aa9126587a8e0cd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myAgent: {fileID: 0}
+  spriteRenderer: {fileID: 0}
+  animator: {fileID: 0}
+  pixelAligner: {fileID: 0}

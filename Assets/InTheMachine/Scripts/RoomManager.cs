@@ -5,6 +5,8 @@ using UnityEngine;
 public class RoomManager : MonoBehaviour
 {
     [SerializeField] protected Grid roomGrid;
+    [SerializeField] public Transform interactiblesGrid;
+
     #region Singleton + Awake
     private static RoomManager _singleton;
     public static RoomManager main
@@ -30,21 +32,29 @@ public class RoomManager : MonoBehaviour
     }
     #endregion
 
-    public Vector2 currentRoom => GetRoom(CameraController.main.transform);
+    public Grid RoomGrid => roomGrid;
 
-    public Action<Vector2> onPlayerMovedRoom;
+    /// <summary>
+    /// Returns the room coordinates of the player
+    /// </summary>
+    public Vector3Int currentRoom => GetRoom(Player.main.transform);
 
-    private Vector2 lastRoom;
+    /// <summary>
+    /// Called when the player changes room, with the room coordinates
+    /// </summary>
+    public Action<Vector3Int> onPlayerMovedRoom;
+
+    private Vector3Int lastRoom;
 
     /// <summary>
     /// Returns the current room coordinates of the provided transform.
     /// </summary>
     /// <param name="transform"></param>
     /// <returns></returns>
-    public Vector2 GetRoom(Transform transform)
+    public Vector3Int GetRoom(Transform transform)
     {
         Vector3Int cell = roomGrid.WorldToCell(transform.position);
-        return roomGrid.CellToWorld(cell);
+        return cell; //roomGrid.CellToWorld(cell);
 
     }
 
@@ -59,5 +69,9 @@ public class RoomManager : MonoBehaviour
             onPlayerMovedRoom?.Invoke(currentRoom);
 
         lastRoom = currentRoom;
+
+        Debug.Log(currentRoom);
     }
+
+    
 }

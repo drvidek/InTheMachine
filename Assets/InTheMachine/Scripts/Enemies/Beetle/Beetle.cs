@@ -136,6 +136,7 @@ public class Beetle : EnemyMachine, IProjectileTarget, IFlammable
     protected override void OnBurnExit()
     {
         DouseFlame();
+        base.OnBurnExit();
     }
 
     public void OnProjectileHit(Projectile projectile)
@@ -167,7 +168,7 @@ public class Beetle : EnemyMachine, IProjectileTarget, IFlammable
             _targetVelocity.y = Mathf.Clamp(_targetVelocity.y, 0.01f, float.PositiveInfinity);
     }
 
-    public override Rigidbody2D GetStandingOnRigidbody()
+    public  Rigidbody2D GetStandingOnRigidbody()
     {
         if (!StandingOn)
             return null;

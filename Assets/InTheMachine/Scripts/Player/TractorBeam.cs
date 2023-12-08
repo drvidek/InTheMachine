@@ -9,18 +9,21 @@ public class TractorBeam : MonoBehaviour
     [SerializeField] private float beamPower;
     [SerializeField] private Transform beamOrigin;
     [SerializeField] private ParticleSystem psysBeam;
+    [SerializeField] private float tractorForgiveness;
     private Collider2D beam;
     private bool active = false;
     private bool snapped = false;
+    private Alarm tractorForgivenessAlarm;
 
     public bool Active => active;
 
     [SerializeField] private Rigidbody2D currentBody = null;
-
+    private List<ContactPoint2D> currentBodyContactCheck = new List<ContactPoint2D>();
 
     // Start is called before the first frame update
     void Start()
     {
+        tractorForgivenessAlarm = Alarm.Get(tractorForgiveness, false, false);
         beam = transform.GetChild(0).GetComponent<Collider2D>();
         Player.main.onFlyExit += () => ToggleBeam(false);
         Player.main.onShootPress += () => ToggleBeam(true);
@@ -58,6 +61,24 @@ public class TractorBeam : MonoBehaviour
         if (colliders.Length == 0)
             return;
 
+        if (currentBody)
+        {
+            currentBody.gravityScale = 0;
+            currentBody.velocity = Vector2.zero;
+
+            if (tractorForgivenessAlarm.IsStopped)
+            {
+                currentBodyContactCheck.Clear();
+
+                if (currentBody.GetContacts(currentBodyContactCheck) > 0)
+                {
+                    DetatchConnectedBody();
+                    ToggleBeam(false);
+                }
+            }
+            return;
+        }
+
         float smallestDistance = float.PositiveInfinity;
 
         foreach (var collider in colliders)
@@ -68,11 +89,10 @@ public class TractorBeam : MonoBehaviour
                 smallestDistance = newDistance;
                 currentBody = collider.attachedRigidbody;
             }
+
         }
-
-        currentBody.gravityScale = 0;
-        currentBody.velocity = Vector2.zero;
-
+        if (currentBody)
+            tractorForgivenessAlarm.ResetAndPlay();
     }
 
     public void ToggleBeam(bool active)
@@ -84,12 +104,14 @@ public class TractorBeam : MonoBehaviour
 
         psysBeam.Play();
 
-        if (!active)
+        if (active)
         {
-            psysBeam.Stop();
-            psysBeam.Clear();
-            DetatchConnectedBody();
+            return;
         }
+        tractorForgivenessAlarm.Stop();
+        psysBeam.Stop();
+        psysBeam.Clear();
+        DetatchConnectedBody();
     }
 
     private void DetatchConnectedBody()
