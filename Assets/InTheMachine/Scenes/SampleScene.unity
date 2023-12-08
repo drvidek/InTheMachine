@@ -77035,7 +77035,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomGrid: {fileID: 1764999009}
-  interactiblesGrid: {fileID: 0}
+  interactiblesGrid: {fileID: 1623440336}
 --- !u!1 &1770449815
 GameObject:
   m_ObjectHideFlags: 0

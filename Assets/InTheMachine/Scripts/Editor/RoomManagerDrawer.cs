@@ -58,11 +58,12 @@ public class RoomManagerEditor : Editor
 
     public GameObject CreateNewRoomParent(string name, Vector3Int roomCode)
     {
+        RoomManager rm = (target as RoomManager);
         GameObject go = new();
         go.name = name;
         go.tag = "Room";
-        go.transform.position = roomCode;
-        go.transform.parent = (target as RoomManager).interactiblesGrid;
+        go.transform.position = rm.RoomGrid.CellToWorld(roomCode);
+        go.transform.parent = rm.interactiblesGrid;
 
         return go;
     }
