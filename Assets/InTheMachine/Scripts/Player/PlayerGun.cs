@@ -15,7 +15,6 @@ public class PlayerGun : Launcher
     private float cost;
     private bool costOnShot;
 
-
     public Action<GunProfileType> onProfileChange;
     public Action<GunProfileType> onProfileUnlock;
 

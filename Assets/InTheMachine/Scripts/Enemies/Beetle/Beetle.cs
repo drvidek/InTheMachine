@@ -147,6 +147,7 @@ public class Beetle : EnemyMachine, IProjectileTarget, IFlammable
             ChangeStateTo(EnemyState.Stun);
             _targetVelocity.x = Mathf.Sign(projectile.Direction.x) * projectile.Speed * 0.4f;
             _targetVelocity.y = projectile.Speed * 0.4f;
+            TakeDamage(projectile.Power);
         }
         //if (projectile is FireProjectile)
         //{

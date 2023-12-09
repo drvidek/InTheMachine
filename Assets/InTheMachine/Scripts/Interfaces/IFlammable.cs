@@ -21,10 +21,16 @@ public interface IFlammable
         Collider2D[] colliders = new Collider2D[10];
         ContactFilter2D filter = new();
         Physics2D.OverlapCollider(collider, filter.NoFilter(), colliders);
+        IFlammable f = null;
         foreach (var item in colliders)
         {
-            if (item != null && QMath.TryGet<IFlammable>(item.transform, out IFlammable f) && !neighbours.Contains(f))
+            if (item != null &&
+                (item.TryGetComponent<IFlammable>(out f) || (item.gameObject.layer == 14 && item.transform.parent.TryGetComponent<IFlammable>(out f))) &&
+                !neighbours.Contains(f))
+            {
+
                 neighbours.Add(f);
+            }
         }
 
         return neighbours;
@@ -35,9 +41,13 @@ public interface IFlammable
         List<IFlammable> neighbours = new();
 
         Collider2D[] colliders = Physics2D.OverlapBoxAll(position, size, 0);
+        IFlammable f = null;
+
         foreach (var item in colliders)
         {
-            if (item != null && QMath.TryGet<IFlammable>(item.transform, out IFlammable f) && !neighbours.Contains(f))
+            if (item != null &&
+                (item.TryGetComponent<IFlammable>(out f) || (item.gameObject.layer == 14 && item.transform.parent.TryGetComponent<IFlammable>(out f))) &&
+                !neighbours.Contains(f))
                 neighbours.Add(f);
         }
 

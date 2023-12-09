@@ -173,6 +173,7 @@ public class Fly : EnemyMachine, IProjectileTarget, IFlammable
             _targetVelocity.x = Mathf.Sign(projectile.Direction.x) * projectile.Speed * 0.4f;
             _targetVelocity.y = projectile.Speed * 0.4f;
             rb.velocity = _targetVelocity;
+            TakeDamage(projectile.Power);
         }
 
     }

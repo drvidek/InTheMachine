@@ -493,7 +493,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: S
+      name: ShroomCloud0
       rect:
         serializedVersion: 2
         x: 16
@@ -514,7 +514,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpritesheetEnemies_18
+      name: ShroomCloud1
       rect:
         serializedVersion: 2
         x: 32
@@ -556,7 +556,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ShroomSpore1
+      name: ShroomSpore2
       rect:
         serializedVersion: 2
         x: 64
@@ -1038,6 +1038,90 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: ShroomIdle1
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1c06d22d59efb35448a730d80b316c8c
+      internalID: 1779684092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShroomWall0
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b1c4c915e1ba5714ea554cc5399b9214
+      internalID: -1866457708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShroomWall1
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 101e14f5a3d7cf749bd0ef1cfa08685e
+      internalID: -2082585755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShroomSpore
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb2fb171554eb014f82f4858befe6f67
+      internalID: -840911511
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -1067,10 +1151,15 @@ TextureImporter:
       Jellyfish1: -1114944053
       Mouse0: 82887657
       Mouse1: -1146830710
-      S: -1046464494
+      ShroomCloud0: -1046464494
+      ShroomCloud1: 1862430551
       ShroomIdle0: 317286728
+      ShroomIdle1: 1779684092
+      ShroomSpore: -840911511
       ShroomSpore0: 2004127259
-      ShroomSpore1: -1738484751
+      ShroomSpore2: -1738484751
+      ShroomWall0: -1866457708
+      ShroomWall1: -2082585755
       Slime0: -887432926
       Slime1: -830948301
       SlimeBig0: 480443968
@@ -1081,7 +1170,6 @@ TextureImporter:
       SpritesheetEnemies_0: -1717616727
       SpritesheetEnemies_1: 1245814813
       SpritesheetEnemies_13: 938702988
-      SpritesheetEnemies_18: 1862430551
       SpritesheetEnemies_2: -909995354
       SpritesheetEnemies_23: -558764941
       SpritesheetEnemies_24: 140504242

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5941951745946214325}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 7713269402009410538}
   - component: {fileID: 8999839617430272988}
   - component: {fileID: 6601803471709235093}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,7 +145,7 @@ GameObject:
   - component: {fileID: 4601295960968008206}
   - component: {fileID: 3576163197384508897}
   - component: {fileID: 3811553840589610835}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Hive
   m_TagString: Untagged
   m_Icon: {fileID: 0}

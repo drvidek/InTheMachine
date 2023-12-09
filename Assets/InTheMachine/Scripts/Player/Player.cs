@@ -919,7 +919,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
 
         if (collision.TryGetComponent<Collectible>(out Collectible c))
@@ -938,7 +938,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             }
             c.Collect();
         }
-        if (collision.TryGetComponent<EnemyMachine>(out EnemyMachine enemy))
+        if (collision.attachedRigidbody && collision.attachedRigidbody.TryGetComponent<EnemyMachine>(out EnemyMachine enemy))
         {
             GetStunned(collision, enemy.ContactDamage);
         }

@@ -396,6 +396,8 @@ namespace QKit
             {
                 alarm = new("New", t, looping, autoRelease, scale, type);
                 _alarmPool.Add(alarm);
+                alarm._stopped = false;
+                alarm._paused = true;
                 return alarm;
             }
 
@@ -441,13 +443,15 @@ namespace QKit
             {
                 alarm = new(name, t, looping, autoRelease, scale, type);
                 _alarmPool.Add(alarm);
+                alarm._stopped = false;
+                alarm._paused = true;
                 return alarm;
             }
 
             alarm.ApplyAlarmProperties(name, t, looping, autoRelease, scale, type);
             alarm._timeRemaining = t;
             alarm._stopped = false;
-            alarm._paused = false;
+            alarm._paused = true;
 
             if (!_alarmsInUse.Contains(alarm))
                 _alarmsInUse.Add(alarm);

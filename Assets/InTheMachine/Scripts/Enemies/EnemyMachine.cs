@@ -28,6 +28,7 @@ public abstract class EnemyMachine : AgentMachine
     public Action onDescendEnter;
     public Action onDescendStay;
     public Action onDescendExit;
+    public Action onPreAttack;
     public Action onAttackEnter;
     public Action onAttackStay;
     public Action onAttackExit;
@@ -570,11 +571,4 @@ public abstract class EnemyMachine : AgentMachine
             IFlammable.ClearFireAndSmoke(burnEffect);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (CurrentState == EnemyState.Stun && _rigidbody.velocity.y < 0)
-        {
-            TakeDamage(_rigidbody.velocity.magnitude);
-        }
-    }
 }

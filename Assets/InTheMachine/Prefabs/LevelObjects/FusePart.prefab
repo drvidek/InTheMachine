@@ -81,4 +81,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   burnTime: 0.5
-  _collder: {fileID: 6717927065922593716}
+  burnWithSmoke: 0
+  _collider: {fileID: 6717927065922593716}

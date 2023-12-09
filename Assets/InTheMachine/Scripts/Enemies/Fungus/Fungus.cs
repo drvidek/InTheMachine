@@ -3,9 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Fungus : EnemyStatic, IFlammable
+public class Fungus : EnemyStatic, IFlammable, IProjectileTarget
 {
-   
+    [SerializeField] protected float catchFlameTime;
+    private Meter catchFlame = new(0, 1, 0);
+
+    protected override void Start()
+    {
+        catchFlame.onMax += () => EnemyCatchFlame(null);
+        base.Start();
+    }
+
     protected override void OnBurnStay()
     {
         PropagateFlame(_collider);
@@ -20,7 +28,8 @@ public class Fungus : EnemyStatic, IFlammable
     }
     public void CatchFlame(Collider2D collider)
     {
-        EnemyCatchFlame(collider);
+        catchFlame.FillOver(catchFlameTime, true, true, true);
+        //EnemyCatchFlame(collider);
     }
 
     public void DouseFlame()
@@ -51,5 +60,13 @@ public class Fungus : EnemyStatic, IFlammable
     protected override void OnDieEnter()
     {
         base.OnDieEnter();
+    }
+
+    public void OnProjectileHit(Projectile projectile)
+    {
+        
+        
+        
+        
     }
 }
