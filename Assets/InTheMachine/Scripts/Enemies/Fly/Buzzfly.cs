@@ -5,7 +5,6 @@ using QKit;
 
 public class Buzzfly : Fly
 {
-    [SerializeField] protected float attackRange;
     [SerializeField] protected float attackSpeed;
     [SerializeField] protected float attackDelayTime;
 
@@ -15,9 +14,7 @@ public class Buzzfly : Fly
     private Vector3 direction;
 
     private float currentDistanceToPlayer => Vector3.Distance(transform.position, Player.main.Position);
-    private bool playerInRange => currentDistanceToPlayer < attackRange;
-    private bool playerInSight => !Physics2D.Raycast(transform.position,QMath.Direction(transform.position,Player.main.Position),currentDistanceToPlayer,groundedMask);
-    private bool playerInSameRoom => RoomManager.main.GetRoom(transform) == RoomManager.main.GetRoom(Player.main.transform);
+    
 
     protected override void Start()
     {
@@ -73,7 +70,7 @@ public class Buzzfly : Fly
 
     protected override bool CheckAttackCondition()
     {
-        return playerInRange && playerInSameRoom && playerInSight;
+        return playerInRange && playerInRoom && playerInSight;
     }
 
 }

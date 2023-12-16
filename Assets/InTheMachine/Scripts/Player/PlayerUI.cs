@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 [RequireComponent(typeof(Player))]
 public class PlayerUI : MonoBehaviour
 {
     private Player player;
     private PlayerGun playerGun;
+    [SerializeField] private TextMeshProUGUI cashDisplay;
     [SerializeField] private Transform powerPelletContainer;
 
     [SerializeField] private GameObject[] gunIcons;
@@ -27,6 +29,9 @@ public class PlayerUI : MonoBehaviour
         player.PowerMeter.onMin += () => { SetPowerColor(player.PowerMeter.BackgroundColor); };
         playerGun.onProfileChange += SetActiveGunIcon;
         playerGun.onProfileUnlock += EnableGunProfileIcon;
+
+        CashManager.main.onCashChange += UpdateCashDisplay;
+        UpdateCashDisplay(0);
     }
 
     private void Update()
@@ -57,5 +62,10 @@ public class PlayerUI : MonoBehaviour
         {
             pellet.color = color;
         }
+    }
+
+    private void UpdateCashDisplay(int cash)
+    {
+        cashDisplay.text = $"{cash}c";
     }
 }

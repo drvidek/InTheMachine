@@ -116,4 +116,9 @@ public class Hive : EnemyStatic, IFlammable
         else
             spawnAlarm.ResetAndPlay();
     }
+
+    public override void OnProjectileHit(Projectile projectile)
+    {
+        
+    }
 }

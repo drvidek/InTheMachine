@@ -13,17 +13,17 @@ MonoBehaviour:
   m_Name: FireGun
   m_EditorClassIdentifier: 
   size: 1
-  speed: 5
+  speed: 6
   power: 1
   lifetime: 1
   count: 1
   spread: 0
   collidingLayer:
     serializedVersion: 2
-    m_Bits: 22448
+    m_Bits: 5392
   piercingLayer:
     serializedVersion: 2
-    m_Bits: 128
-  projectilePrefab: {fileID: 5911450181065757125, guid: 73b7a5629b009a74db1e7e9cd9747af0, type: 3}
+    m_Bits: 17024
+  projectilePrefab: {fileID: 5911450181065757125, guid: e32e31826247add45873d6dc987f0e03, type: 3}
   cost: 20
   costOnShot: 0

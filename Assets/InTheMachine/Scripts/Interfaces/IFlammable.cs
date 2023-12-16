@@ -7,6 +7,7 @@ public interface IFlammable
 {
     public static GameObject psysObjFire = Resources.Load("PSysFire") as GameObject;
     public static GameObject psysObjSmoke = Resources.Load("PSysSmoke") as GameObject;
+    public static GameObject psysObjSmokePuff = Resources.Load("PSysSmokePuff") as GameObject;
 
     public static void ClearFireAndSmoke(GameObject obj)
     {

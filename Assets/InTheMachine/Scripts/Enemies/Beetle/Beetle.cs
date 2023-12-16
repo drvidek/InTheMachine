@@ -3,25 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using QKit;
 
-public class Beetle : EnemyMachine, IProjectileTarget, IFlammable
+public class Beetle : EnemyWalking, IFlammable
 {
     [SerializeField] protected Collider2D hardCollider;
-    [SerializeField] protected float _walkSpeed;
     
 
-    protected bool walkingRight = true;
-    public bool WalkingRight => walkingRight;
-    public Vector3 CurrentDirection => walkingRight ? transform.right : transform.right * -1;
 
     private BoxCollider2D boxCollider => _collider as BoxCollider2D;
     public Quaternion zRotation => Quaternion.AngleAxis(transform.rotation.eulerAngles.z, Vector3.forward);
 
     public Vector3 NinetyDegrees => new Vector3(0f, 0f, 90f);
 
-    public Vector2 groundBox => new Vector2(0.1f, boxCollider.size.y);
-    public Vector2 wallBox => new Vector2(0.02f, 0.1f);
+    public Vector2 groundBox => new Vector2(0.2f, boxCollider.size.y);
+    public Vector2 wallBox => new Vector2(0.2f, 0.1f);
 
-    public Collider2D StandingOn
+    public override Collider2D StandingOn
     {
         get
         {
@@ -32,51 +28,49 @@ public class Beetle : EnemyMachine, IProjectileTarget, IFlammable
         }
     }
 
-    public Collider2D ColliderAhead
+    public override Collider2D ColliderAhead
     {
         get
         {
-            RaycastHit2D hit = Physics2D.BoxCast(transform.position + (zRotation * (Vector3)boxCollider.offset), wallBox, 0, CurrentDirection, burning ? 0.2f : 0.02f, groundedMask);
+            RaycastHit2D hit = Physics2D.BoxCast(transform.position + (zRotation * (Vector3)boxCollider.offset), wallBox, transform.localEulerAngles.z, CurrentDirection, burning ? 0.2f : 0.02f, groundedMask);
             if (!hit)
                 return null;
             return hit.collider;
         }
     }
 
-    public bool IsGrounded => StandingOn != null;
 
     public int turnLock;
 
-    protected override void Start()
-    {
-        base.Start();
-        hardCollider.enabled = false;
-    }
-
     protected override void OnWalkEnter()
     {
-        hardCollider.enabled = false;
+        //hardCollider.enabled = false;
+        transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / 16f), QMath.RoundToNearestFraction(transform.position.y, 1f / 4f), transform.position.z);
         walkingRight = QMath.Choose<bool>(true, false);
     }
 
     protected override void OnWalkStay()
     {
         turnLock = (int)Mathf.MoveTowards(turnLock, 0, 1);
-        if (turnLock == 0)
+        //if (turnLock == 0)
         {
             //if we're not grounded
             if (!IsGrounded)
             {
+                if (turnLock > 0)
+                {
+                    GetStunned(Vector3.down, 1f);
+                }
                 //rotate
                 transform.localEulerAngles += walkingRight ? -NinetyDegrees : NinetyDegrees;
-                transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / 4f), QMath.RoundToNearestFraction(transform.position.y, 1f / 4f), transform.position.z) + CurrentDirection * 0.02f;
+                transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / 4f), QMath.RoundToNearestFraction(transform.position.y, 1f / 4f), transform.position.z) + CurrentDirection * 0.1f;
                 turnLock = 5;
             }
             else
             if (ColliderAhead)
             {
                 transform.localEulerAngles += walkingRight ? NinetyDegrees : -NinetyDegrees;
-                transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / 4f), QMath.RoundToNearestFraction(transform.position.y, 1f / 4f), transform.position.z) + CurrentDirection * 0.02f;
+                transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / 4f), QMath.RoundToNearestFraction(transform.position.y, 1f / 4f), transform.position.z) + CurrentDirection * 0.1f;
                 turnLock = 5;
             }
         }
@@ -95,7 +89,7 @@ public class Beetle : EnemyMachine, IProjectileTarget, IFlammable
 
     protected override void OnStunEnter()
     {
-        hardCollider.enabled = true;
+        //hardCollider.enabled = true;
         rb.velocity = _targetVelocity;
     }
 
@@ -113,13 +107,13 @@ public class Beetle : EnemyMachine, IProjectileTarget, IFlammable
 
     protected override void OnStunExit()
     {
-        hardCollider.enabled = false;
+        //hardCollider.enabled = false;
     }
 
     protected override void OnBurnEnter()
     {
         transform.eulerAngles = Vector3.zero;
-        hardCollider.enabled = true;
+        //hardCollider.enabled = true;
     }
 
     protected override void OnBurnStay()
@@ -139,20 +133,20 @@ public class Beetle : EnemyMachine, IProjectileTarget, IFlammable
         base.OnBurnExit();
     }
 
-    public void OnProjectileHit(Projectile projectile)
+    public override void OnProjectileHit(Projectile projectile)
     {
         if (projectile is AirProjectile)
         {
             DouseFlame();
-            ChangeStateTo(EnemyState.Stun);
-            _targetVelocity.x = Mathf.Sign(projectile.Direction.x) * projectile.Speed * 0.4f;
-            _targetVelocity.y = projectile.Speed * 0.4f;
+            GetStunned(new Vector2(Mathf.Sign(projectile.Direction.x), 1), projectile.Speed * 0.4f);
             TakeDamage(projectile.Power);
         }
-        //if (projectile is FireProjectile)
-        //{
-        //    CatchFlame();
-        //}
+        if (projectile is ElecProjectile)
+        {
+            GetStunned(projectile.Direction, projectile.Power * 2f);
+            TakeDamage(projectile.Power);
+        }
+        
     }
 
     override protected void Move(Vector3 direction, float speed)
@@ -160,16 +154,9 @@ public class Beetle : EnemyMachine, IProjectileTarget, IFlammable
         _targetVelocity = direction * speed;
     }
 
-    protected void MoveWithGravity(Vector3 direction, float speed)
-    {
-        _targetVelocity.x = direction.x * speed;
-        if (!IsGrounded)
-            _targetVelocity.y -= _grv * Time.fixedDeltaTime;
-        else
-            _targetVelocity.y = Mathf.Clamp(_targetVelocity.y, 0.01f, float.PositiveInfinity);
-    }
+    
 
-    public  Rigidbody2D GetStandingOnRigidbody()
+    override public Rigidbody2D GetStandingOnRigidbody()
     {
         if (!StandingOn)
             return null;

@@ -77,7 +77,9 @@ public class Door : MonoBehaviour, IActivate
             }
             if (currentOpen > i)
             {
-                colliders[i].enabled = true;
+
+                if (!Physics2D.OverlapBox(colliders[i].transform.position, colliders[i].bounds.size, 0, 1 << 6))
+                    colliders[i].enabled = true;
 
                 if (!open)
                 {

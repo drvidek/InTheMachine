@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5722410407282156313}
   - component: {fileID: 1383532781301912786}
   - component: {fileID: 7152150751234255276}
+  - component: {fileID: 380769907909008905}
   m_Layer: 8
   m_Name: PhysicsObject
   m_TagString: Untagged
@@ -106,6 +107,22 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.9, y: 0.9}
   m_EdgeRadius: 0.02
+--- !u!114 &380769907909008905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4163983211913900757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b3a1671673c9274086e94dc1e0a3300, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 0}
+  collidingMask:
+    serializedVersion: 2
+    m_Bits: 5376
 --- !u!1 &7114431697036573742
 GameObject:
   m_ObjectHideFlags: 0

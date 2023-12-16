@@ -1,4 +1,4 @@
-using Codice.CM.Common;
+using System.Collections.Generic;
 using UnityEngine;
 using QKit;
 namespace QKit
@@ -29,6 +29,27 @@ namespace QKit
         {
 
             SetRigidbody();
+
+            ContactFilter2D filter = new();
+            List<Collider2D> list = new();
+            Physics2D.OverlapCollider(GetComponentInChildren<Collider2D>(), filter.NoFilter(), list);
+            foreach (var item in list)
+            {
+                int layer = item.gameObject.layer;
+                bool collision = CheckForCollision(layer);
+                bool piercing = CheckForPierce(layer);
+
+                if (!collision && !piercing)
+                    return;
+                TryToHitTarget(item);
+
+                if (collision)
+                {
+                    DoCollision(item);
+                }
+            }
+
+            
         }
 
         protected virtual void SetRigidbody()
@@ -141,6 +162,7 @@ namespace QKit
                 DoCollision(other);
             }
         }
+
 
         /// <summary>
         /// Check a collider for a valid ProjectileTarget and trigger OnProjectileHit and return true if found

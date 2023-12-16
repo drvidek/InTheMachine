@@ -49,7 +49,9 @@ public interface IElectrocutable
         Physics2D.OverlapCollider(collider, filter.NoFilter(), colliders);
         foreach (var item in colliders)
         {
-            if ((item != null) && (item.TryGetComponent<IElectrocutable>(out IElectrocutable e)) && !neighbours.Contains(item))
+            if ((item != null) &&
+                (item.TryGetComponent<IElectrocutable>(out IElectrocutable e) || (item.gameObject.layer == 15 && item.transform.parent.TryGetComponent<IElectrocutable>(out e))) &&
+                !neighbours.Contains(item))
             {
                 neighbours.Add(item);
             }
@@ -67,7 +69,9 @@ public interface IElectrocutable
         Physics2D.OverlapCollider(collider, filter.NoFilter(), colliders);
         foreach (var item in colliders)
         {
-            if ((item != null) && (item.TryGetComponent<IElectrocutable>(out IElectrocutable e)) && !neighbours.Contains(item))
+            if ((item != null) &&
+                (item.TryGetComponent<IElectrocutable>(out IElectrocutable e) || (item.gameObject.layer == 15 && item.transform.parent.TryGetComponent<IElectrocutable>(out e))) &&
+                !neighbours.Contains(item))
             {
                 neighbours.Add(item);
                 contacts.Add(e);

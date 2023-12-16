@@ -65,6 +65,7 @@ public class PlayerAnimate : AgentAnimator
         myPlayer.onDescendEnter += () => animator.SetTrigger("Falling");
         myPlayer.onFlyEnter += () => AnimatePakFlip(true);
         myPlayer.onFlyExit += () => { if (myPlayer.CurrentState != Player.PlayerState.Boost) AnimatePakFlip(false); };
+        myPlayer.onUltraBoostExit += () => AnimatePakFlip(false);
         myPlayer.onWalkEnter += () => animator.SetBool("IsWalking", true);
         myPlayer.onWalkExit += () => animator.SetBool("IsWalking", false);
         myPlayer.onStunEnter += () => { animator.SetBool("IsStunned", true); pakPixelAligner.SetOffset(Vector2.zero); };

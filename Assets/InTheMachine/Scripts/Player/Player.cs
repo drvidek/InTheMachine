@@ -11,9 +11,10 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         Gun,
         Flight,
         Tractor,
-        Boost
+        Boost,
+        UltraBoost
     }
-    public enum PlayerState { Idle, Walk, Ascend, Hang, Descend, Fly, Boost, Stun, Burn }
+    public enum PlayerState { Idle, Walk, Ascend, Hang, Descend, Fly, Boost, UltraBoost, Stun, Burn }
     [SerializeField] private PlayerState _currentState;
     [SerializeField] private List<Ability> abilities = new();
     [SerializeField] private bool allAbilities = false;
@@ -90,6 +91,9 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     public Action onBoostEnter;
     public Action onBoostStay;
     public Action onBoostExit;
+    public Action onUltraBoostEnter;
+    public Action onUltraBoostStay;
+    public Action onUltraBoostExit;
     public Action onStunEnter;
     public Action onStunStay;
     public Action onStunExit;
@@ -100,7 +104,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
 
     public bool IsGrounded => Physics2D.CapsuleCast(transform.position + (Vector3)_collider.offset, CapsuleCollider.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.02f, groundedMask);
     public bool IsStunned => CurrentState == PlayerState.Stun;
-    public bool IsBoosting => CurrentState == PlayerState.Boost;
+    public bool IsBoosting => CurrentState == PlayerState.Boost || CurrentState == PlayerState.UltraBoost;
     public Meter PowerMeter => powerMeter;
     public bool OutOfPower => outOfPower;
     public CapsuleCollider2D CapsuleCollider => _collider as CapsuleCollider2D;
@@ -200,7 +204,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         if (JumpRelease)
             onJumpRelease?.Invoke();
 
-        if (!usingPower && CurrentState != PlayerState.Boost)
+        if (!usingPower && !IsBoosting && !PlayerGun.main.DelayingShot)
             powerMeter.FillOver(powerChargeTime, false, true, true);
         usingPower = false;
     }
@@ -650,6 +654,66 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     private void OnBoostExit()
     {
         _targetVelocity *= postBoostVelocityRate;
+        if (HasAbility(Ability.UltraBoost) && ActionHold)
+            ChangeStateTo(PlayerState.UltraBoost);
+    }
+
+    IEnumerator UltraBoost()
+    {
+        //on entry
+        OnUltraBoostEnter();
+        onUltraBoostEnter?.Invoke();
+        //every frame while we're in this state
+        while (_currentState == PlayerState.UltraBoost)
+        {
+            //state behaviour here
+
+            OnUltraBoostStay();
+            onUltraBoostStay?.Invoke();
+            //wait a frame
+            yield return waitForFixedUpdate;
+        }
+        //on exit
+        OnUltraBoostExit();
+        onUltraBoostExit?.Invoke();
+        //trigger the next state
+        NextState();
+    }
+
+    /// <summary>
+    /// Called once when entering Boost state
+    /// </summary>
+    private void OnUltraBoostEnter()
+    {
+        //boostDirection = PlayerAnimate.main.FacingDirection;
+        //Alarm boostEnd = Alarm.GetAndPlay(boostDistance / boostSpeed);
+        //boostEnd.onComplete = () => ChangeStateTo(returnFromBoost);
+        //_targetVelocity.y = 0f;
+    }
+
+    /// <summary>
+    /// Called every fixed update when in Boost state
+    /// </summary>
+    private void OnUltraBoostStay()
+    {
+        MoveInDirectionAtSpeed(boostDirection, boostSpeed * 1.25f);
+        if (!ActionHold || !TryToUsePower(boostCost * 2f * Time.fixedDeltaTime))
+            ChangeStateTo(PlayerState.Idle);
+        //set our next state to...
+        PlayerState nextState =
+            //stay as we are
+            _currentState;
+        //trigger the next state
+        ChangeStateTo(nextState);
+        SetNewInputs();
+    }
+
+    /// <summary>
+    /// Called once when exiting Boost state
+    /// </summary>
+    private void OnUltraBoostExit()
+    {
+        _targetVelocity *= postBoostVelocityRate;
     }
     IEnumerator Stun()
     {
@@ -879,7 +943,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         switch (type)
         {
             case PowerUp.Type.Power:
-                powerMeter.SetNewBounds(0, powerMeter.Max + 5);
+                powerMeter.SetNewBounds(0, powerMeter.Max + 10);
                 powerMeter.Fill();
                 break;
             default:
@@ -909,12 +973,38 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             collision.GetContacts(contactPoints);
             foreach (var item in contactPoints)
             {
-                if (item.point.y > transform.position.y && QMath.Difference(item.point.y, transform.position.y) > 0.45f)
+                if (item.point.y > transform.position.y && QMath.Difference(item.point.y, transform.position.y) > 0.29f)
                 {
                     _targetVelocity.y = 0;
                     _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, 0);
                     break;
                 }
+            }
+        }
+
+        if (CurrentState == PlayerState.UltraBoost && QMath.DoesLayerMaskContain(groundedMask, collision.gameObject.layer))
+        {
+            CheckBoostBreak(collision);
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (CurrentState == PlayerState.UltraBoost && QMath.DoesLayerMaskContain(groundedMask, collision.gameObject.layer))
+        {
+            CheckBoostBreak(collision);
+        }
+    }
+
+    private void CheckBoostBreak(Collision2D collision)
+    {
+        List<ContactPoint2D> list = new();
+        collision.GetContacts(list);
+        foreach (var contact in list)
+        {
+            if (Mathf.Sign(contact.point.x - _collider.bounds.center.x) == Mathf.Sign(rb.velocity.x) && contact.point.y > _collider.bounds.min.y)
+            {
+                ChangeStateTo(PlayerState.Idle);
             }
         }
     }
@@ -974,7 +1064,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     public void CatchFlame(Collider2D collider)
     {
         if (collider.gameObject.layer != gameObject.layer)
-        GetStunned(collider, 12f);
+            GetStunned(collider, 12f);
     }
 
     public void DouseFlame()
@@ -989,6 +1079,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
 
     public void RecieveElectricity(Collider2D collider)
     {
-        GetStunned(collider,15f);
+        if (collider.gameObject.layer != gameObject.layer)
+            GetStunned(collider, 15f);
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using QKit;
 
 public class TractorBeam : MonoBehaviour
@@ -17,8 +18,11 @@ public class TractorBeam : MonoBehaviour
 
     public bool Active => active;
 
+
     [SerializeField] private Rigidbody2D currentBody = null;
     private List<ContactPoint2D> currentBodyContactCheck = new List<ContactPoint2D>();
+
+    private Vector3 currentBodyOffset = new();
 
     // Start is called before the first frame update
     void Start()
@@ -37,11 +41,12 @@ public class TractorBeam : MonoBehaviour
             return;
 
         float z = currentBody.transform.position.z;
-        if (!snapped && QMath.MoveTowardsAndSnap(currentBody.transform, beamOrigin.position, beamPower * Time.deltaTime, 0.05f))
+        if (!snapped && QMath.MoveTowardsAndSnap(currentBody.transform, beamOrigin.position - currentBodyOffset, beamPower * Time.deltaTime, 0.2f))
             snapped = true;
 
         if (snapped)
-            currentBody.transform.position = beamOrigin.position;
+            currentBody.transform.position = beamOrigin.position - currentBodyOffset;
+
 
         currentBody.transform.position = QMath.ReplaceVectorValue(currentBody.transform.position, VectorValue.z, z);
         //currentBody.transform.position = Vector2.SmoothDamp(currentBody.transform.position, beamOrigin.position, ref dampVel, 0.1f);
@@ -83,6 +88,9 @@ public class TractorBeam : MonoBehaviour
 
         foreach (var collider in colliders)
         {
+            if (collider is TilemapCollider2D)
+                continue;
+
             float newDistance = Vector3.Distance(collider.ClosestPoint(beamOrigin.position), beamOrigin.position);
             if (newDistance < smallestDistance)
             {
@@ -91,8 +99,12 @@ public class TractorBeam : MonoBehaviour
             }
 
         }
+
         if (currentBody)
+        {
+            currentBodyOffset = CalculateBodyOffset();
             tractorForgivenessAlarm.ResetAndPlay();
+        }
     }
 
     public void ToggleBeam(bool active)
@@ -101,7 +113,7 @@ public class TractorBeam : MonoBehaviour
             active = false;
 
         this.active = active;
-
+        beam.enabled = active;
         psysBeam.Play();
 
         if (active)
@@ -120,5 +132,27 @@ public class TractorBeam : MonoBehaviour
             currentBody.gravityScale = 1;
         currentBody = null;
         snapped = false;
+    }
+
+    private Vector2 CalculateBodyOffset()
+    {
+        if (!currentBody)
+            return Vector2.zero;
+
+        List<Collider2D> colliders = new();
+        currentBody.GetAttachedColliders(colliders);
+
+        foreach (var collider in colliders)
+        {
+            if (collider is TilemapCollider2D)
+            {
+                Vector3 centre = collider.bounds.center - collider.transform.position;
+                centre.y += collider.bounds.extents.y;
+                return new(centre.x, centre.y);
+            }
+        }
+
+        return new(0, colliders[0].bounds.extents.y);
+
     }
 }

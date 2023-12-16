@@ -26,6 +26,10 @@ public class RoomManagerEditor : Editor
         {
             OrganiseScene();
         }
+        if (GUILayout.Button("Move Player to Camera"))
+        {
+            MovePlayerToCurrentRoom();
+        }
 
         if (target)
         {
@@ -68,6 +72,13 @@ public class RoomManagerEditor : Editor
         return go;
     }
 
+
+    public void MovePlayerToCurrentRoom()
+    {
+        Transform cam = SceneView.lastActiveSceneView.camera.transform;
+        Player p = FindObjectOfType<Player>();
+        p.transform.position = new(cam.position.x, cam.position.y, p.transform.position.z);
+    }
 }
 
 

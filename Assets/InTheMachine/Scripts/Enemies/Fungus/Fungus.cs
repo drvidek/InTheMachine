@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Fungus : EnemyStatic, IFlammable, IProjectileTarget
+public class Fungus : EnemyStatic, IFlammable
 {
     [SerializeField] protected float catchFlameTime;
     private Meter catchFlame = new(0, 1, 0);
@@ -62,11 +62,9 @@ public class Fungus : EnemyStatic, IFlammable, IProjectileTarget
         base.OnDieEnter();
     }
 
-    public void OnProjectileHit(Projectile projectile)
+    public override void OnProjectileHit(Projectile projectile)
     {
-        
-        
-        
-        
+
     }
+
 }

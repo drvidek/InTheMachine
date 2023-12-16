@@ -9,9 +9,18 @@ public class Debris : MonoBehaviour, IProjectileTarget
 
     public void OnProjectileHit(Projectile projectile)
     {
+        if (projectile is AirProjectile)
+        {
+            EndOfLife();
+        }
+    }
+
+    protected void EndOfLife()
+    {
         GetComponent<Collider2D>().enabled = false;
         transform.GetChild(0).gameObject.SetActive(false);
         psysDust.Play();
         Destroy(gameObject, 1f);
+        CashManager.main.IncreaseCashBy(1);
     }
 }

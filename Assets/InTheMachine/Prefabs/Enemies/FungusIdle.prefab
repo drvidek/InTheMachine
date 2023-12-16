@@ -266,6 +266,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     _colorType: 0
   _currentState: 0
+  cashWorth: 10
   contactDamage: 7
   _fric: 0
   _grv: 0

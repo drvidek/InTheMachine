@@ -104,7 +104,7 @@ public class PopupText : MonoBehaviour
 			case PowerUp.Type.Power:
                 upgradeType = "UPGRADE FOUND";
                 upgradeName = "MAX POWER";
-                upgradeAmount = "INCREASED +5";
+                upgradeAmount = "INCREASED +10";
                 break;
 			default:
 				break;

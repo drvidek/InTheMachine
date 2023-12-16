@@ -312,6 +312,7 @@ public class LevelEditorDrawer : Editor
                 finalPrefab = editor.enemyList.enemyPrefabs[(int)editor.currentEnemy];
                 break;
             case LevelEditor.Category.PhysicsObject:
+                finalPrefab = editor.physicsObject;
                 break;
             case LevelEditor.Category.Door:
                 finalPrefab = editor.door;

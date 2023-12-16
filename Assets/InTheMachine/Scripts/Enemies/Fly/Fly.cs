@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using QKit;
 
-public class Fly : EnemyMachine, IProjectileTarget, IFlammable
+public class Fly : EnemyFlying, IFlammable, IElectrocutable
 {
     [SerializeField] protected float idleTime;
     [SerializeField] protected float flySpeed;
@@ -67,7 +67,7 @@ public class Fly : EnemyMachine, IProjectileTarget, IFlammable
         _targetVelocity = rb.velocity;
         _targetVelocity.x = Mathf.MoveTowards(_targetVelocity.x, 0, _fric * Time.fixedDeltaTime);
         _targetVelocity.y -= _grv * Time.fixedDeltaTime;
-        
+
         base.OnStunStay();
     }
 
@@ -77,7 +77,7 @@ public class Fly : EnemyMachine, IProjectileTarget, IFlammable
 
         PropagateFlame(_collider);
 
-        if (Random.Range(0f,100f) > 80f)
+        if (Random.Range(0f, 100f) > 80f)
         {
             targetDestination = RollNewDestination(transform.position, maxDistanceToNewDestination);
         }
@@ -130,7 +130,7 @@ public class Fly : EnemyMachine, IProjectileTarget, IFlammable
 
     private void ApplyForce(Vector3 direction, float speed)
     {
-        _targetVelocity += (Vector2)direction * speed*0.25f;
+        _targetVelocity += (Vector2)direction * speed * 0.25f;
     }
 
     private void OnDrawGizmos()
@@ -164,22 +164,34 @@ public class Fly : EnemyMachine, IProjectileTarget, IFlammable
         EnemyDouseFlame();
     }
 
-    public void OnProjectileHit(Projectile projectile)
+    public override void OnProjectileHit(Projectile projectile)
     {
         if (projectile is AirProjectile)
         {
             DouseFlame();
-            ChangeStateTo(EnemyState.Stun);
-            _targetVelocity.x = Mathf.Sign(projectile.Direction.x) * projectile.Speed * 0.4f;
-            _targetVelocity.y = projectile.Speed * 0.4f;
-            rb.velocity = _targetVelocity;
+            GetStunned(new Vector2(Mathf.Sign(projectile.Direction.x), 1), projectile.Speed * 0.4f);
             TakeDamage(projectile.Power);
         }
-
+        if (projectile is ElecProjectile)
+        {
+            GetStunned(Vector2.down, 2f);
+            Instantiate(IFlammable.psysObjSmokePuff, transform.position, Quaternion.identity);
+            TakeDamage(5f);
+        }
     }
 
     public bool IsFlaming()
     {
         return CurrentState == EnemyState.Burn;
+    }
+
+    public void RecieveElectricity(Collider2D collider)
+    {
+        if (collider.gameObject.layer == 6)
+            return;
+
+        GetStunned(Vector2.down, 2f);
+        Instantiate(IFlammable.psysObjSmokePuff,transform.position,Quaternion.identity);
+        TakeDamage(5f);
     }
 }

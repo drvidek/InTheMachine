@@ -25,7 +25,7 @@ public class EnemyAnimator : AgentAnimator
 
         myAgent.onTakeDamage += (float f) =>
         {
-            if (damageAnimationActive)
+            if (damageAnimationActive || f == 0)
                 return;
 
             damageAnimationActive = true;

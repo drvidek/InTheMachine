@@ -5,14 +5,12 @@ using QKit;
 
 public class FungusCloud : Fungus
 {
-    [SerializeField] private float attackRange, attackWindupTime, attackDuration;
+    [SerializeField] private float attackWindupTime, attackDuration;
     [SerializeField] private Collider2D attackHitbox;
     [SerializeField] private ParticleSystem psysAttack;
 
     private Alarm attackWindupAlarm;
     private bool preAttackActive;
-
-    protected bool playerInRange => Vector3.Distance(transform.position, Player.main.Position) < attackRange;
 
 
     protected override void Start()
@@ -25,7 +23,7 @@ public class FungusCloud : Fungus
 
     protected override void OnIdleStay()
     {
-        if (playerInRange && !preAttackActive)
+        if (playerInRange && playerInSight && playerInRoom && !preAttackActive)
         {
             onPreAttack?.Invoke();
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using QKit;
 
-public class AirProjectile : Projectile, IFlammable
+public class AirProjectile : Projectile
 {
     private float baseSpeed;
     private bool lifeOver;
@@ -34,19 +34,9 @@ public class AirProjectile : Projectile, IFlammable
     protected override void DoCollision(Collider2D collider)
     {
         //if we hit a flammable object
-        if (collider.TryGetComponent<IFlammable>(out IFlammable flame))
+        if (collider.TryGetComponent<IFlammable>(out IFlammable flame) && flame.IsFlaming())
         {
-            //if it's flaming
-            if (flame.IsFlaming())
-            {
-                //douse it and destroy the shot
                 flame.DouseFlame();
-                base.DoCollision(collider);
-                return;
-            }
-            //otherwise, if it's not an enemy, don't destroy the shot
-            if (!collider.GetComponent<EnemyMachine>())
-                return;
         }
         base.DoCollision(collider);
     }
@@ -59,28 +49,4 @@ public class AirProjectile : Projectile, IFlammable
         Destroy(gameObject, 2f);
     }
 
-    public void PropagateFlame(Collider2D collider)
-    {
-
-    }
-
-    public void PropagateFlame(Vector3 position, Vector2 size)
-    {
-
-    }
-
-    public void CatchFlame(Collider2D collider)
-    {
-
-    }
-
-    public void DouseFlame()
-    {
-
-    }
-
-    public bool IsFlaming()
-    {
-        return false;
-    }
 }

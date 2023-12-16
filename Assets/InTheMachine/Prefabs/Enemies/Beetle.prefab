@@ -163,7 +163,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
   m_Constraints: 4
 --- !u!61 &932829290506793303
 BoxCollider2D:
@@ -289,11 +289,13 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     _colorType: 0
   _currentState: 1
+  cashWorth: 2
   contactDamage: 8
-  hardCollider: {fileID: 23597838642139603}
-  _walkSpeed: 1
   _fric: 10
   _grv: 22
+  stunTimeMin: 0
+  hardCollider: {fileID: 23597838642139603}
+  _walkSpeed: 1
   turnLock: 0
 --- !u!114 &2312947636591606973
 MonoBehaviour:
@@ -386,5 +388,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.2, y: 0.5}
+  m_Size: {x: 0.2, y: 0.49}
   m_EdgeRadius: 0

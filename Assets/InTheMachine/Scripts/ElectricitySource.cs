@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using QKit;
 
-public class Electricity : MonoBehaviour, IActivate, IElectrocutable
+public class ElectricitySource : MonoBehaviour, IActivate, IElectrocutable
 {
     [SerializeField] private bool active;
     [SerializeField] private SpriteRenderer spriteRenderer;
@@ -22,13 +22,13 @@ public class Electricity : MonoBehaviour, IActivate, IElectrocutable
         if (!boxCollider)
             boxCollider = GetComponentInChildren<BoxCollider2D>();
 
-        RaycastHit2D hit = Physics2D.Raycast(transform.position + transform.right*-0.25f, transform.right,float.PositiveInfinity, contactMask);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position + transform.right * -0.25f, transform.right, float.PositiveInfinity, contactMask);
         if (hit)
         {
             spriteRenderer.size = new Vector2(hit.distance, 1);
-            spriteRenderer.transform.localPosition = new Vector2((hit.distance - 1) / 2f+0.25f, 0);
+            spriteRenderer.transform.localPosition = new Vector2((hit.distance - 1) / 2f + 0.25f, 0);
             boxCollider.size = new Vector2(hit.distance, .25f);
-            boxCollider.offset = new Vector2((hit.distance - 1) /2f + 0.25f, 0);
+            boxCollider.offset = new Vector2((hit.distance - 1) / 2f + 0.25f, 0);
         }
     }
 
@@ -54,7 +54,7 @@ public class Electricity : MonoBehaviour, IActivate, IElectrocutable
             {
                 item.RecieveElectricity(boxCollider);
             }
-            spriteRenderer.flipY = QMath.Choose<bool>(true,false);
+            spriteRenderer.flipY = QMath.Choose<bool>(true, false);
             spriteRenderer.flipX = QMath.Choose<bool>(true, false);
         }
     }

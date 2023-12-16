@@ -2,23 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using QKit;
 
 public class RevealSecret : MonoBehaviour
 {
-    private Color currentColor = Color.white;
+    private Color currentColor;
+    private Color homeColor;
     private bool revealed;
     private Tilemap map;
     private Collider2D _collider;
+
+    private Meter fade = new(0, 0.5f, 0.5f);
 
     private void Start()
     {
         map = GetComponent<Tilemap>();
         _collider = GetComponent<Collider2D>();
+        homeColor = map.color;
     }
 
     private void Update()
     {
-        currentColor = Color.Lerp(currentColor, revealed ? Color.clear : Color.white, 0.5f);
+        if (revealed)
+            fade.FillOver(0.5f);
+        else
+            fade.EmptyOver(0.5f);
+
+        currentColor = Color.Lerp(homeColor, Color.clear, fade.Percent);
         map.color = currentColor;
     }
 

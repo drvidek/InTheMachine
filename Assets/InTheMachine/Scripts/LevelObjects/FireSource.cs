@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using QKit;
-public class FireSource : MonoBehaviour, IActivate, IFlammable
+public class FireSource : MonoBehaviour, IActivate, IFlammable, IElectrocutable
 {
     [SerializeField] private float length = 1;
     [SerializeField] private bool isLit;
@@ -115,5 +115,10 @@ public class FireSource : MonoBehaviour, IActivate, IFlammable
     public bool IsFlaming()
     {
         return isLit;
+    }
+
+    public void RecieveElectricity(Collider2D collider)
+    {
+        CatchFlame(collider);
     }
 }

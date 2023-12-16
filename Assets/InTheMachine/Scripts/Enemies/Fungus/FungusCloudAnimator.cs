@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FungusAnimator : EnemyAnimator
+public class FungusCloudAnimator : EnemyAnimator
 {
     protected override void Start()
     {

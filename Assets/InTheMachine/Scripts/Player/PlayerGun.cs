@@ -11,6 +11,7 @@ public class PlayerGun : Launcher
     private Player myPlayer;
     private PlayerAnimate myAnimator;
     private bool canShoot = true;
+    private bool delayingShot = false;
     private GunProfileType lastProfile;
     private float cost;
     private bool costOnShot;
@@ -18,7 +19,10 @@ public class PlayerGun : Launcher
     public Action<GunProfileType> onProfileChange;
     public Action<GunProfileType> onProfileUnlock;
 
+    public Vector3 Direction => GetDirection();
     public float Cost => cost;
+    public bool DelayingShot => delayingShot;
+    public GunProfileType CurrentProfile => currentProfile;
 
     public Vector3 SpawnPosition
     {
@@ -70,10 +74,11 @@ public class PlayerGun : Launcher
         myPlayer.onFlyExit += () => canShoot = true;
         myPlayer.onBoostEnter += () => canShoot = false;
         myPlayer.onBoostExit += () => canShoot = true;
+        myPlayer.onUltraBoostEnter += () => canShoot = false;
+        myPlayer.onUltraBoostExit += () => canShoot = true;
         myPlayer.onStunEnter += () => canShoot = false;
         myPlayer.onStunExit += () => canShoot = true;
         lastProfile = currentProfile;
-        myPlayer.onShootPress += () => TryToShoot();
 
         SetProfile(currentProfile);
 
@@ -85,7 +90,7 @@ public class PlayerGun : Launcher
         currentProfile =
             Input.GetKeyDown(KeyCode.Alpha1) ? GunProfileType.Air :
             Input.GetKeyDown(KeyCode.Alpha2) ? GunProfileType.Fire :
-            Input.GetKeyDown(KeyCode.Alpha3) ? GunProfileType.Air :
+            Input.GetKeyDown(KeyCode.Alpha3) ? GunProfileType.Elec :
             Input.GetKeyDown(KeyCode.Alpha4) ? GunProfileType.Air :
             currentProfile;
 
@@ -105,11 +110,9 @@ public class PlayerGun : Launcher
             return;
         }
 
-        if (costOnShot)
-        {
-            if (!Player.main.TryToUsePower(cost))
-                return;
-        }
+        if (!Player.main.TryToUsePower(cost * (costOnShot ? 1 : _lifetime / _speed)))
+            return;
+
         Projectile projectile = Instantiate(_projectilePrefab, SpawnPosition, Quaternion.identity, null);
         ApplyPropertiesToProjectile(projectile, direction);
 
@@ -117,7 +120,7 @@ public class PlayerGun : Launcher
 
     protected override bool CanShoot()
     {
-        return myPlayer.HasAbility(Player.Ability.Gun) && canShoot && !myPlayer.OutOfPower;
+        return myPlayer.HasAbility(Player.Ability.Gun) && canShoot && !delayingShot && !myPlayer.OutOfPower;
     }
 
     protected override Vector3 GetDirection()
@@ -129,7 +132,11 @@ public class PlayerGun : Launcher
 
     protected override void Reload()
     {
-
+        if (costOnShot)
+            return;
+        delayingShot = true;
+        Alarm delay = Alarm.GetAndPlay(_lifetime/_speed);
+        delay.onComplete = () => delayingShot = false;
     }
 
     private void SetProfile(GunProfileType profile)
@@ -148,7 +155,24 @@ public class PlayerGun : Launcher
         cost = gun.cost;
         costOnShot = gun.costOnShot;
 
+        if (costOnShot)
+        {
+            myPlayer.onShootPress += PlayerInputsShoot;
+            myPlayer.onShootHold -= PlayerInputsShoot;
+        }
+        else
+        {
+            myPlayer.onShootPress -= PlayerInputsShoot;
+            myPlayer.onShootHold += PlayerInputsShoot;
+        }
+
+
         onProfileChange?.Invoke(profile);
+    }
+
+    private void PlayerInputsShoot()
+    {
+        TryToShoot();
     }
 
     private void UnlockPak(Player.Ability ability)

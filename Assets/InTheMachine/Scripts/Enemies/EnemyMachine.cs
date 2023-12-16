@@ -1,16 +1,19 @@
+using QKit;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class EnemyMachine : AgentMachine
+public abstract class EnemyMachine : AgentMachine, IProjectileTarget
 {
     public enum EnemyState { Idle, Walk, Fly, Ascend, Descend, Attack, Die, Stun, Burn }
     [SerializeField] protected EnemyState _currentState;
+    [SerializeField] protected float cashWorth;
     [SerializeField] protected float contactDamage;
     [SerializeField] protected float _fric;
     [SerializeField] protected float _grv;
     [SerializeField] protected float stunTimeMin;
+    [SerializeField] protected float attackRange;
 
     #region Events
     public Action onIdleEnter;
@@ -46,6 +49,12 @@ public abstract class EnemyMachine : AgentMachine
     public EnemyState CurrentState => _currentState;
     public float ContactDamage => contactDamage;
     public bool IsAttacking => CurrentState == EnemyState.Attack;
+
+    public Vector3 DirectionToPlayer => QMath.Direction(transform.position, Player.main.Position);
+    protected bool playerInRange => Vector3.Distance(transform.position, Player.main.Position) < attackRange;
+    protected bool playerInSight => !Physics2D.Raycast(transform.position, DirectionToPlayer, attackRange, groundedMask);
+   
+    protected bool playerInRoom => RoomManager.main.currentRoom == RoomManager.main.GetRoom(transform);
 
     protected override void Start()
     {
@@ -404,7 +413,9 @@ public abstract class EnemyMachine : AgentMachine
     protected virtual void OnDieEnter()
     {
         rb.simulated = false;
-        rb.velocity = Vector2.zero;
+        if (rb.bodyType != RigidbodyType2D.Static)
+            rb.velocity = Vector2.zero;
+        CashManager.main.IncreaseCashBy(cashWorth);
         _targetVelocity = Vector2.zero;
     }
 
@@ -571,4 +582,12 @@ public abstract class EnemyMachine : AgentMachine
             IFlammable.ClearFireAndSmoke(burnEffect);
     }
 
+    protected virtual void GetStunned(Vector2 direction, float power)
+    {
+        ChangeStateTo(EnemyState.Stun);
+        _targetVelocity = direction * power;
+        rb.velocity = _targetVelocity;
+    }
+
+    public abstract void OnProjectileHit(Projectile projectile);
 }
