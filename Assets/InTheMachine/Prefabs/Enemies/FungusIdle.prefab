@@ -111,8 +111,10 @@ GameObject:
   - component: {fileID: 1046198487769962482}
   - component: {fileID: 2997610900860247197}
   - component: {fileID: 5768591578692800846}
+  - component: {fileID: 3841762946091663242}
   - component: {fileID: 6489557059932397547}
-  - component: {fileID: 558666859258316704}
+  - component: {fileID: -1788705795777787250}
+  - component: {fileID: 7974791650860353546}
   m_Layer: 7
   m_Name: FungusIdle
   m_TagString: Untagged
@@ -208,6 +210,27 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.8, y: 1}
   m_EdgeRadius: 0
+--- !u!95 &3841762946091663242
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8350449251952499582}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 9c0573349e7470a448c2e025c6890a5d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &6489557059932397547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -265,14 +288,17 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     _colorType: 0
+  showDebug: 0
   _currentState: 0
-  cashWorth: 10
-  contactDamage: 7
+  questID: 0
+  contactDamage: 0
   _fric: 0
   _grv: 0
   stunTimeMin: 0
+  attackRange: 0
   catchFlameTime: 0.5
---- !u!114 &558666859258316704
+  respawnLauncher: {fileID: -1788705795777787250}
+--- !u!114 &-1788705795777787250
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -281,7 +307,34 @@ MonoBehaviour:
   m_GameObject: {fileID: 8350449251952499582}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3878b59b22866004abda76e3497211e1, type: 3}
+  m_Script: {fileID: 11500000, guid: 730dd2cec65099c47a831238440f1d86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _size: 1
+  _speed: 12
+  _power: 1
+  _lifetime: 100
+  _count: 2
+  _spread: 60
+  _spawn: {fileID: 1046198487769962482}
+  _collidingLayer:
+    serializedVersion: 2
+    m_Bits: 5376
+  _piercingLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  _projectilePrefab: {fileID: 8368966783001793159, guid: 969608ab0ba274b498907ffd93289f35, type: 3}
+  spawn: 4
+--- !u!114 &7974791650860353546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8350449251952499582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d81a55c7473bf5408baa4f3b0a50b45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   myAgent: {fileID: 0}

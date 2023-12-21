@@ -11,6 +11,7 @@ public class Fuse : MonoBehaviour, IFlammable
     private bool burning;
     private bool canBurn = true;
     private GameObject burnEffect;
+    private Color baseColor;
 
     public void CatchFlame(Collider2D collider)
     {
@@ -29,12 +30,12 @@ public class Fuse : MonoBehaviour, IFlammable
         burning = false;
         canBurn = false;
 
-        Alarm readyToBurn = Alarm.GetAndPlay(burnTime * 2f);
+        Alarm readyToBurn = Alarm.GetAndPlay(burnTime * 10f);
         readyToBurn.onComplete = () => canBurn = true;
         if (burnEffect)
         {
             IFlammable.ClearFireAndSmoke(burnEffect);
-            Destroy(burnEffect,1f);
+            Destroy(burnEffect,burnTime * 2f);
         }
     }
 

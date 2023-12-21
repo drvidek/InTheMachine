@@ -38,7 +38,7 @@ public class Button : LevelToggle
         if (active && stayPressed)
             return;
 
-        if (Physics2D.OverlapBox(transform.position, Vector2.one, 0, blockingLayer))
+        if (Physics2D.OverlapBox(transform.position, Vector2.one*.75f, 0, blockingLayer))
             return;
 
         if (collision.isTrigger)

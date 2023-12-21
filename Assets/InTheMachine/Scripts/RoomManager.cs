@@ -5,7 +5,8 @@ using UnityEngine;
 public class RoomManager : MonoBehaviour
 {
     [SerializeField] protected Grid roomGrid;
-    [SerializeField] public Transform interactiblesGrid;
+    [SerializeField] public Grid environmentGrid;
+    [SerializeField] public Grid interactiblesGrid;
 
     #region Singleton + Awake
     private static RoomManager _singleton;

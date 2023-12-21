@@ -82,5 +82,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _collider: {fileID: 0}
   canExtinguish: 0
-  burnTime: 1
-  catchTime: 0.5
+  burnTime: 0.5
+  catchTime: 0.25

@@ -288,14 +288,16 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     _colorType: 0
+  showDebug: 0
   _currentState: 1
   cashWorth: 2
-  contactDamage: 8
+  contactDamage: 0
   _fric: 10
   _grv: 22
   stunTimeMin: 0
-  hardCollider: {fileID: 23597838642139603}
+  attackRange: 0
   _walkSpeed: 1
+  hardCollider: {fileID: 23597838642139603}
   turnLock: 0
 --- !u!114 &2312947636591606973
 MonoBehaviour:

@@ -1,3 +1,4 @@
+using QKit;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,7 +9,14 @@ public abstract class AgentAnimator : MonoBehaviour
     [SerializeField] protected SpriteRenderer spriteRenderer;
     [SerializeField] protected Animator animator;
     [SerializeField] protected PixelAligner pixelAligner;
-    
+
+    protected Color myBaseColor;
+
+    protected bool damageAnimationActive;
+
+    protected float damageFlashSpeed = 0.1f;
+
+
     // Start is called before the first frame update
     protected virtual void Start()
     {
@@ -20,7 +28,23 @@ public abstract class AgentAnimator : MonoBehaviour
             animator = GetComponent<Animator>();
         if (!pixelAligner)
             pixelAligner = GetComponentInChildren<PixelAligner>();
+        myBaseColor = spriteRenderer.color;
 
+        myAgent.onTakeDamage += (float f) =>
+        {
+            if (damageAnimationActive || f == 0)
+                return;
+
+            damageAnimationActive = true;
+            spriteRenderer.color = Color.red;
+            Alarm alarmA = Alarm.GetAndPlay(damageFlashSpeed);
+            alarmA.onComplete = () =>
+            {
+                spriteRenderer.color = myBaseColor;
+                Alarm alarmB = Alarm.GetAndPlay(damageFlashSpeed);
+                alarmB.onComplete = () => damageAnimationActive = false;
+            };
+        };
     }
 
     public static void Vibrate(PixelAligner pixelAligner, int amount)

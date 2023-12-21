@@ -80,6 +80,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e4321a898de78448a1a0959f2a595b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burnTime: 0.5
+  burnTime: 0.1
   burnWithSmoke: 0
   _collider: {fileID: 6717927065922593716}

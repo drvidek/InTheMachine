@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4490767586724926647}
   - component: {fileID: 5202662752509620319}
   - component: {fileID: 5327418702591238303}
+  - component: {fileID: 7251724173914314783}
   m_Layer: 7
   m_Name: FungusCloud
   m_TagString: Untagged
@@ -189,14 +190,16 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     _colorType: 0
+  showDebug: 0
   _currentState: 0
-  cashWorth: 10
-  contactDamage: 10
+  questID: 0
+  contactDamage: 1
   _fric: 0
   _grv: 0
   stunTimeMin: 0
-  catchFlameTime: 0.5
   attackRange: 3
+  catchFlameTime: 0.5
+  respawnLauncher: {fileID: 7251724173914314783}
   attackWindupTime: 1.5
   attackDuration: 2
   attackHitbox: {fileID: 4530551950165368456}
@@ -217,6 +220,33 @@ MonoBehaviour:
   spriteRenderer: {fileID: 0}
   animator: {fileID: 0}
   pixelAligner: {fileID: 0}
+--- !u!114 &7251724173914314783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4633124670607814627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 730dd2cec65099c47a831238440f1d86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _size: 1
+  _speed: 12
+  _power: 1
+  _lifetime: 100
+  _count: 2
+  _spread: 60
+  _spawn: {fileID: 1040775892136634677}
+  _collidingLayer:
+    serializedVersion: 2
+    m_Bits: 5376
+  _piercingLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  _projectilePrefab: {fileID: 8368966783001793159, guid: 969608ab0ba274b498907ffd93289f35, type: 3}
+  spawn: 5
 --- !u!1 &5730072821243808101
 GameObject:
   m_ObjectHideFlags: 0

@@ -128,8 +128,8 @@ MonoBehaviour:
   agentAnimator: {fileID: 0}
   healthMeter:
     _min: 0
-    _max: 5
-    _value: 5
+    _max: 2
+    _value: 2
     _rateUp: 1
     _rateDown: 1
     _colorMain: {r: 0, g: 1, b: 1, a: 1}
@@ -165,14 +165,16 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     _colorType: 0
+  showDebug: 0
   _currentState: 0
-  cashWorth: 5
-  contactDamage: 7
+  questID: 0
+  contactDamage: 0
   _fric: 0
   _grv: 0
   stunTimeMin: 0
   attackRange: 0
   catchFlameTime: 0.5
+  respawnLauncher: {fileID: 0}
 --- !u!114 &3499825110197669380
 MonoBehaviour:
   m_ObjectHideFlags: 0

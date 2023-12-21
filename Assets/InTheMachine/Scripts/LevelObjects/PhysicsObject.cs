@@ -18,7 +18,7 @@ public class PhysicsObject : MonoBehaviour
     {
         if (!rb)
             rb = GetComponent<Rigidbody2D>();
-        _collider = GetComponent<Collider2D>();
+        _collider = GetComponent<CompositeCollider2D>();
     }
 
     private void FixedUpdate()
@@ -51,7 +51,10 @@ public class PhysicsObject : MonoBehaviour
                 collision.GetContacts(list);
                 foreach (var contact in list)
                 {
-                    if (Mathf.Sign(contact.point.x - _collider.bounds.center.x) == slidingDirection.x && contact.point.y > _collider.bounds.min.y)
+                    Debug.Log(contact.point + $" {_collider.bounds.min.y}/{_collider.bounds.max.y}");
+                    if (Mathf.Sign(contact.point.x - _collider.bounds.center.x) == slidingDirection.x &&
+                        contact.point.y > _collider.bounds.min.y + 0.1f &&
+                        contact.point.y < _collider.bounds.max.y - 0.1f)
                     {
                         EndSlide();
                         return;

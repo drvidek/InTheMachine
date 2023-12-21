@@ -43,11 +43,16 @@ public abstract class AgentMachine : MonoBehaviour
 
     protected virtual void Update()
     {
+        if (!GameManager.IsPlaying)
+            return;
         CheckForExternalVelocity();
     }
 
     protected virtual void FixedUpdate()
     {
+        if (!GameManager.IsPlaying)
+            return;
+
         if (_rigidbody.bodyType == RigidbodyType2D.Static)
             return;
 

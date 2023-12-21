@@ -62,11 +62,7 @@ namespace QKit
             {
                 Debug.LogError($"No projectile prefab is installed in {gameObject.name}'s launcher.");
                 return;
-                //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                //Rigidbody rb = sphere.AddComponent<Rigidbody>();
-                //rb.useGravity = false;
-                //rb.collider.isTrigger = true;
-                //_projectilePrefab = sphere;
+               
             }
 
             Projectile projectile = Instantiate(_projectilePrefab, _spawn.position, Quaternion.identity, null);

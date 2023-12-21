@@ -6,7 +6,8 @@ using UnityEngine;
 public class Fungus : EnemyStatic, IFlammable
 {
     [SerializeField] protected float catchFlameTime;
-    private Meter catchFlame = new(0, 1, 0);
+    [SerializeField] protected Launcher respawnLauncher;
+    protected Meter catchFlame = new(0, 1, 0);
 
     protected override void Start()
     {
@@ -16,7 +17,7 @@ public class Fungus : EnemyStatic, IFlammable
 
     protected override void OnBurnStay()
     {
-        PropagateFlame(_collider);
+        PropagateFlame(transform.position,Vector3.one);
         TakeDamage(5f * Time.fixedDeltaTime);
         base.OnBurnStay();
     }
@@ -54,11 +55,17 @@ public class Fungus : EnemyStatic, IFlammable
 
     public void PropagateFlame(Vector3 position, Vector2 size)
     {
-
+        IFlammable thisFlam = GetComponentInChildren<IFlammable>();
+        foreach (var flammable in IFlammable.FindFlammableNeighbours(position,size))
+        {
+            if (flammable != thisFlam)
+                flammable.CatchFlame(_collider);
+        }
     }
 
     protected override void OnDieEnter()
     {
+        respawnLauncher?.TryToShoot();
         base.OnDieEnter();
     }
 

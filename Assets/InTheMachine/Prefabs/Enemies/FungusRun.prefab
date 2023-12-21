@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 918984281555017676}
   - component: {fileID: 3432367480466790257}
   - component: {fileID: 3459557353785722790}
+  - component: {fileID: 7919386355668082679}
   m_Layer: 7
   m_Name: FungusRun
   m_TagString: Untagged
@@ -178,14 +179,16 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     _colorType: 0
+  showDebug: 0
   _currentState: 0
-  cashWorth: 5
-  contactDamage: 10
+  questID: 0
+  contactDamage: 1
   _fric: 15
   _grv: 20
   stunTimeMin: 0
   attackRange: 5
   catchFlameTime: 0.5
+  respawnLauncher: {fileID: 7919386355668082679}
   walkSpeed: 7
   accel: 8
   jumpPower: 5
@@ -206,6 +209,33 @@ MonoBehaviour:
   animator: {fileID: 0}
   pixelAligner: {fileID: 0}
   animRunSpeed: 1.5
+--- !u!114 &7919386355668082679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2609677827530991008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 730dd2cec65099c47a831238440f1d86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _size: 1
+  _speed: 12
+  _power: 1
+  _lifetime: 100
+  _count: 2
+  _spread: 60
+  _spawn: {fileID: 2713345192453431105}
+  _collidingLayer:
+    serializedVersion: 2
+    m_Bits: 5376
+  _piercingLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  _projectilePrefab: {fileID: 8368966783001793159, guid: 969608ab0ba274b498907ffd93289f35, type: 3}
+  spawn: 7
 --- !u!1 &5665840390400947626
 GameObject:
   m_ObjectHideFlags: 0

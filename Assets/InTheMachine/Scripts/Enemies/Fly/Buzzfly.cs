@@ -10,11 +10,7 @@ public class Buzzfly : Fly
 
     private Alarm attackDelay;
     private float currentSpeed;
-
     private Vector3 direction;
-
-    private float currentDistanceToPlayer => Vector3.Distance(transform.position, Player.main.Position);
-    
 
     protected override void Start()
     {

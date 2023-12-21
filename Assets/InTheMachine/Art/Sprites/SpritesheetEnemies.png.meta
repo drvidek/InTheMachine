@@ -220,7 +220,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpritesheetEnemies_4
+      name: FireDroneClosed0
       rect:
         serializedVersion: 2
         x: 64
@@ -241,7 +241,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpritesheetEnemies_5
+      name: FireDroneClosed1
       rect:
         serializedVersion: 2
         x: 80
@@ -262,7 +262,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpritesheetEnemies_6
+      name: FireDroneOpen0
       rect:
         serializedVersion: 2
         x: 96
@@ -283,7 +283,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpritesheetEnemies_7
+      name: FireDroneOpen1
       rect:
         serializedVersion: 2
         x: 112
@@ -583,7 +583,7 @@ TextureImporter:
         x: 80
         y: 48
         width: 16
-        height: 16
+        height: 6
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1102,7 +1102,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ShroomSpore
+      name: ShroomSpore1
       rect:
         serializedVersion: 2
         x: 96
@@ -1135,6 +1135,10 @@ TextureImporter:
     nameFileIdTable:
       Beetle0: 172012922
       Beetle1: -2085413680
+      FireDroneClosed0: -1593439552
+      FireDroneClosed1: 332659859
+      FireDroneOpen0: -663355562
+      FireDroneOpen1: -1004528308
       Fish0: -1231070615
       Fish1: 1060852063
       FishSpear0: -1011474207
@@ -1155,8 +1159,8 @@ TextureImporter:
       ShroomCloud1: 1862430551
       ShroomIdle0: 317286728
       ShroomIdle1: 1779684092
-      ShroomSpore: -840911511
       ShroomSpore0: 2004127259
+      ShroomSpore1: -840911511
       ShroomSpore2: -1738484751
       ShroomWall0: -1866457708
       ShroomWall1: -2082585755
@@ -1176,10 +1180,6 @@ TextureImporter:
       SpritesheetEnemies_25: 348133382
       SpritesheetEnemies_26: 477622832
       SpritesheetEnemies_3: 177744511
-      SpritesheetEnemies_4: -1593439552
-      SpritesheetEnemies_5: 332659859
-      SpritesheetEnemies_6: -663355562
-      SpritesheetEnemies_7: -1004528308
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

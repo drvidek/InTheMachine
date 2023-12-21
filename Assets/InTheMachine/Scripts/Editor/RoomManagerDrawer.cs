@@ -41,9 +41,9 @@ public class RoomManagerEditor : Editor
     {
         RoomManager rm = target as RoomManager;
 
-        for (int i = 0; i < rm.interactiblesGrid.childCount; i++)
+        for (int i = 0; i < rm.interactiblesGrid.transform.childCount; i++)
         {
-            Transform currentChild = rm.interactiblesGrid.GetChild(i);
+            Transform currentChild = rm.interactiblesGrid.transform.GetChild(i);
             if (currentChild.tag == "Room")
                 continue;
 
@@ -67,7 +67,7 @@ public class RoomManagerEditor : Editor
         go.name = name;
         go.tag = "Room";
         go.transform.position = rm.RoomGrid.CellToWorld(roomCode);
-        go.transform.parent = rm.interactiblesGrid;
+        go.transform.parent = rm.interactiblesGrid.transform;
 
         return go;
     }

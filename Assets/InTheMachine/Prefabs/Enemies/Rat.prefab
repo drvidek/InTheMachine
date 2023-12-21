@@ -288,14 +288,16 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     _colorType: 0
+  showDebug: 0
   _currentState: 0
-  cashWorth: 3
-  contactDamage: 7
+  questID: 0
+  contactDamage: 0
   _fric: 15
   _grv: 15
   stunTimeMin: 1
-  _walkSpeed: 5
-  jumpPower: 5
+  attackRange: 0
+  _walkSpeed: 8
+  jumpPower: 2
   jumpDelayTime: 0.25
 --- !u!114 &7725364686676554133
 MonoBehaviour:

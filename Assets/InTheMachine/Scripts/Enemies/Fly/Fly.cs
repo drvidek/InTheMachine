@@ -133,8 +133,9 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
         _targetVelocity += (Vector2)direction * speed * 0.25f;
     }
 
-    private void OnDrawGizmos()
+    protected override void OnDrawGizmos()
     {
+        base.OnDrawGizmos();
         if (targetDestination != Vector3.zero)
             Gizmos.DrawLine(transform.position, targetDestination);
     }

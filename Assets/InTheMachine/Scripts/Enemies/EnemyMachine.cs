@@ -7,8 +7,9 @@ using UnityEngine;
 public abstract class EnemyMachine : AgentMachine, IProjectileTarget
 {
     public enum EnemyState { Idle, Walk, Fly, Ascend, Descend, Attack, Die, Stun, Burn }
+    [SerializeField] private bool showDebug;
     [SerializeField] protected EnemyState _currentState;
-    [SerializeField] protected float cashWorth;
+    [SerializeField] protected QuestID questID;
     [SerializeField] protected float contactDamage;
     [SerializeField] protected float _fric;
     [SerializeField] protected float _grv;
@@ -51,9 +52,9 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     public bool IsAttacking => CurrentState == EnemyState.Attack;
 
     public Vector3 DirectionToPlayer => QMath.Direction(transform.position, Player.main.Position);
-    protected bool playerInRange => Vector3.Distance(transform.position, Player.main.Position) < attackRange;
-    protected bool playerInSight => !Physics2D.Raycast(transform.position, DirectionToPlayer, attackRange, groundedMask);
-   
+    protected float currentDistanceToPlayer => Vector3.Distance(transform.position, Player.main.Position);
+    protected bool playerInRange => currentDistanceToPlayer < attackRange;
+    protected bool playerInSight => !Physics2D.Raycast(transform.position, DirectionToPlayer, currentDistanceToPlayer, groundedMask);
     protected bool playerInRoom => RoomManager.main.currentRoom == RoomManager.main.GetRoom(transform);
 
     protected override void Start()
@@ -415,7 +416,8 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
         rb.simulated = false;
         if (rb.bodyType != RigidbodyType2D.Static)
             rb.velocity = Vector2.zero;
-        CashManager.main.IncreaseCashBy(cashWorth);
+        if (questID != QuestID.Null)
+            QuestManager.main.CompleteQuest(questID);
         _targetVelocity = Vector2.zero;
     }
 
@@ -570,8 +572,7 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
         burning = true;
         if (!burnEffect)
         {
-            burnEffect = Instantiate(IFlammable.psysObjFire, transform);
-            Instantiate(IFlammable.psysObjSmoke, burnEffect.transform);
+            burnEffect = IFlammable.InstantiateFireAndSmoke(transform);
         }
     }
 
@@ -590,4 +591,18 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     }
 
     public abstract void OnProjectileHit(Projectile projectile);
+
+    protected virtual void OnDrawGizmos()
+    {
+        if (showDebug && Player.main)
+        {
+            Gizmos.color = CheckAttackCondition() ? Color.green : !playerInRange ? Color.yellow : !playerInSight ? Color.red : Color.cyan;
+            Gizmos.DrawLine(transform.position, Player.main.Position);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, DirectionToPlayer, attackRange, groundedMask);
+            if (hit)
+            {
+                Gizmos.DrawCube(hit.point, Vector3.one * 0.1f);
+            }
+        }
+    }
 }

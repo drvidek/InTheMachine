@@ -319,12 +319,14 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     _colorType: 0
+  showDebug: 0
   _currentState: 0
-  cashWorth: 5
-  contactDamage: 5
+  questID: 0
+  contactDamage: 0
   _fric: 0
   _grv: 0
   stunTimeMin: 0
+  attackRange: 0
   spawnAlarm:
     _name: 
     _id: 0

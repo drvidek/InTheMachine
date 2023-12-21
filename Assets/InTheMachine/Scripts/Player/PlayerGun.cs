@@ -80,23 +80,25 @@ public class PlayerGun : Launcher
         myPlayer.onStunExit += () => canShoot = true;
         lastProfile = currentProfile;
 
-        SetProfile(currentProfile);
+        SetCurrentProfile(currentProfile, myPlayer.AllAbilities);
 
         myPlayer.onAbilityUnlock += UnlockPak;
     }
 
     private void Update()
     {
-        currentProfile =
-            Input.GetKeyDown(KeyCode.Alpha1) ? GunProfileType.Air :
-            Input.GetKeyDown(KeyCode.Alpha2) ? GunProfileType.Fire :
-            Input.GetKeyDown(KeyCode.Alpha3) ? GunProfileType.Elec :
-            Input.GetKeyDown(KeyCode.Alpha4) ? GunProfileType.Air :
+        float swapH = Input.GetAxis("SwapH");
+        float swapV = Input.GetAxis("SwapV");
+        GunProfileType newProfile =
+            swapV > 0 ? GunProfileType.Air :
+             swapH < 0 ? GunProfileType.Fire :
+            swapV < 0 ? GunProfileType.Elec :
+            swapH > 0 ? GunProfileType.Air :
             currentProfile;
 
-        if (lastProfile != currentProfile)
+        if (lastProfile != newProfile)
         {
-            SetProfile(currentProfile);
+            SetCurrentProfile(newProfile);
             lastProfile = currentProfile;
         }
     }
@@ -110,7 +112,7 @@ public class PlayerGun : Launcher
             return;
         }
 
-        if (!Player.main.TryToUsePower(cost * (costOnShot ? 1 : _lifetime / _speed)))
+        if (!Player.main.TryToUsePower(cost * (costOnShot ? 1 : _lifetime / _speed / 2f)))
             return;
 
         Projectile projectile = Instantiate(_projectilePrefab, SpawnPosition, Quaternion.identity, null);
@@ -135,15 +137,20 @@ public class PlayerGun : Launcher
         if (costOnShot)
             return;
         delayingShot = true;
-        Alarm delay = Alarm.GetAndPlay(_lifetime/_speed);
+        Alarm delay = Alarm.GetAndPlay(_lifetime / _speed / 2f);
         delay.onComplete = () => delayingShot = false;
     }
 
-    private void SetProfile(GunProfileType profile)
+    private void SetCurrentProfile(GunProfileType profile, bool force = false)
     {
-        if (!availableTypes.Contains(profile))
-            return;
+        Debug.Log("Setting profile");
 
+        if (!availableTypes.Contains(profile) || currentProfile == profile)
+        {
+            if (!force)
+                return;
+        }
+        currentProfile = profile;
         GunProfile gun = gunProfile[(int)profile];
         _size = gun.size;
         _speed = gun.speed;
@@ -155,14 +162,15 @@ public class PlayerGun : Launcher
         cost = gun.cost;
         costOnShot = gun.costOnShot;
 
+        myPlayer.onShootHold -= PlayerInputsShoot;
+        myPlayer.onShootPress -= PlayerInputsShoot;
+
         if (costOnShot)
         {
             myPlayer.onShootPress += PlayerInputsShoot;
-            myPlayer.onShootHold -= PlayerInputsShoot;
         }
         else
         {
-            myPlayer.onShootPress -= PlayerInputsShoot;
             myPlayer.onShootHold += PlayerInputsShoot;
         }
 
@@ -188,6 +196,6 @@ public class PlayerGun : Launcher
     {
         availableTypes.Add(type);
         onProfileUnlock?.Invoke(type);
-        SetProfile(type);
+        SetCurrentProfile(type, true);
     }
 }

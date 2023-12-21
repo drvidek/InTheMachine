@@ -892,7 +892,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_57
+      name: Timer0
       rect:
         serializedVersion: 2
         x: 0
@@ -913,7 +913,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_58
+      name: Timer1
       rect:
         serializedVersion: 2
         x: 16
@@ -934,7 +934,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_59
+      name: Timer2
       rect:
         serializedVersion: 2
         x: 32
@@ -955,7 +955,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_60
+      name: Timer3
       rect:
         serializedVersion: 2
         x: 48
@@ -976,7 +976,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MossGround0
+      name: Timer4
       rect:
         serializedVersion: 2
         x: 64
@@ -1102,7 +1102,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_67
+      name: Monitor1
       rect:
         serializedVersion: 2
         x: 0
@@ -1123,7 +1123,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_68
+      name: Monitor2
       rect:
         serializedVersion: 2
         x: 16
@@ -1144,7 +1144,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_69
+      name: Monitor3
       rect:
         serializedVersion: 2
         x: 32
@@ -1165,7 +1165,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_70
+      name: Monitor0
       rect:
         serializedVersion: 2
         x: 48
@@ -1921,7 +1921,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_85
+      name: Ash
       rect:
         serializedVersion: 2
         x: 128
@@ -3086,9 +3086,13 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      Ash: 90325341
+      Monitor0: 520838503
+      Monitor1: -2116036166
+      Monitor2: 395328457
+      Monitor3: 1435569986
       MossCeiling0: -670138246
       MossCeiling1: -220253581
-      MossGround0: 327372278
       MossGround1: -59916214
       TilesetEnvironment_10: 95239072
       TilesetEnvironment_11: -353825013
@@ -3143,27 +3147,18 @@ TextureImporter:
       TilesetEnvironment_54: 638911469
       TilesetEnvironment_55: 1102022737
       TilesetEnvironment_56: 58806664
-      TilesetEnvironment_57: 1100163533
-      TilesetEnvironment_58: -1583893576
-      TilesetEnvironment_59: -1788322364
       TilesetEnvironment_6: 1574943003
-      TilesetEnvironment_60: 1400901949
       TilesetEnvironment_63: 50803107
       TilesetEnvironment_64: 141784528
       TilesetEnvironment_65: -1388659400
       TilesetEnvironment_66: -42204568
-      TilesetEnvironment_67: -2116036166
-      TilesetEnvironment_68: 395328457
-      TilesetEnvironment_69: 1435569986
       TilesetEnvironment_7: 1473367495
-      TilesetEnvironment_70: 520838503
       TilesetEnvironment_73: 1221166841
       TilesetEnvironment_74: 1776749278
       TilesetEnvironment_75: -1415075470
       TilesetEnvironment_76: -38399577
       TilesetEnvironment_8: -438632413
       TilesetEnvironment_84: -539143867
-      TilesetEnvironment_85: 90325341
       TilesetEnvironment_86: -1044944878
       TilesetEnvironment_9: -815005561
       TilesetEnvironment_90: -2073621399
@@ -3171,6 +3166,11 @@ TextureImporter:
       TilesetEnvironment_95: -644856801
       TilesetEnvironment_97: 2057486466
       TilesetEnvironment_98: -1374626637
+      Timer0: 1100163533
+      Timer1: -1583893576
+      Timer2: -1788322364
+      Timer3: 1400901949
+      Timer4: 327372278
       spButton: -1675052462
       spButtonActive: 1976051175
       spCobwebBL: -707051332

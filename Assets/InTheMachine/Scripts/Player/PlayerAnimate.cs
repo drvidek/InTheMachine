@@ -13,6 +13,7 @@ public class PlayerAnimate : AgentAnimator
     private PlayerGun myGun;
     private PixelAligner pakPixelAligner;
     private float pakOffsetBase;
+    private float flashTime;
 
     public Action<bool> onPlayerFlip;
     public int PakAimUpOffset => pakAimUpYOffset;
@@ -69,7 +70,11 @@ public class PlayerAnimate : AgentAnimator
         myPlayer.onWalkEnter += () => animator.SetBool("IsWalking", true);
         myPlayer.onWalkExit += () => animator.SetBool("IsWalking", false);
         myPlayer.onStunEnter += () => { animator.SetBool("IsStunned", true); pakPixelAligner.SetOffset(Vector2.zero); };
-        myPlayer.onStunExit += () => animator.SetBool("IsStunned", false);
+        myPlayer.onStunExit += () =>
+        {
+            animator.SetBool("IsStunned", false);
+
+        };
         myGun.onShoot += () => animator.SetTrigger("Shoot");
         AnimatePakForward(true);
 
@@ -95,8 +100,23 @@ public class PlayerAnimate : AgentAnimator
         AnimatePlayerDirection(updateHor, myPlayer.UserInputDir.x < 0);
         AnimatePakForward(updateHor);
         AnimatePakAimUp(myPlayer.UserInputDir.y > 0.5 && !myPlayer.IsFlying);
+        if (myPlayer.IFramesActive)
+        {
+            flashTime += Time.deltaTime;
+            if (flashTime > 0.08f)
+            {
+                flashTime = 0;
+                spriteRenderer.color = spriteRenderer.color == myBaseColor ? Color.clear : myBaseColor;
+            }
+        }
+        else
+        {
+            flashTime = 0;
+            spriteRenderer.color = myBaseColor;
+        }
     }
 
+    
     private void AnimatePakAimUp(bool aimUp)
     {
         if (aimUp)

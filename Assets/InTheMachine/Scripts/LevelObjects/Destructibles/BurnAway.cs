@@ -61,7 +61,10 @@ public class BurnAway : MonoBehaviour, IFlammable
         if (isBurning)
             return;
 
-        catchFlame.FillOver(catchTime, true, true, true);
+        if (collider.GetComponent<Fuse>())
+            catchFlame.Fill();
+        else
+            catchFlame.FillOver(catchTime, true, true, true);
     }
 
     public void DouseFlame()

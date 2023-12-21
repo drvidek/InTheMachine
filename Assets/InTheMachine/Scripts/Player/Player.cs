@@ -25,6 +25,8 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     [SerializeField] private TractorBeam beam;
     [SerializeField] private float powerChargeTime;
     [SerializeField] private Meter powerMeter;
+    [SerializeField] private float iframeLength = 1f;
+    [SerializeField] private Meter repairMeter;
     private float _targetHorSpeed, _fric, _accel, _grav;
     private bool usingPower, outOfPower;
     private Vector3 boostDirection;
@@ -32,7 +34,9 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     private Alarm coyoteTime;
     private Alarm triedToJump;
     private Alarm stunMinAlarm;
+    private Alarm iframesAlarm;
 
+    private Vector3 startPosition;
 
     private float _currentGrav => _grav * Time.fixedDeltaTime;
 
@@ -42,7 +46,10 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         public Vector2 direction;
         public bool jump;
         public bool shoot;
-        public bool action;
+        public bool boost;
+        public bool heal;
+        public bool interact;
+        public bool special;
     }
     private Vector2 _userInputDir;
     private bool[] _userInputAction = new bool[3];
@@ -53,10 +60,13 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         inputs.direction = _userInputDir;
         inputs.jump = _userInputAction[0];
         inputs.shoot = _userInputAction[1];
-        inputs.action = _userInputAction[2];
+        inputs.boost = _userInputAction[2];
+        inputs.heal = _userInputAction[3];
+        inputs.interact = _userInputAction[4];
+        inputs.special = _userInputAction[5];
 
         lastInput = inputs;
-        _userInputAction = new bool[3] { Input.GetButton("Jump"), Input.GetButton("Fire1"), Input.GetButton("Fire2") };
+        _userInputAction = new bool[6] { Input.GetButton("Jump"), Input.GetButton("Shoot"), Input.GetButton("Boost"), Input.GetButton("Heal"), Input.GetButton("Interact"), Input.GetButton("Special") };
     }
 
     #region Events
@@ -67,9 +77,18 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     public Action onShootPress;
     public Action onShootHold;
     public Action onShootRelease;
-    public Action onActionPress;
-    public Action onActionHold;
-    public Action onActionRelease;
+    public Action onBoostPress;
+    public Action onBoostHold;
+    public Action onBoostRelease;
+    public Action onHealPress;
+    public Action onHealHold;
+    public Action onHealRelease;
+    public Action onInteractPress;
+    public Action onInteractHold;
+    public Action onInteractRelease;
+    public Action onSpecialPress;
+    public Action onSpecialHold;
+    public Action onSpecialRelease;
     public Action onIdleEnter;
     public Action onIdleStay;
     public Action onIdleExit;
@@ -102,13 +121,20 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     public Action onBurnExit;
     #endregion
 
+
+    public bool AllAbilities => allAbilities;
+
     public bool IsGrounded => Physics2D.CapsuleCast(transform.position + (Vector3)_collider.offset, CapsuleCollider.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.02f, groundedMask);
     public bool IsStunned => CurrentState == PlayerState.Stun;
     public bool IsBoosting => CurrentState == PlayerState.Boost || CurrentState == PlayerState.UltraBoost;
+    public bool IFramesActive => iframesAlarm.IsPlaying;
+    public bool IsVulnerable => !IsBoosting && !IsStunned && !IFramesActive;
     public Meter PowerMeter => powerMeter;
     public bool OutOfPower => outOfPower;
     public CapsuleCollider2D CapsuleCollider => _collider as CapsuleCollider2D;
 
+    public float CurrentHealth => healthMeter.Value;
+    public float MaxHealth => healthMeter.Max;
 
     public PlayerState CurrentState => _currentState;
     public Vector3 Position => transform.position;
@@ -124,9 +150,13 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     public bool ShootHold => _userInputAction[1] && lastInput.shoot;
     public bool ShootRelease => !_userInputAction[1] && lastInput.shoot;
 
-    public bool ActionPress => _userInputAction[2] && !lastInput.action;
-    public bool ActionHold => _userInputAction[2] && lastInput.action;
-    public bool ActionRelease => !_userInputAction[2] && lastInput.action;
+    public bool BoostPress => _userInputAction[2] && !lastInput.boost;
+    public bool BoostHold => _userInputAction[2] && lastInput.boost;
+    public bool BoostRelease => !_userInputAction[2] && lastInput.boost;
+
+    public bool InteractPress => _userInputAction[2] && !lastInput.interact;
+    public bool InteractHold => _userInputAction[2] && lastInput.interact;
+    public bool InteractRelease => !_userInputAction[2] && lastInput.interact;
 
     public bool IsFlying => CurrentState == PlayerState.Fly;
     public bool BeamActive => beam.Active;
@@ -161,29 +191,41 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     {
         base.Start();
         _targetHorSpeed = _walkSpeed;
-        onActionPress += () => TryToBoost();
+        onBoostPress += () => TryToBoost();
         coyoteTime = Alarm.Get(_coyoteSec, false, false);
         triedToJump = Alarm.Get(_jumpInputAllowance, false, false);
         stunMinAlarm = Alarm.Get(stunTimeMin, false, false);
-
+        iframesAlarm = Alarm.Get(iframeLength, false, false);
+        startPosition = transform.position;
         powerMeter.onMin += () => { outOfPower = true; };
         powerMeter.onMax += () => { outOfPower = false; };
+
+        healthMeter.onMin += () =>
+        {
+            transform.position = Checkpoint.Current != null ? Checkpoint.Current.Position : startPosition;
+            healthMeter.Fill();
+        };
 
         NextState();
     }
     protected override void Update()
     {
+        if (!GameManager.IsPlaying)
+            return;
         base.Update();
         _userInputAction[0] = Input.GetButton("Jump") || _userInputAction[0];
-        _userInputAction[1] = Input.GetButton("Fire1") || _userInputAction[1];
-        _userInputAction[2] = Input.GetButton("Fire2") || _userInputAction[2];
+        _userInputAction[1] = Input.GetButton("Shoot") || _userInputAction[1];
+        _userInputAction[2] = Input.GetButton("Boost") || _userInputAction[2];
         _userInputDir = new(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
     }
 
     override protected void FixedUpdate()
     {
+        if (!GameManager.IsPlaying)
+            return;
         base.FixedUpdate();
+
 
         if (ShootPress)
             onShootPress?.Invoke();
@@ -191,12 +233,35 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             onShootHold?.Invoke();
         if (ShootRelease)
             onShootRelease?.Invoke();
-        if (ActionPress)
-            onActionPress?.Invoke();
-        if (ActionHold)
-            onActionHold?.Invoke();
-        if (ActionRelease)
-            onActionRelease?.Invoke();
+        
+        if (BoostPress)
+            onBoostPress?.Invoke();
+        if (BoostHold)
+            onBoostHold?.Invoke();
+        if (BoostRelease)
+            onBoostRelease?.Invoke();
+
+        if (JumpPress)
+            onJumpPress?.Invoke();
+        if (JumpHold)
+            onJumpHold?.Invoke();
+        if (JumpRelease)
+            onJumpRelease?.Invoke();
+
+        if (InteractPress)
+            onInteractPress?.Invoke();
+        if (InteractHold)
+            onInteractHold?.Invoke();
+        if (InteractRelease)
+            onInteractRelease?.Invoke();
+
+        if (SpecialPress)
+            onSpecialPress?.Invoke();
+        if (SpecialHold)
+            onSpecialHold?.Invoke();
+        if (SpecialRelease)
+            onSpecialRelease?.Invoke();
+
         if (JumpPress)
             onJumpPress?.Invoke();
         if (JumpHold)
@@ -237,9 +302,10 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         while (_currentState == PlayerState.Idle)
         {
             //state behaviour here
-
+            
             OnIdleStay();
             onIdleStay?.Invoke();
+
             //wait a frame
             yield return waitForFixedUpdate;
         }
@@ -297,7 +363,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         while (_currentState == PlayerState.Walk)
         {
             //state behaviour here
-
+            
             OnWalkStay();
             onWalkStay?.Invoke();
             //wait a frame
@@ -360,7 +426,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         while (_currentState == PlayerState.Ascend)
         {
             //state behaviour here
-
+            
             OnAscendStay();
             onAscendStay?.Invoke();
             //wait a frame
@@ -419,7 +485,10 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         if (_hangTime > 0)
         {
             hang.Play();
-            hang.onComplete = () => ChangeStateTo(PlayerState.Descend);
+            hang.onComplete = () =>
+            {
+                if (_currentState == PlayerState.Hang) ChangeStateTo(PlayerState.Descend);
+            };
         }
         else
             ChangeStateTo(PlayerState.Descend);
@@ -427,7 +496,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         while (_currentState == PlayerState.Hang)
         {
             //state behaviour here
-
+            
             OnHangStay();
             onHangStay?.Invoke();
             //wait a frame
@@ -483,7 +552,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         while (_currentState == PlayerState.Descend)
         {
             //state behaviour here
-
+            
             OnDescendStay();
             onDescendStay?.Invoke();
             //wait a frame
@@ -654,7 +723,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     private void OnBoostExit()
     {
         _targetVelocity *= postBoostVelocityRate;
-        if (HasAbility(Ability.UltraBoost) && ActionHold)
+        if (HasAbility(Ability.UltraBoost) && BoostHold)
             ChangeStateTo(PlayerState.UltraBoost);
     }
 
@@ -697,7 +766,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     private void OnUltraBoostStay()
     {
         MoveInDirectionAtSpeed(boostDirection, boostSpeed * 1.25f);
-        if (!ActionHold || !TryToUsePower(boostCost * 2f * Time.fixedDeltaTime))
+        if (!BoostHold || !TryToUsePower(boostCost * 2f * Time.fixedDeltaTime))
             ChangeStateTo(PlayerState.Idle);
         //set our next state to...
         PlayerState nextState =
@@ -753,6 +822,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     {
         MoveVerticallyWithGravity();
         MoveHorizontallyWithInput();
+        iframesAlarm.ResetAndPlay();
         //set our next state to...
         PlayerState nextState =
             IsGrounded && stunMinAlarm.IsStopped ? PlayerState.Idle :
@@ -1028,15 +1098,21 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             }
             c.Collect();
         }
-        if (collision.attachedRigidbody && collision.attachedRigidbody.TryGetComponent<EnemyMachine>(out EnemyMachine enemy))
+
+        if (IsVulnerable && collision.attachedRigidbody && collision.gameObject.layer == 7)
         {
-            GetStunned(collision, enemy.ContactDamage);
+            if (collision.attachedRigidbody.TryGetComponent<EnemyMachine>(out EnemyMachine enemy))
+                TakeDamage(enemy.ContactDamage);
+            if (collision.attachedRigidbody.TryGetComponent<Projectile>(out Projectile p))
+                TakeDamage(p.Power);
+
+            GetStunned(collision, 10f);
         }
     }
 
     public void GetStunned(Collider2D stunSource, float stunPower)
     {
-        if (IsStunned || IsBoosting)
+        if (!IsVulnerable)
         {
             return;
         }
@@ -1063,8 +1139,11 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
 
     public void CatchFlame(Collider2D collider)
     {
-        if (collider.gameObject.layer != gameObject.layer)
-            GetStunned(collider, 12f);
+        if (IsVulnerable && collider.gameObject.layer != gameObject.layer)
+        {
+            TakeDamage(1f);
+            GetStunned(collider, 10f);
+        }
     }
 
     public void DouseFlame()
@@ -1079,7 +1158,10 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
 
     public void RecieveElectricity(Collider2D collider)
     {
-        if (collider.gameObject.layer != gameObject.layer)
-            GetStunned(collider, 15f);
+        if (IsVulnerable && collider.gameObject.layer != gameObject.layer)
+        {
+            TakeDamage(1f);
+            GetStunned(collider, 10f);
+        }
     }
 }

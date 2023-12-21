@@ -79,6 +79,23 @@ public class FungusJump : Fungus
 
     }
 
+    protected override void OnBurnEnter()
+    {
+        currentSpeed = rb.velocity.y;
+        base.OnBurnEnter();
+    }
+
+    protected override void OnBurnStay()
+    {
+        currentSpeed -= _fric * Time.fixedDeltaTime;
+        if (Physics2D.BoxCast(transform.position, _collider.bounds.size, 0, Vector2.down, 0.02f, groundedMask))
+        {
+            currentSpeed = 0;
+        }
+        Move(new(0, currentSpeed), 1);
+            base.OnBurnStay();
+    }
+
     protected override void OnStunEnter()
     {
         _targetVelocity = Vector2.zero;

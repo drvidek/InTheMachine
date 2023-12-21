@@ -109,17 +109,5 @@ public class FungusRun : Fungus
         return playerInRange && playerInRoom && playerInSight;
     }
 
-    private void OnDrawGizmos()
-    {
-        if (Player.main)
-        {
-            Gizmos.color = CheckAttackCondition() ? Color.green : !playerInRange ? Color.yellow : !playerInSight ? Color.red : Color.cyan;
-            Gizmos.DrawLine(transform.position, Player.main.Position);
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, Player.main.Position, attackRange, groundedMask);
-            if (hit)
-            {
-                Gizmos.DrawCube(hit.point, Vector3.one * 0.1f);
-            }
-        }
-    }
+    
 }

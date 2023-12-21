@@ -21,6 +21,6 @@ public class Debris : MonoBehaviour, IProjectileTarget
         transform.GetChild(0).gameObject.SetActive(false);
         psysDust.Play();
         Destroy(gameObject, 1f);
-        CashManager.main.IncreaseCashBy(1);
+        QuestManager.main.CompleteQuest(QuestID.Clean);
     }
 }

@@ -9,10 +9,14 @@ public class EnemyList : ScriptableObject
     public enum Type
     {
         Beetle,
+        Rat,
         Fly,
         Buzzfly,
         Shroom,
-        ShroomCloud
+        ShroomCloud,
+        ShroomJump,
+        ShroomRun,
+        ShroomSpore
     }
 
     public static int Length => Enum.GetNames(typeof(Type)).Length;
