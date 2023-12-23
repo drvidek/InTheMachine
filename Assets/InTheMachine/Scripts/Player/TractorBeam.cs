@@ -30,8 +30,8 @@ public class TractorBeam : MonoBehaviour
         tractorForgivenessAlarm = Alarm.Get(tractorForgiveness, false, false);
         beam = transform.GetChild(0).GetComponent<Collider2D>();
         Player.main.onFlyExit += () => ToggleBeam(false);
-        Player.main.onShootPress += () => ToggleBeam(true);
-        Player.main.onShootRelease += () => ToggleBeam(false);
+        Player.main.shoot.onPress += () => ToggleBeam(true);
+        Player.main.shoot.onRelease += () => ToggleBeam(false);
         ToggleBeam(false);
     }
 

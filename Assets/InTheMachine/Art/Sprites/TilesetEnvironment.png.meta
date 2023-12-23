@@ -640,7 +640,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_45
+      name: Cracks0
       rect:
         serializedVersion: 2
         x: 128
@@ -661,7 +661,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_46
+      name: Cracks1
       rect:
         serializedVersion: 2
         x: 144
@@ -850,7 +850,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_55
+      name: Cracks2
       rect:
         serializedVersion: 2
         x: 128
@@ -871,7 +871,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_56
+      name: Cracks3
       rect:
         serializedVersion: 2
         x: 144
@@ -1942,7 +1942,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_86
+      name: ExplosiveBarrel
       rect:
         serializedVersion: 2
         x: 144
@@ -2110,7 +2110,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_94
+      name: Explosion0
       rect:
         serializedVersion: 2
         x: 112
@@ -2131,7 +2131,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_95
+      name: Explosion1
       rect:
         serializedVersion: 2
         x: 128
@@ -2152,7 +2152,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: spExplosiveBarrel
+      name: Explosion2
       rect:
         serializedVersion: 2
         x: 144
@@ -3087,6 +3087,14 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       Ash: 90325341
+      Cracks0: 1000422432
+      Cracks1: 999008709
+      Cracks2: 1102022737
+      Cracks3: 58806664
+      Explosion0: 1780119636
+      Explosion1: -644856801
+      Explosion2: 170274910
+      ExplosiveBarrel: -1044944878
       Monitor0: 520838503
       Monitor1: -2116036166
       Monitor2: 395328457
@@ -3134,8 +3142,6 @@ TextureImporter:
       TilesetEnvironment_42: -958182522
       TilesetEnvironment_43: -42869373
       TilesetEnvironment_44: 1363393987
-      TilesetEnvironment_45: 1000422432
-      TilesetEnvironment_46: 999008709
       TilesetEnvironment_47: 2118248221
       TilesetEnvironment_48: -1484325982
       TilesetEnvironment_49: 1173501823
@@ -3145,8 +3151,6 @@ TextureImporter:
       TilesetEnvironment_52: -1860291461
       TilesetEnvironment_53: 412368694
       TilesetEnvironment_54: 638911469
-      TilesetEnvironment_55: 1102022737
-      TilesetEnvironment_56: 58806664
       TilesetEnvironment_6: 1574943003
       TilesetEnvironment_63: 50803107
       TilesetEnvironment_64: 141784528
@@ -3159,11 +3163,8 @@ TextureImporter:
       TilesetEnvironment_76: -38399577
       TilesetEnvironment_8: -438632413
       TilesetEnvironment_84: -539143867
-      TilesetEnvironment_86: -1044944878
       TilesetEnvironment_9: -815005561
       TilesetEnvironment_90: -2073621399
-      TilesetEnvironment_94: 1780119636
-      TilesetEnvironment_95: -644856801
       TilesetEnvironment_97: 2057486466
       TilesetEnvironment_98: -1374626637
       Timer0: 1100163533
@@ -3182,7 +3183,6 @@ TextureImporter:
       spDustBig: 564222772
       spDustMedium: 1234076375
       spDustSmall: -1863746595
-      spExplosiveBarrel: 170274910
       spFan: -309651792
       spFanActive: 1376961241
       stMetalTL: -663454749

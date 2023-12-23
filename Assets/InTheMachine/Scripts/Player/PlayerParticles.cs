@@ -52,14 +52,14 @@ public class PlayerParticles : MonoBehaviour
 
         animPlayer.onPlayerFlip += FlipParticlePositions;
 
-        player.onShootPress += () =>
+        player.shoot.onPress += () =>
         {
             if (PlayerGun.main.CurrentProfile == GunProfileType.Fire && !Player.main.OutOfPower)
             {
                 _psysFlameGun.Play();
             }
         };
-        player.onShootRelease += () =>
+        player.shoot.onRelease += () =>
         {
             _psysFlameGun.Stop();
         };

@@ -19,7 +19,7 @@ public class FungusRunAnimator : EnemyAnimator
     {
         float x = myEnemy.rb.velocity.x;
         if (x != 0)
-            spriteRenderer.flipX = x < 0;
+            spriteRenderer.flipX = myFungus.TargetXDirection < 0;
 
         if (myEnemy.CurrentState == EnemyMachine.EnemyState.Walk)
             animator.SetFloat("Speed", (myFungus.CurrentSpeed / myFungus.MaxSpeed) * animRunSpeed);

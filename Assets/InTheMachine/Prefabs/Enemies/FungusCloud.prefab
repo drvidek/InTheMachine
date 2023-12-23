@@ -192,7 +192,7 @@ MonoBehaviour:
     _colorType: 0
   showDebug: 0
   _currentState: 0
-  questID: 0
+  questID: 3
   contactDamage: 1
   _fric: 0
   _grv: 0
@@ -220,6 +220,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 0}
   animator: {fileID: 0}
   pixelAligner: {fileID: 0}
+  damageFlashSpeed: 0.1
 --- !u!114 &7251724173914314783
 MonoBehaviour:
   m_ObjectHideFlags: 0

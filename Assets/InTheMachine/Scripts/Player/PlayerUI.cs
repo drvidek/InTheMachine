@@ -15,34 +15,24 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] private Transform powerPelletContainerA;
     [SerializeField] private Transform powerPelletContainerB;
     [SerializeField] private Transform healthContainer;
+    [SerializeField] private Transform repairContainer;
 
     [SerializeField] private GameObject[] gunIcons;
 
     private Image[] powerPelletsA;
     private Image[] powerPelletsB;
     private Image[] healthPellets;
+    private Image[] repairPellets;
 
     private void Start()
     {
         player = GetComponent<Player>();
         playerGun = GetComponent<PlayerGun>();
 
-        powerPelletsA = new Image[powerPelletContainerA.childCount];
-        for (int i = 0; i < powerPelletContainerA.childCount; i++)
-        {
-            powerPelletsA[i] = powerPelletContainerA.GetChild(i).GetChild(0).GetComponent<Image>();
-        }
-        powerPelletsB = new Image[powerPelletContainerB.childCount];
-        for (int i = 0; i < powerPelletContainerB.childCount; i++)
-        {
-            powerPelletsB[i] = powerPelletContainerB.GetChild(i).GetChild(0).GetComponent<Image>();
-        }
-
-        healthPellets = new Image[healthContainer.childCount];
-        for (int i = 0; i < healthContainer.childCount; i++)
-        {
-            healthPellets[i] = healthContainer.GetChild(i).GetChild(0).GetComponent<Image>();
-        }
+        ScrapeContainer(powerPelletContainerA, ref powerPelletsA);
+        ScrapeContainer(powerPelletContainerB, ref powerPelletsB);
+        ScrapeContainer(healthContainer, ref healthPellets);
+        ScrapeContainer(repairContainer, ref repairPellets);
 
         player.PowerMeter.onMax += () => { SetPowerColor(player.PowerMeter.CurrentColor); };
         player.PowerMeter.onMin += () => { SetPowerColor(player.PowerMeter.BackgroundColor); };
@@ -53,28 +43,35 @@ public class PlayerUI : MonoBehaviour
         UpdateCashDisplay(0);
     }
 
+    private void ScrapeContainer(Transform container, ref Image[] array)
+    {
+        int count = container.childCount;
+        array = new Image[count];
+        for (int i = 0; i < count; i++)
+        {
+            array[i] = container.GetChild(i).GetChild(0).GetComponent<Image>();
+        }
+    }
+
     private void Update()
     {
         powerPelletContainerB.gameObject.SetActive(player.PowerMeter.Max > powerPelletWorth * powerPelletsA.Length);
-        for (int i = powerPelletsA.Length - 1; i >= 0; i--)
-        {
-            powerPelletsA[i].transform.parent.gameObject.SetActive(Player.main.PowerMeter.Max / powerPelletWorth > i);
-            powerPelletsA[i].enabled = Player.main.PowerMeter.Value / powerPelletWorth > i;
-        }
 
+        UpdateDisplay(powerPelletsA, Player.main.PowerMeter.Max / powerPelletWorth, Player.main.PowerMeter.Value / powerPelletWorth);
         float newMax = Player.main.PowerMeter.Max - (powerPelletWorth * powerPelletsA.Length);
         float newValue = Player.main.PowerMeter.Value - (powerPelletWorth * powerPelletsA.Length);
+        UpdateDisplay(powerPelletsB, newMax / powerPelletWorth, newValue / powerPelletWorth);
+        UpdateDisplay(healthPellets, Player.main.MaxHealth, Player.main.CurrentHealth);
+        UpdateDisplay(repairPellets, Player.main.RepairMax, Player.main.RepairCurrent);
 
-        for (int i = powerPelletsB.Length - 1; i >= 0; i--)
-        {
-            powerPelletsB[i].transform.parent.gameObject.SetActive(newMax / powerPelletWorth > i);
-            powerPelletsB[i].enabled = newValue / powerPelletWorth > i;
-        }
+    }
 
-        for (int i = healthPellets.Length - 1; i >= 0; i--)
+    private void UpdateDisplay(Image[] collection, float activeValue, float filledValue)
+    {
+        for (int i = collection.Length - 1; i >= 0; i--)
         {
-            healthPellets[i].transform.parent.gameObject.SetActive(Player.main.MaxHealth > i);
-            healthPellets[i].enabled = Player.main.CurrentHealth > i;
+            collection[i].transform.parent.gameObject.SetActive(activeValue > i);
+            collection[i].enabled = filledValue > i;
         }
     }
 

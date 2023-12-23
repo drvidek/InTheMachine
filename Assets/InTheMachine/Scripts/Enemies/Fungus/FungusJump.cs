@@ -37,6 +37,8 @@ public class FungusJump : Fungus
 
     protected override void OnIdleStay()
     {
+        rb.velocity = Vector3.zero;
+        transform.position = homePosition;
         if (CheckAttackCondition())
             ChangeStateTo(EnemyState.Ascend);
 
@@ -93,7 +95,7 @@ public class FungusJump : Fungus
             currentSpeed = 0;
         }
         Move(new(0, currentSpeed), 1);
-            base.OnBurnStay();
+        base.OnBurnStay();
     }
 
     protected override void OnStunEnter()
@@ -104,6 +106,8 @@ public class FungusJump : Fungus
 
     protected override void OnStunStay()
     {
+        rb.velocity = Vector3.zero;
+
         if (!Physics2D.BoxCast(transform.position, _collider.bounds.size, 0, Vector2.down, 0.02f, groundedMask))
             ChangeStateTo(EnemyState.Descend);
     }

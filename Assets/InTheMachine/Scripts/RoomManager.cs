@@ -59,6 +59,18 @@ public class RoomManager : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Return the current room coordinates of the provided world position.
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns></returns>
+    public Vector3Int GetRoom(Vector3 position)
+    {
+        Vector3Int cell = roomGrid.WorldToCell(position);
+        return cell; //roomGrid.CellToWorld(cell);
+
+    }
+
     private void Start()
     {
         lastRoom = GetRoom(Player.main.transform);
@@ -71,7 +83,6 @@ public class RoomManager : MonoBehaviour
 
         lastRoom = currentRoom;
 
-        Debug.Log(currentRoom);
     }
 
     

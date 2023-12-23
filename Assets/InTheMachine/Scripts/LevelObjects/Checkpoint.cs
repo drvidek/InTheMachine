@@ -42,6 +42,7 @@ public class Checkpoint : MonoBehaviour, IActivate
                 currentCheckpoint.animator.SetBool("CurrentCheckpoint", false);
             animator.SetBool("CurrentCheckpoint", true);
             currentCheckpoint = this;
+            Player.main.RefillRepairCharges();
         }
     }
 }

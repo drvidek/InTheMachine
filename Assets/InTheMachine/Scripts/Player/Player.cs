@@ -14,7 +14,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         Boost,
         UltraBoost
     }
-    public enum PlayerState { Idle, Walk, Ascend, Hang, Descend, Fly, Boost, UltraBoost, Stun, Burn }
+    public enum PlayerState { Idle, Walk, Ascend, Hang, Descend, Fly, Boost, UltraBoost, Stun, Burn, Heal }
     [SerializeField] private PlayerState _currentState;
     [SerializeField] private List<Ability> abilities = new();
     [SerializeField] private bool allAbilities = false;
@@ -26,6 +26,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     [SerializeField] private float powerChargeTime;
     [SerializeField] private Meter powerMeter;
     [SerializeField] private float iframeLength = 1f;
+    [SerializeField] private float healDelay = 1f;
     [SerializeField] private Meter repairMeter;
     private float _targetHorSpeed, _fric, _accel, _grav;
     private bool usingPower, outOfPower;
@@ -35,60 +36,17 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     private Alarm triedToJump;
     private Alarm stunMinAlarm;
     private Alarm iframesAlarm;
+    private Alarm healTimer;
 
     private Vector3 startPosition;
 
     private float _currentGrav => _grav * Time.fixedDeltaTime;
 
-
-    private struct UserInput
-    {
-        public Vector2 direction;
-        public bool jump;
-        public bool shoot;
-        public bool boost;
-        public bool heal;
-        public bool interact;
-        public bool special;
-    }
     private Vector2 _userInputDir;
-    private bool[] _userInputAction = new bool[3];
-    private UserInput lastInput;
-    private void SetNewInputs()
-    {
-        UserInput inputs = new();
-        inputs.direction = _userInputDir;
-        inputs.jump = _userInputAction[0];
-        inputs.shoot = _userInputAction[1];
-        inputs.boost = _userInputAction[2];
-        inputs.heal = _userInputAction[3];
-        inputs.interact = _userInputAction[4];
-        inputs.special = _userInputAction[5];
 
-        lastInput = inputs;
-        _userInputAction = new bool[6] { Input.GetButton("Jump"), Input.GetButton("Shoot"), Input.GetButton("Boost"), Input.GetButton("Heal"), Input.GetButton("Interact"), Input.GetButton("Special") };
-    }
 
     #region Events
     public Action<Ability> onAbilityUnlock;
-    public Action onJumpPress;
-    public Action onJumpHold;
-    public Action onJumpRelease;
-    public Action onShootPress;
-    public Action onShootHold;
-    public Action onShootRelease;
-    public Action onBoostPress;
-    public Action onBoostHold;
-    public Action onBoostRelease;
-    public Action onHealPress;
-    public Action onHealHold;
-    public Action onHealRelease;
-    public Action onInteractPress;
-    public Action onInteractHold;
-    public Action onInteractRelease;
-    public Action onSpecialPress;
-    public Action onSpecialHold;
-    public Action onSpecialRelease;
     public Action onIdleEnter;
     public Action onIdleStay;
     public Action onIdleExit;
@@ -119,6 +77,9 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     public Action onBurnEnter;
     public Action onBurnStay;
     public Action onBurnExit;
+    public Action onHealEnter;
+    public Action onHealStay;
+    public Action onHealExit;
     #endregion
 
 
@@ -126,6 +87,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
 
     public bool IsGrounded => Physics2D.CapsuleCast(transform.position + (Vector3)_collider.offset, CapsuleCollider.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.02f, groundedMask);
     public bool IsStunned => CurrentState == PlayerState.Stun;
+    public bool IsHealing => CurrentState == PlayerState.Heal;
     public bool IsBoosting => CurrentState == PlayerState.Boost || CurrentState == PlayerState.UltraBoost;
     public bool IFramesActive => iframesAlarm.IsPlaying;
     public bool IsVulnerable => !IsBoosting && !IsStunned && !IFramesActive;
@@ -143,24 +105,15 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     public float Z => transform.position.z;
     public float Height => CapsuleCollider.size.y;
     public Vector2 UserInputDir => _userInputDir;
-    public bool JumpPress => _userInputAction[0] && !lastInput.jump;
-    public bool JumpHold => _userInputAction[0] && lastInput.jump;
-    public bool JumpRelease => !_userInputAction[0] && lastInput.jump;
-    public bool ShootPress => _userInputAction[1] && !lastInput.shoot;
-    public bool ShootHold => _userInputAction[1] && lastInput.shoot;
-    public bool ShootRelease => !_userInputAction[1] && lastInput.shoot;
 
-    public bool BoostPress => _userInputAction[2] && !lastInput.boost;
-    public bool BoostHold => _userInputAction[2] && lastInput.boost;
-    public bool BoostRelease => !_userInputAction[2] && lastInput.boost;
-
-    public bool InteractPress => _userInputAction[2] && !lastInput.interact;
-    public bool InteractHold => _userInputAction[2] && lastInput.interact;
-    public bool InteractRelease => !_userInputAction[2] && lastInput.interact;
+    public FixedInput jump = new("Jump"), shoot = new("Shoot"), boost = new("Boost"), interact = new("Interact"), special = new("Special"), heal = new("Heal");
 
     public bool IsFlying => CurrentState == PlayerState.Fly;
     public bool BeamActive => beam.Active;
     public float PowerRemaining => powerMeter.Value;
+
+    public float RepairMax => repairMeter.Max;
+    public float RepairCurrent => repairMeter.Value;
 
     #region Singleton + Awake
     private static Player _singleton;
@@ -191,20 +144,38 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     {
         base.Start();
         _targetHorSpeed = _walkSpeed;
-        onBoostPress += () => TryToBoost();
+        boost.onPress += () => TryToBoost();
         coyoteTime = Alarm.Get(_coyoteSec, false, false);
         triedToJump = Alarm.Get(_jumpInputAllowance, false, false);
         stunMinAlarm = Alarm.Get(stunTimeMin, false, false);
         iframesAlarm = Alarm.Get(iframeLength, false, false);
+        healTimer = Alarm.Get(healDelay, false, false);
         startPosition = transform.position;
         powerMeter.onMin += () => { outOfPower = true; };
         powerMeter.onMax += () => { outOfPower = false; };
+
+        jump.onPress = JumpPressed;
 
         healthMeter.onMin += () =>
         {
             transform.position = Checkpoint.Current != null ? Checkpoint.Current.Position : startPosition;
             healthMeter.Fill();
         };
+
+        heal.onPress += () =>
+        {
+            if (!IsStunned && !IsBoosting && !repairMeter.IsEmpty)
+                ChangeStateTo(PlayerState.Heal);
+        };
+
+        healTimer.onComplete = () =>
+        {
+            repairMeter.Adjust(-1);
+            healthMeter.Fill();
+            ChangeStateTo(PlayerState.Idle);
+
+        };
+
 
         NextState();
     }
@@ -213,9 +184,8 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         if (!GameManager.IsPlaying)
             return;
         base.Update();
-        _userInputAction[0] = Input.GetButton("Jump") || _userInputAction[0];
-        _userInputAction[1] = Input.GetButton("Shoot") || _userInputAction[1];
-        _userInputAction[2] = Input.GetButton("Boost") || _userInputAction[2];
+
+        FixedInput.ReadAll();
         _userInputDir = new(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
     }
@@ -225,49 +195,6 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         if (!GameManager.IsPlaying)
             return;
         base.FixedUpdate();
-
-
-        if (ShootPress)
-            onShootPress?.Invoke();
-        if (ShootHold)
-            onShootHold?.Invoke();
-        if (ShootRelease)
-            onShootRelease?.Invoke();
-        
-        if (BoostPress)
-            onBoostPress?.Invoke();
-        if (BoostHold)
-            onBoostHold?.Invoke();
-        if (BoostRelease)
-            onBoostRelease?.Invoke();
-
-        if (JumpPress)
-            onJumpPress?.Invoke();
-        if (JumpHold)
-            onJumpHold?.Invoke();
-        if (JumpRelease)
-            onJumpRelease?.Invoke();
-
-        if (InteractPress)
-            onInteractPress?.Invoke();
-        if (InteractHold)
-            onInteractHold?.Invoke();
-        if (InteractRelease)
-            onInteractRelease?.Invoke();
-
-        if (SpecialPress)
-            onSpecialPress?.Invoke();
-        if (SpecialHold)
-            onSpecialHold?.Invoke();
-        if (SpecialRelease)
-            onSpecialRelease?.Invoke();
-
-        if (JumpPress)
-            onJumpPress?.Invoke();
-        if (JumpHold)
-            onJumpHold?.Invoke();
-        if (JumpRelease)
-            onJumpRelease?.Invoke();
 
         if (!usingPower && !IsBoosting && !PlayerGun.main.DelayingShot)
             powerMeter.FillOver(powerChargeTime, false, true, true);
@@ -302,7 +229,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         while (_currentState == PlayerState.Idle)
         {
             //state behaviour here
-            
+
             OnIdleStay();
             onIdleStay?.Invoke();
 
@@ -333,7 +260,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         MoveVerticallyWithGravity();
         MoveHorizontallyWithInput();
 
-        if (JumpPress || triedToJump.IsPlaying)
+        if (triedToJump.IsPlaying)
             TryToJump(_jumpPower);
         //set our next state to...
         PlayerState nextState =
@@ -343,7 +270,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             _currentState;
         //trigger the next state
         ChangeStateTo(nextState);
-        SetNewInputs();
+        FixedInput.EatAll();
     }
 
     /// <summary>
@@ -363,7 +290,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         while (_currentState == PlayerState.Walk)
         {
             //state behaviour here
-            
+
             OnWalkStay();
             onWalkStay?.Invoke();
             //wait a frame
@@ -395,7 +322,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         MoveHorizontallyWithInput();
         MoveVerticallyWithGravity();
 
-        if (JumpPress || triedToJump.IsPlaying)
+        if (triedToJump.IsPlaying)
             TryToJump(_jumpPower);
 
         //set our next state to...
@@ -406,7 +333,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             _currentState;
         //trigger the next state
         ChangeStateTo(nextState);
-        SetNewInputs();
+        FixedInput.EatAll();
     }
 
     /// <summary>
@@ -426,7 +353,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         while (_currentState == PlayerState.Ascend)
         {
             //state behaviour here
-            
+
             OnAscendStay();
             onAscendStay?.Invoke();
             //wait a frame
@@ -444,6 +371,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     /// </summary>
     private void OnAscendEnter()
     {
+
         _grav = _gravUp;
     }
 
@@ -454,10 +382,8 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     {
         MoveHorizontallyWithInput();
         MoveVerticallyWithGravity();
-        if (!JumpHold)
+        if (!jump.Hold)
             _targetVelocity.y *= _jumpDecayRate;
-        if (JumpPress)
-            TryToFly();
         //set our next state to...
         PlayerState nextState =
             _targetVelocity.y <= 0 ? PlayerState.Hang :
@@ -465,7 +391,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             _currentState;
         //trigger the next state
         ChangeStateTo(nextState);
-        SetNewInputs();
+        FixedInput.EatAll();
     }
 
     /// <summary>
@@ -488,6 +414,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             hang.onComplete = () =>
             {
                 if (_currentState == PlayerState.Hang) ChangeStateTo(PlayerState.Descend);
+                Debug.Log("HangAlarm complete");
             };
         }
         else
@@ -496,7 +423,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         while (_currentState == PlayerState.Hang)
         {
             //state behaviour here
-            
+
             OnHangStay();
             onHangStay?.Invoke();
             //wait a frame
@@ -524,8 +451,6 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     private void OnHangStay()
     {
         MoveHorizontallyWithInput();
-        if (JumpPress)
-            TryToFly();
         //set our next state to...
         PlayerState nextState =
             IsGrounded ? PlayerState.Idle :
@@ -533,7 +458,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             _currentState;
         //trigger the next state
         ChangeStateTo(nextState);
-        SetNewInputs();
+        FixedInput.EatAll();
     }
 
     /// <summary>
@@ -552,7 +477,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         while (_currentState == PlayerState.Descend)
         {
             //state behaviour here
-            
+
             OnDescendStay();
             onDescendStay?.Invoke();
             //wait a frame
@@ -580,8 +505,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     {
         MoveHorizontallyWithInput();
         MoveVerticallyWithGravity();
-        if (JumpPress)
-            TryToFly();
+
         //set our next state to...
         PlayerState nextState =
             IsGrounded ? PlayerState.Idle :
@@ -589,7 +513,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             _currentState;
         //trigger the next state
         ChangeStateTo(nextState);
-        SetNewInputs();
+        FixedInput.EatAll();
     }
 
     /// <summary>
@@ -646,17 +570,9 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         if (IsGrounded && triedToJump.IsPlaying)
         {
             TryToJump(_jumpPower);
-            //PlayerState.Ascend
         }
 
-        //set our next state to...
-        PlayerState nextState =
-            JumpPress ? PlayerState.Descend :
-            //stay as we are
-            _currentState;
-        //trigger the next state
-        ChangeStateTo(nextState);
-        SetNewInputs();
+        FixedInput.EatAll();
     }
 
     /// <summary>
@@ -714,7 +630,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             _currentState;
         //trigger the next state
         ChangeStateTo(nextState);
-        SetNewInputs();
+        FixedInput.EatAll();
     }
 
     /// <summary>
@@ -723,7 +639,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     private void OnBoostExit()
     {
         _targetVelocity *= postBoostVelocityRate;
-        if (HasAbility(Ability.UltraBoost) && BoostHold)
+        if (HasAbility(Ability.UltraBoost) && boost.Hold)
             ChangeStateTo(PlayerState.UltraBoost);
     }
 
@@ -766,7 +682,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     private void OnUltraBoostStay()
     {
         MoveInDirectionAtSpeed(boostDirection, boostSpeed * 1.25f);
-        if (!BoostHold || !TryToUsePower(boostCost * 2f * Time.fixedDeltaTime))
+        if (!boost.Hold || !TryToUsePower(boostCost * 2f * Time.fixedDeltaTime))
             ChangeStateTo(PlayerState.Idle);
         //set our next state to...
         PlayerState nextState =
@@ -774,7 +690,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             _currentState;
         //trigger the next state
         ChangeStateTo(nextState);
-        SetNewInputs();
+        FixedInput.EatAll();
     }
 
     /// <summary>
@@ -830,7 +746,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             _currentState;
         //trigger the next state
         ChangeStateTo(nextState);
-        SetNewInputs();
+        FixedInput.EatAll();
     }
 
     /// <summary>
@@ -881,13 +797,69 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             _currentState;
         //trigger the next state
         ChangeStateTo(nextState);
-        SetNewInputs();
+        FixedInput.EatAll();
     }
 
     /// <summary>
     /// Called once when exiting Burn state
     /// </summary>
     private void OnBurnExit()
+    {
+
+    }
+
+    IEnumerator Heal()
+    {
+        //on entry
+        OnHealEnter();
+        onHealEnter?.Invoke();
+        //every frame while we're in this state
+        while (_currentState == PlayerState.Heal)
+        {
+            //state behaviour here
+
+            OnHealStay();
+            onHealStay?.Invoke();
+            //wait a frame
+            yield return waitForFixedUpdate;
+        }
+        //on exit
+        OnHealExit();
+        onHealExit?.Invoke();
+        //trigger the next state
+        NextState();
+    }
+
+    /// <summary>
+    /// Called once when entering Heal state
+    /// </summary>
+    private void OnHealEnter()
+    {
+        healTimer.ResetAndPlay();
+    }
+
+    /// <summary>
+    /// Called every fixed update when in Heal state
+    /// </summary>
+    private void OnHealStay()
+    {
+        MoveVerticallyWithGravity();
+        MoveHorizontallyWithInput();
+
+        //set our next state to...
+        PlayerState nextState =
+            !heal.Hold ? PlayerState.Idle :
+            //stay as we are
+            _currentState;
+        //trigger the next state
+        ChangeStateTo(nextState);
+        FixedInput.EatAll();
+    }
+
+    /// <summary>
+    /// Called once when exiting Heal state
+    /// </summary>
+    private void OnHealExit()
     {
 
     }
@@ -903,7 +875,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         if (!IsGrounded && !IsFlying)
             change /= _airAccelPenalty;
 
-        _targetVelocity.x = Mathf.MoveTowards(_targetVelocity.x, (IsStunned ? 0 : _targetHorSpeed) * UserInputDir.x, change * Time.fixedDeltaTime);
+        _targetVelocity.x = Mathf.MoveTowards(_targetVelocity.x, (IsStunned || IsHealing ? 0 : _targetHorSpeed) * UserInputDir.x, change * Time.fixedDeltaTime);
 
     }
 
@@ -935,6 +907,34 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         _targetVelocity.y = speed;
     }
 
+    private void JumpPressed()
+    {
+        switch (CurrentState)
+        {
+            case PlayerState.Idle:
+            case PlayerState.Walk:
+                TryToJump(_jumpPower);
+                break;
+            case PlayerState.Ascend:
+            case PlayerState.Hang:
+            case PlayerState.Descend:
+                TryToFly();
+                break;
+            case PlayerState.Fly:
+
+                ChangeStateTo(PlayerState.Descend);
+                break;
+            case PlayerState.Boost:
+            case PlayerState.UltraBoost:
+                break;
+            case PlayerState.Stun:
+            case PlayerState.Burn:
+                break;
+            default:
+                break;
+        }
+    }
+
     private bool TryToJump(float speed)
     {
         if (!IsGrounded && coyoteTime.IsStopped && triedToJump.IsStopped)
@@ -950,6 +950,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
 
     private bool TryToFly()
     {
+        Debug.Log("Tried to fly");
         triedToJump.ResetAndPlay();
 
         if (coyoteTime.IsPlaying)
@@ -965,7 +966,6 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         ChangeStateTo(PlayerState.Fly);
         return true;
     }
-
 
     public bool TryToUsePower(float power, bool checkMin = false)
     {
@@ -985,7 +985,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         if (!HasAbility(Ability.Boost))
             return false;
 
-        if (CurrentState == PlayerState.Boost)
+        if (IsStunned || IsBoosting)
             return false;
 
         if (TryToUsePower(boostCost, false))
@@ -1019,6 +1019,11 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             default:
                 break;
         }
+    }
+
+    public void RefillRepairCharges()
+    {
+        repairMeter.Fill();
     }
 
     protected override void CheckForExternalVelocity()

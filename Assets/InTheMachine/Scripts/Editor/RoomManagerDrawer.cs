@@ -37,6 +37,19 @@ public class RoomManagerEditor : Editor
         }
     }
 
+    private void OnSceneGUI()
+    {
+        Handles.BeginGUI();
+
+        Vector3 mousePosition = Event.current.mousePosition;
+        Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
+
+        Vector3Int position = (target as RoomManager).GetRoom(ray.origin);
+
+        GUILayout.Label($"Room: {position.x},{position.y}", GUILayout.Width(100f));
+        Handles.EndGUI();
+    }
+
     private void OrganiseScene()
     {
         RoomManager rm = target as RoomManager;

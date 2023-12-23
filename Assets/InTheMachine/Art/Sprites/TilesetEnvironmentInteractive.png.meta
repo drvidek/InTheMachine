@@ -136,7 +136,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: TilesetEnvironmentInteractive_0
+      name: WireV
       rect:
         serializedVersion: 2
         x: 0
@@ -157,7 +157,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironmentInteractive_1
+      name: WireCornerBL
       rect:
         serializedVersion: 2
         x: 16
@@ -178,7 +178,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironmentInteractive_2
+      name: WireCornerBR
       rect:
         serializedVersion: 2
         x: 32
@@ -199,7 +199,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironmentInteractive_3
+      name: WireBLR
       rect:
         serializedVersion: 2
         x: 48
@@ -220,7 +220,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironmentInteractive_4
+      name: WireBRT
       rect:
         serializedVersion: 2
         x: 64
@@ -241,7 +241,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironmentInteractive_5
+      name: WireCross
       rect:
         serializedVersion: 2
         x: 80
@@ -262,7 +262,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironmentInteractive_6
+      name: WireSourceB
       rect:
         serializedVersion: 2
         x: 96
@@ -346,7 +346,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironmentInteractive_10
+      name: WireH
       rect:
         serializedVersion: 2
         x: 0
@@ -367,7 +367,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironmentInteractive_11
+      name: WireCornerTR
       rect:
         serializedVersion: 2
         x: 16
@@ -388,7 +388,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironmentInteractive_12
+      name: WireCornerTL
       rect:
         serializedVersion: 2
         x: 32
@@ -409,7 +409,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironmentInteractive_13
+      name: WireLRT
       rect:
         serializedVersion: 2
         x: 48
@@ -430,7 +430,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironmentInteractive_14
+      name: WireBLT
       rect:
         serializedVersion: 2
         x: 64
@@ -2267,22 +2267,12 @@ TextureImporter:
       FuseV: -207900514
       GrassFloor0: -209364436
       GrassFloor1: 440023963
-      TilesetEnvironmentInteractive_0: -189018523
-      TilesetEnvironmentInteractive_1: -550431419
-      TilesetEnvironmentInteractive_10: 2065594435
-      TilesetEnvironmentInteractive_11: 607258373
-      TilesetEnvironmentInteractive_12: -5517476
-      TilesetEnvironmentInteractive_13: -1282119983
-      TilesetEnvironmentInteractive_14: 770653761
       TilesetEnvironmentInteractive_15: -167799819
       TilesetEnvironmentInteractive_16: -388090937
       TilesetEnvironmentInteractive_17: -1976491976
       TilesetEnvironmentInteractive_18: -679345674
       TilesetEnvironmentInteractive_19: 1029533698
-      TilesetEnvironmentInteractive_2: -797161623
-      TilesetEnvironmentInteractive_3: -1284472854
       TilesetEnvironmentInteractive_35: -1447394487
-      TilesetEnvironmentInteractive_4: 124911741
       TilesetEnvironmentInteractive_42: 573114818
       TilesetEnvironmentInteractive_43: 898664873
       TilesetEnvironmentInteractive_44: 141599204
@@ -2291,7 +2281,6 @@ TextureImporter:
       TilesetEnvironmentInteractive_47: -1343503270
       TilesetEnvironmentInteractive_48: -224839230
       TilesetEnvironmentInteractive_49: 982587774
-      TilesetEnvironmentInteractive_5: 389562344
       TilesetEnvironmentInteractive_50: 295334265
       TilesetEnvironmentInteractive_51: 762726557
       TilesetEnvironmentInteractive_52: 1537854788
@@ -2302,7 +2291,6 @@ TextureImporter:
       TilesetEnvironmentInteractive_57: -1813642447
       TilesetEnvironmentInteractive_58: 2068643784
       TilesetEnvironmentInteractive_59: 2119867421
-      TilesetEnvironmentInteractive_6: 1711813725
       TilesetEnvironmentInteractive_60: -1292445702
       TilesetEnvironmentInteractive_61: 357929140
       TilesetEnvironmentInteractive_62: -1921150618
@@ -2346,6 +2334,18 @@ TextureImporter:
       TilesetEnvironmentInteractive_97: -1500953517
       TilesetEnvironmentInteractive_98: 59607353
       TilesetEnvironmentInteractive_99: 1565701851
+      WireBLR: -1284472854
+      WireBLT: 770653761
+      WireBRT: 124911741
+      WireCornerBL: -550431419
+      WireCornerBR: -797161623
+      WireCornerTL: -5517476
+      WireCornerTR: 607258373
+      WireCross: 389562344
+      WireH: 2065594435
+      WireLRT: -1282119983
+      WireSourceB: 1711813725
+      WireV: -189018523
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

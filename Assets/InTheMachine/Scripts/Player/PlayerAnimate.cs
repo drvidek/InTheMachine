@@ -75,6 +75,10 @@ public class PlayerAnimate : AgentAnimator
             animator.SetBool("IsStunned", false);
 
         };
+
+        myPlayer.PowerMeter.onMin += () => pakSprite.color = Color.gray;
+        myPlayer.PowerMeter.onMax += () => pakSprite.color = Color.white;
+
         myGun.onShoot += () => animator.SetTrigger("Shoot");
         AnimatePakForward(true);
 

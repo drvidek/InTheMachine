@@ -14,7 +14,7 @@ public abstract class AgentAnimator : MonoBehaviour
 
     protected bool damageAnimationActive;
 
-    protected float damageFlashSpeed = 0.1f;
+    [SerializeField] protected float damageFlashSpeed = 0.1f;
 
 
     // Start is called before the first frame update

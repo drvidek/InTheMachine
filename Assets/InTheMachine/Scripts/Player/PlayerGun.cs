@@ -162,16 +162,16 @@ public class PlayerGun : Launcher
         cost = gun.cost;
         costOnShot = gun.costOnShot;
 
-        myPlayer.onShootHold -= PlayerInputsShoot;
-        myPlayer.onShootPress -= PlayerInputsShoot;
+        myPlayer.shoot.onHold -= PlayerInputsShoot;
+        myPlayer.shoot.onPress -= PlayerInputsShoot;
 
         if (costOnShot)
         {
-            myPlayer.onShootPress += PlayerInputsShoot;
+            myPlayer.shoot.onPress += PlayerInputsShoot;
         }
         else
         {
-            myPlayer.onShootHold += PlayerInputsShoot;
+            myPlayer.shoot.onHold += PlayerInputsShoot;
         }
 
 
