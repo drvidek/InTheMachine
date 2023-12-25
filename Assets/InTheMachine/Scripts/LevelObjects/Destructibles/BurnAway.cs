@@ -14,6 +14,7 @@ public class BurnAway : MonoBehaviour, IFlammable
     private GameObject burnEffect;
     private Alarm burnAlarm;
     private Tilemap tilemap;
+    private Vector3Int cell;
     private Meter catchFlame = new(0, 1, 0, 2, 1);
 
     private bool dying = false;
@@ -23,6 +24,8 @@ public class BurnAway : MonoBehaviour, IFlammable
     {
         _collider = GetComponentInChildren<Collider2D>();
         tilemap = GetComponentInParent<Tilemap>();
+        cell = tilemap.WorldToCell(transform.position);
+        transform.position = QMath.ReplaceVectorValue(transform.position, VectorValue.z, Player.main.Z);
 
         catchFlame.onMax = () =>
         {
@@ -59,12 +62,18 @@ public class BurnAway : MonoBehaviour, IFlammable
     public void CatchFlame(Collider2D collider)
     {
         if (isBurning)
+        {
             return;
+        }
 
         if (collider.GetComponent<Fuse>())
+        {
             catchFlame.Fill();
+        }
         else
+        {
             catchFlame.FillOver(catchTime, true, true, true);
+        }
     }
 
     public void DouseFlame()
@@ -107,7 +116,7 @@ public class BurnAway : MonoBehaviour, IFlammable
     private void EndOfLife()
     {
         IFlammable.ClearFireAndSmoke(burnEffect);
-        tilemap.SetTile(tilemap.WorldToCell(transform.position), null);
+        tilemap.SetTile(cell, null);
         CashManager.main.IncreaseCashBy(1);
     }
 }

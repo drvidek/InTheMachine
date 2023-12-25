@@ -13,6 +13,7 @@ public class PlayerParticles : MonoBehaviour
     [SerializeField] private ParticleSystem _psysFlameGun;
     [SerializeField] private Color boostColor, ultraBoostColor;
 
+    private ParticleSystem.MainModule flameGunMain;
     private ParticleSystem.ShapeModule flameGunShape;
 
     private Vector3 _psysFlyPositionBase;
@@ -54,6 +55,8 @@ public class PlayerParticles : MonoBehaviour
 
         player.shoot.onPress += () =>
         {
+            if (player.IsFlying)
+                return;
             if (PlayerGun.main.CurrentProfile == GunProfileType.Fire && !Player.main.OutOfPower)
             {
                 _psysFlameGun.Play();
@@ -71,6 +74,7 @@ public class PlayerParticles : MonoBehaviour
         _psysFly.Stop();
         _psysFlyPositionBase = _psysFly.transform.localPosition;
 
+        flameGunMain = _psysFlameGun.main;
         flameGunShape = _psysFlameGun.shape;
     }
 
@@ -79,11 +83,13 @@ public class PlayerParticles : MonoBehaviour
         _psysFlameGun.transform.position = PlayerGun.main.SpawnPosition;
         if (PlayerGun.main.Direction.y != 0)
         {
-            flameGunShape.rotation = new Vector3(0,0,90 - (2.5f));
+            flameGunShape.rotation = new Vector3(0, 0, 90 - (2.5f));
+            flameGunMain.startSpeed = 6f;
         }
         else
         {
             flameGunShape.rotation = new Vector3(0, 0, (PlayerGun.main.Direction.x > 0 ? 0 : 180) - (2.5f));
+            flameGunMain.startSpeed = 6f + Mathf.Abs(player.rb.velocity.x);
         }
     }
 

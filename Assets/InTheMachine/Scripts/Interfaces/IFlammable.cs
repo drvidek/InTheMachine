@@ -9,6 +9,7 @@ public interface IFlammable
     public static GameObject psysObjSmoke = Resources.Load("PSysSmoke") as GameObject;
     public static GameObject psysObjSmokePuff = Resources.Load("PSysSmokePuff") as GameObject;
 
+
     public static GameObject InstantiateFireAndSmoke(Transform transform)
     {
         GameObject go = MonoBehaviour.Instantiate(psysObjFire, transform);

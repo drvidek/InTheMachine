@@ -13,6 +13,11 @@ public class FungusRunAnimator : EnemyAnimator
         myEnemy.onAscendEnter += () => animator.SetBool("Active", true);
 
         myEnemy.onWalkEnter += () => animator.SetBool("Grounded", true);
+        myEnemy.onIdleEnter += () =>
+        {
+            animator.SetBool("Active", false);
+            animator.SetBool("Grounded", false);
+        };
     }
 
     private void FixedUpdate()

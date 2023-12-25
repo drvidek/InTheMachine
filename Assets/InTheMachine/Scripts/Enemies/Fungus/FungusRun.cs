@@ -9,7 +9,11 @@ public class FungusRun : Fungus
 
     private float currentSpeed, currentJumpPower;
 
+    private Vector3 homePosition;
+
     private Collider2D hardCollider;
+
+    private Alarm returnAlarm;
 
     public float TargetXDirection => Mathf.Sign(QMath.Direction(transform.position, Player.main.Position).x);
 
@@ -35,7 +39,7 @@ public class FungusRun : Fungus
     {
         get
         {
-            RaycastHit2D hit = Physics2D.BoxCast(transform.position + (Vector3)hardCollider.offset, new(hardCollider.bounds.size.x,0.9f), transform.localEulerAngles.z, new(TargetXDirection, 0), burning ? 0.2f : 0.02f, groundedMask);
+            RaycastHit2D hit = Physics2D.BoxCast(transform.position + (Vector3)hardCollider.offset, new(hardCollider.bounds.size.x, 0.9f), transform.localEulerAngles.z, new(TargetXDirection, 0), burning ? 0.2f : 0.02f, groundedMask);
             if (!hit)
                 return null;
             return hit.collider;
@@ -45,13 +49,23 @@ public class FungusRun : Fungus
 
     protected override void Start()
     {
+        homePosition = transform.position;
         hardCollider = transform.GetChild(1).GetComponent<Collider2D>();
+        returnAlarm = Alarm.Get(5f, false, false);
+        returnAlarm.onComplete = () =>
+        {
+            transform.position = homePosition;
+            rb.velocity = Vector2.zero;
+            _targetVelocity = Vector2.zero;
+            ChangeStateTo(EnemyState.Idle);
+        };
         base.Start();
     }
 
     protected override void OnIdleEnter()
     {
         hardCollider.enabled = false;
+        returnAlarm.Stop();
         //rb.bodyType = RigidbodyType2D.Static;
         base.OnIdleEnter();
     }
@@ -117,6 +131,16 @@ public class FungusRun : Fungus
             {
                 AscendAtSpeedInDirection(jumpPower * 1.5f, TargetXDirection * -1);
             }
+        }
+
+        if (!playerInRoom && !playerInSight)
+        {
+            if (returnAlarm.IsStopped)
+                returnAlarm.ResetAndPlay();
+        }
+        else
+        {
+            returnAlarm.Stop();
         }
 
         MoveWithGravity(new(direction, 0), currentSpeed);

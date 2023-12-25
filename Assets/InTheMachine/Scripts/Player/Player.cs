@@ -24,6 +24,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     [SerializeField] private float boostSpeed, boostDistance, boostCost, postBoostVelocityRate;
     [SerializeField] private TractorBeam beam;
     [SerializeField] private float powerChargeTime;
+    [SerializeField] private float powerChargeDelayTime;
     [SerializeField] private Meter powerMeter;
     [SerializeField] private float iframeLength = 1f;
     [SerializeField] private float healDelay = 1f;
@@ -37,6 +38,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     private Alarm stunMinAlarm;
     private Alarm iframesAlarm;
     private Alarm healTimer;
+    private Alarm powerChargeDelay;
 
     private Vector3 startPosition;
 
@@ -150,6 +152,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         stunMinAlarm = Alarm.Get(stunTimeMin, false, false);
         iframesAlarm = Alarm.Get(iframeLength, false, false);
         healTimer = Alarm.Get(healDelay, false, false);
+        powerChargeDelay = Alarm.Get(powerChargeDelayTime, false, false);
         startPosition = transform.position;
         powerMeter.onMin += () => { outOfPower = true; };
         powerMeter.onMax += () => { outOfPower = false; };
@@ -196,7 +199,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             return;
         base.FixedUpdate();
 
-        if (!usingPower && !IsBoosting && !PlayerGun.main.DelayingShot)
+        if (!usingPower && !IsBoosting && !PlayerGun.main.DelayingShot && !powerChargeDelay.IsPlaying)
             powerMeter.FillOver(powerChargeTime, false, true, true);
         usingPower = false;
     }
@@ -977,6 +980,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
 
         powerMeter.Adjust(-power);
         usingPower = true;
+        powerChargeDelay.ResetAndPlay();
         return true;
     }
 
