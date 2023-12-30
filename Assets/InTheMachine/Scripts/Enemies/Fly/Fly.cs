@@ -9,7 +9,11 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
     [SerializeField] protected float flySpeed;
     [SerializeField] protected float maxDistanceToNewDestination;
     [SerializeField] protected float maxDistanceFromHome = 10f;
+    [SerializeField] protected float damageFromAir;
 
+    private Alarm stunAlarm;
+
+    private Alarm respawnAlarm;
 
     protected Vector3 homePosition;
     protected CircleCollider2D circleCollider => _collider as CircleCollider2D;
@@ -22,7 +26,32 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
         homePosition = transform.position;
         idleAlarm = Alarm.Get(idleTime, false, false);
         idleAlarm.onComplete += () => { targetDestination = FindValidStraightLineTarget(); ChangeStateTo(EnemyState.Fly); };
+        respawnAlarm = Alarm.Get(5f, false, false);
+        respawnAlarm.onComplete += () =>
+        {
+            transform.position = homePosition;
+            ChangeStateTo(EnemyState.Idle);
+        };
+        RoomManager.main.onPlayerMovedRoom += CheckRespawnTimerReset;
         base.Start();
+    }
+
+
+    private void CheckRespawnTimerReset(Vector3Int room)
+    {
+        if (IsFlaming())
+            return;
+
+        if (room == currentRoom)
+        {
+            respawnAlarm.Stop();
+            return;
+        }
+
+        if (!RoomManager.main.InSameRoom(transform.position,homePosition) && !respawnAlarm.IsPlaying)
+        {
+            respawnAlarm.ResetAndPlay();
+        }
     }
 
 
@@ -58,7 +87,7 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
 
     protected override void OnStunEnter()
     {
-        Alarm stunAlarm = Alarm.GetAndPlay(stunTimeMin);
+        stunAlarm = Alarm.GetAndPlay(stunTimeMin);
         stunAlarm.onComplete = () => { if (CurrentState == EnemyState.Stun) ChangeStateTo(EnemyState.Idle); };
     }
 
@@ -101,13 +130,18 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
 
     protected Vector3 FindValidStraightLineTarget()
     {
+        //determine if we should start from our current position, or our home position
         Vector3 baseDestination = Vector3.Distance(transform.position, homePosition) > maxDistanceFromHome ? homePosition : transform.position;
+        //Roll our new destination using our base position
         Vector3 newDestination = RollNewDestination(baseDestination, maxDistanceToNewDestination);
         int loops = 0;
+        //while there is a block between our destinations, a block near our new destination, our destination is too far from home, or we're in our home room and our new destination is not
         while (Physics2D.Raycast(baseDestination, QMath.Direction(baseDestination, newDestination), Vector3.Distance(baseDestination, newDestination), groundedMask) ||
             Physics2D.OverlapCircle(newDestination, circleCollider.radius * 1.1f, groundedMask) ||
-            Vector3.Distance(newDestination, homePosition) > maxDistanceFromHome)
+            Vector3.Distance(newDestination, homePosition) > maxDistanceFromHome ||
+            RoomManager.main.InSameRoom(transform.position, homePosition) && !RoomManager.main.InSameRoom(homePosition, newDestination))
         {
+            //roll a new destination
             newDestination = RollNewDestination(baseDestination, maxDistanceToNewDestination);
             loops++;
             if (loops > 100)
@@ -171,7 +205,8 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
         {
             DouseFlame();
             GetStunned(new Vector2(Mathf.Sign(projectile.Direction.x), 1), projectile.Speed * 0.4f);
-            TakeDamage(projectile.Power);
+            TakeDamage(damageFromAir);
+            stunAlarm?.ResetAndPlay();
         }
         if (projectile is ElecProjectile)
         {
@@ -192,7 +227,7 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
             return;
 
         GetStunned(Vector2.down, 2f);
-        Instantiate(IFlammable.psysObjSmokePuff,transform.position,Quaternion.identity);
+        Instantiate(IFlammable.psysObjSmokePuff, transform.position, Quaternion.identity);
         TakeDamage(5f);
     }
 }

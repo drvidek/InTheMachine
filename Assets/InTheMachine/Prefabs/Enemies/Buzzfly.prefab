@@ -180,7 +180,7 @@ MonoBehaviour:
     _colorType: 0
   showDebug: 0
   _currentState: 0
-  cashWorth: 2
+  questID: 2
   contactDamage: 1
   _fric: 15
   _grv: 22
@@ -208,6 +208,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 0}
   animator: {fileID: 0}
   pixelAligner: {fileID: 0}
+  damageFlashSpeed: 0.1
 --- !u!1 &8464267811925890837
 GameObject:
   m_ObjectHideFlags: 0

@@ -109,7 +109,7 @@ public class TractorBeam : MonoBehaviour
 
     public void ToggleBeam(bool active)
     {
-        if (!Player.main.IsFlying)
+        if (!Player.main.IsFlying || !Player.main.HasAbility(Player.Ability.Tractor))
             active = false;
 
         this.active = active;

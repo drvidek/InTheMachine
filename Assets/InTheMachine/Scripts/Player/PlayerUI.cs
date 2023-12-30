@@ -12,6 +12,7 @@ public class PlayerUI : MonoBehaviour
     private PlayerGun playerGun;
     [SerializeField] private float powerPelletWorth = 2f;
     [SerializeField] private TextMeshProUGUI cashDisplay;
+    [SerializeField] private TextMeshProUGUI navMemDisplay;
     [SerializeField] private Transform powerPelletContainerA;
     [SerializeField] private Transform powerPelletContainerB;
     [SerializeField] private Transform healthContainer;
@@ -63,7 +64,7 @@ public class PlayerUI : MonoBehaviour
         UpdateDisplay(powerPelletsB, newMax / powerPelletWorth, newValue / powerPelletWorth);
         UpdateDisplay(healthPellets, Player.main.MaxHealth, Player.main.CurrentHealth);
         UpdateDisplay(repairPellets, Player.main.RepairMax, Player.main.RepairCurrent);
-
+        navMemDisplay.text = $"{FogOfWar.TilesToClear}x NAV MEMORY";
     }
 
     private void UpdateDisplay(Image[] collection, float activeValue, float filledValue)

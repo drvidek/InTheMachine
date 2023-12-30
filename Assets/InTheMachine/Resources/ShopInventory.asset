@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3de3b21bc46027444beeb151f5278f88, type: 3}
+  m_Name: ShopInventory
+  m_EditorClassIdentifier: 
+  inventory:
+  - id: 0
+    name: Repair Charge
+    image: {fileID: 1806954396, guid: 90b6ce84361a2f94787d6435a336a129, type: 3}
+    color: {r: 1, g: 0.9058824, b: 0, a: 1}
+    cost: 100
+    description: Hold RB to repair all hull damage.|Replenish charges at Checkpoint
+      Terminals.
+    count: 0
+    costIncrease: 0
+  - id: 1
+    name: Reinforced Hull
+    image: {fileID: 1806954396, guid: 90b6ce84361a2f94787d6435a336a129, type: 3}
+    color: {r: 1, g: 0.14509805, b: 0, a: 1}
+    cost: 200
+    description: Permanently increase hull strength by one.
+    count: 0
+    costIncrease: 0
+  - id: 2
+    name: Shield
+    image: {fileID: 90325341, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}
+    color: {r: 0, g: 1, b: 1, a: 1}
+    cost: 20000
+    description: Protect yourself from damage once.|Recharges at Checkpoint Terminals.
+    count: 0
+    costIncrease: 0
+  - id: 10
+    name: Gust Cannon
+    image: {fileID: 1252209455, guid: 81ca3388215c4a04d98f252a8255eae0, type: 3}
+    color: {r: 1, g: 1, b: 1, a: 1}
+    cost: 500
+    description: Increase range and damage any target.
+    count: 0
+    costIncrease: 0
+  - id: 12
+    name: Flamejet
+    image: {fileID: -1905128415, guid: 81ca3388215c4a04d98f252a8255eae0, type: 3}
+    color: {r: 1, g: 1, b: 1, a: 1}
+    cost: 1000
+    description: Slightly increase range and decrease power cost.
+    count: 0
+    costIncrease: 0
+  - id: 20
+    name: Nav Memory
+    image: {fileID: 1806954396, guid: 90b6ce84361a2f94787d6435a336a129, type: 3}
+    color: {r: 1, g: 1, b: 1, a: 1}
+    cost: 25
+    description: Add a new room to your map.|Activates on entering an unmapped room.
+    count: 0
+    costIncrease: 0
+  - id: 21
+    name: Radar
+    image: {fileID: 1780119636, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}
+    color: {r: 1, g: 1, b: 1, a: 1}
+    cost: 500
+    description: Mark a discovered room which still contains an upgrade on your map.
+    count: 0
+    costIncrease: 0

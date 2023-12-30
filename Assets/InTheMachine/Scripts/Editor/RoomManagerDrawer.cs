@@ -58,19 +58,32 @@ public class RoomManagerEditor : Editor
         {
             Transform currentChild = rm.interactiblesGrid.transform.GetChild(i);
             if (currentChild.tag == "Room")
+            {
+                for (int ii = 0; ii < currentChild.childCount; ii++)
+                {
+                    Transform roomChild = currentChild.GetChild(ii);
+                    roomChild.parent = rm.interactiblesGrid.transform;
+                    ii--;
+                }
                 continue;
+            }
 
-            Vector3Int roomCode = rm.GetRoom(currentChild);
-
-            string roomName = $"Room {roomCode.x},{roomCode.y}";
-            GameObject roomObject = GameObject.Find(roomName);
-            if (!roomObject)
-                roomObject = CreateNewRoomParent(roomName, roomCode);
-            currentChild.parent = roomObject.transform;
+            MoveChildToRoom(rm, currentChild);
 
             i--;
         }
 
+    }
+
+    private void MoveChildToRoom(RoomManager rm, Transform currentChild)
+    {
+        Vector3Int roomCode = rm.GetRoom(currentChild);
+
+        string roomName = $"Room {roomCode.x},{roomCode.y}";
+        GameObject roomObject = GameObject.Find(roomName);
+        if (!roomObject)
+            roomObject = CreateNewRoomParent(roomName, roomCode);
+        currentChild.parent = roomObject.transform;
     }
 
     public GameObject CreateNewRoomParent(string name, Vector3Int roomCode)

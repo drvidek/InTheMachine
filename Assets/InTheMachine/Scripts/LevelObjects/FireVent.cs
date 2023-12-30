@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using QKit;
+using System;
 public class FireVent : MonoBehaviour, IActivate, IFlammable, IElectrocutable
 {
     [SerializeField] private float length = 1;
@@ -9,6 +10,8 @@ public class FireVent : MonoBehaviour, IActivate, IFlammable, IElectrocutable
     [SerializeField] private float timeToRelight;
     [SerializeField] private BoxCollider2D _collider;
     [SerializeField] private ParticleSystem psysFlame, psysGas, psysSpark;
+    [SerializeField] private Sprite[] timerSprites;
+    [SerializeField] private SpriteRenderer timer;
     private bool isLocked;
     private Alarm relightAlarm;
 
@@ -21,7 +24,7 @@ public class FireVent : MonoBehaviour, IActivate, IFlammable, IElectrocutable
 
     private void Start()
     {
-        
+
         SetLength();
         if (timeToRelight > 0)
         {
@@ -45,8 +48,8 @@ public class FireVent : MonoBehaviour, IActivate, IFlammable, IElectrocutable
         psysFlame.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
         _collider.size = new(_collider.size.x, length);
-        _collider.offset = new Vector2(0, (length - 1) /2);
-        
+        _collider.offset = new Vector2(0, (length - 1) / 2);
+
         var main = psysFlame.main;
         main.startSpeed = length * 1.2f;
         main.duration = 0.25f / length;
@@ -62,6 +65,14 @@ public class FireVent : MonoBehaviour, IActivate, IFlammable, IElectrocutable
     {
         if (isLit)
             PropagateFlame(_collider);
+        else
+        {
+            if (timeToRelight > 0)
+            {
+                int index = Mathf.RoundToInt(relightAlarm.PercentComplete * Mathf.Max(0, Mathf.FloorToInt(timerSprites.Length - 1)));
+                timer.sprite = timerSprites[index];
+            }
+        }
     }
 
     public void CatchFlame(Collider2D collider)
@@ -72,6 +83,8 @@ public class FireVent : MonoBehaviour, IActivate, IFlammable, IElectrocutable
         psysFlame.Play();
         psysGas.Stop();
         _collider.enabled = true;
+        timer.sprite = timerSprites[^1];
+
     }
 
     public void DouseFlame()
@@ -84,6 +97,8 @@ public class FireVent : MonoBehaviour, IActivate, IFlammable, IElectrocutable
         psysFlame.Clear();
         relightAlarm?.ResetAndPlay();
         _collider.enabled = false;
+        timer.sprite = timerSprites[0];
+
     }
 
     public void PropagateFlame(Collider2D collider)

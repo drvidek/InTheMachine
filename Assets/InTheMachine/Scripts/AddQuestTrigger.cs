@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class AddQuestTrigger : MonoBehaviour
 {
-    [SerializeField] private Quest quest;
+    [SerializeField] private QuestID quest;
     [SerializeField] private bool destroyObject;
 
     private void OnTriggerEnter2D(Collider2D collision)

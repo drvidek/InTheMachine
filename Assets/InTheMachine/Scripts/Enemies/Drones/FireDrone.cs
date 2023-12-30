@@ -2,6 +2,7 @@ using QKit;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class FireDrone : EnemyWalking
 {
@@ -18,6 +19,8 @@ public class FireDrone : EnemyWalking
 
     [SerializeField] private Collider2D burstCollider;
     [SerializeField] private CapsuleCollider2D flamethrowerCollider;
+    [SerializeField] private GameObject reward;
+    [SerializeField] private UnityEvent killEvent;
 
     public Action onFlamethrower, onBurst, onCharge;
 
@@ -38,7 +41,7 @@ public class FireDrone : EnemyWalking
         attackAlarm = Alarm.Get(burstAttackRecovery, false, false);
         idleAlarm.onComplete = () =>
         {
-            if (!GroundAhead)
+            if (!GroundAhead || ColliderAhead)
                 ChangeDirection();
             ChooseNewAttack();
         };
@@ -62,6 +65,8 @@ public class FireDrone : EnemyWalking
         _targetVelocity = Vector2.zero;
         rb.velocity = _targetVelocity;
         idleAlarm.ResetAndPlay();
+        if (!playerInRoom)
+            healthMeter.Fill();
     }
 
     protected override void OnIdleStay()
@@ -83,7 +88,7 @@ public class FireDrone : EnemyWalking
             ChangeStateTo(EnemyState.Attack);
         }
 
-        if (!GroundAhead)
+        if (!GroundAhead || ColliderAhead)
         {
             ChangeDirection();
             ChooseNewAttack();
@@ -137,7 +142,7 @@ public class FireDrone : EnemyWalking
                 MoveWithGravity(CurrentDirection, _walkSpeed);
                 float newX = Mathf.MoveTowards(flamethrowerCollider.size.x, maxLength, maxLength * Time.fixedDeltaTime);
                 UpdateFlamethrowerCollider(new(newX, 0.5f));
-                if (!GroundAhead)
+                if (!GroundAhead || ColliderAhead)
                 {
                     ExitAttack();
                 }
@@ -152,7 +157,7 @@ public class FireDrone : EnemyWalking
                 break;
             case Attack.Charge:
                 MoveWithGravity(CurrentDirection, chargeAttackSpeed);
-                if (!GroundAhead)
+                if (!GroundAhead || ColliderAhead)
                 {
                     ExitAttack();
                 }
@@ -167,6 +172,13 @@ public class FireDrone : EnemyWalking
         flamethrowerCollider.enabled = false;
         burstCollider.enabled = false;
         base.OnAttackExit();
+    }
+
+    protected override void OnDieEnter()
+    {
+        Instantiate(reward, transform.position, Quaternion.identity);
+        killEvent?.Invoke();
+        base.OnDieEnter();
     }
 
     private void ExitAttack()

@@ -130,7 +130,9 @@ namespace QKit
                 Debug.LogWarning(_warningMeterRateZero);
 
             _value = clamp ? Mathf.Clamp(_value + f, _min, _max) : _value + f;
-            CheckForAction();
+
+            if (f != 0)
+                CheckForAction();
         }
 
 
@@ -161,8 +163,9 @@ namespace QKit
                 if (clamp)
                     _value = Mathf.Clamp(_value, _min, _max);
             }
+            if (f != 0)
 
-            CheckForAction();
+                CheckForAction();
         }
 
         /// <summary>
@@ -184,7 +187,9 @@ namespace QKit
                 return false;
             }
             _value = newValue;
-            CheckForAction();
+            if (f != 0)
+
+                CheckForAction();
             return true;
         }
 
@@ -213,8 +218,9 @@ namespace QKit
             }
 
             _value = newValue;
+            if (f != 0)
 
-            CheckForAction();
+                CheckForAction();
             return true;
         }
 

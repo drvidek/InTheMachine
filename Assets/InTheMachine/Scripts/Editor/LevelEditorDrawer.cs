@@ -283,7 +283,7 @@ public class LevelEditorDrawer : Editor
             case LevelEditor.Category.Debris:
                 if (debris)
                     break;
-                if (toggle && toggle.GetComponent<Button>())
+                if (toggle && toggle.GetComponent<MachineButton>())
                 {
                     finalPrefab = editor.debris.prefab;
                 }
@@ -341,9 +341,9 @@ public class LevelEditorDrawer : Editor
                 LevelToggle toggleSpawned = objSpawnedjInScene.GetComponent<LevelToggle>();
                 if (buttonStayPressed.boolValue)
                 {
-                    (toggleSpawned as Button).SetStayPressed();
+                    (toggleSpawned as MachineButton).SetStayPressed();
                 }
-                if (toggleSpawned is Button)
+                if (toggleSpawned is MachineButton)
                     objSpawnedjInScene.transform.localEulerAngles = new Vector3(0, 0, editor.objectRotation);
                 foreach (var objToActivate in editor.objectsInSceneToActivate)
                 {

@@ -73,7 +73,15 @@ public class PlayerAnimate : AgentAnimator
         myPlayer.onStunExit += () =>
         {
             animator.SetBool("IsStunned", false);
+        };
 
+        myPlayer.onHealEnter += () =>
+        {
+            animator.SetBool("IsHealing", true);
+        };
+        myPlayer.onHealExit += () =>
+        {
+            animator.SetBool("IsHealing", false);
         };
 
         myPlayer.PowerMeter.onMin += () => pakSprite.color = Color.gray;

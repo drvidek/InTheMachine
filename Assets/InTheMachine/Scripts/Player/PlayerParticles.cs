@@ -10,11 +10,16 @@ public class PlayerParticles : MonoBehaviour
     [SerializeField] private ParticleSystem _psysFly;
     [SerializeField] private ParticleSystem _psysBoost;
     [SerializeField] private ParticleSystem _psysUltraBoostActivate, _psysUltraBoostStay;
+    [SerializeField] private ParticleSystem _psysHealingActive, _psysHealingComplete;
+    [SerializeField] private ParticleSystem _psysOutOfPower, _psysPowerRecharged;
+    [SerializeField] private ParticleSystem _psysTakeHit;
     [SerializeField] private ParticleSystem _psysFlameGun;
     [SerializeField] private Color boostColor, ultraBoostColor;
 
     private ParticleSystem.MainModule flameGunMain;
     private ParticleSystem.ShapeModule flameGunShape;
+
+    private bool outOfPower = false;
 
     private Vector3 _psysFlyPositionBase;
     // Start is called before the first frame update
@@ -22,6 +27,34 @@ public class PlayerParticles : MonoBehaviour
     {
         player = GetComponent<Player>();
         animPlayer = GetComponent<PlayerAnimate>();
+
+        player.onTakeDamage += (float f) =>
+        {
+            var main = _psysTakeHit.main;
+            main.startColor = f > 0 ? Color.red : new(.8f, .8f, .8f, 1);
+            _psysTakeHit.Play();
+        };
+
+        player.onHealEnter += () => _psysHealingActive.Play();
+        player.onHealExit += () =>
+        {
+            _psysHealingActive.Clear();
+            _psysHealingActive.Stop();
+        };
+        player.heal.onRelease += () => _psysHealingActive.Stop();
+        player.HealthMeter.onMax += () => _psysHealingComplete.Play();
+        player.PowerMeter.onMin += () =>
+        {
+            _psysOutOfPower.Play();
+            outOfPower = true;
+        };
+        player.PowerMeter.onMax += () =>
+        {
+            if (outOfPower)
+            _psysPowerRecharged.Play();
+            outOfPower = false;
+        };
+
         player.onFlyEnter += () => _psysFly.Play();
         player.onFlyExit += () => _psysFly.Stop();
         player.onBoostEnter += () =>

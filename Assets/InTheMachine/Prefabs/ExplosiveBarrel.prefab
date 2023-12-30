@@ -177,7 +177,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 1000
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
@@ -205,6 +205,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   explosionPrefab: {fileID: 342506643400893107, guid: 40cc64067d57cc34fa385903fe15fce1, type: 3}
+  respawn: 0
 --- !u!1 &8265265725814782308
 GameObject:
   m_ObjectHideFlags: 0

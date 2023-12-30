@@ -68,12 +68,34 @@ public class RoomManager : MonoBehaviour
     {
         Vector3Int cell = roomGrid.WorldToCell(position);
         return cell; //roomGrid.CellToWorld(cell);
+    }
 
+    public bool InSameRoom(params Transform[] transforms)
+    {
+        Vector3Int room = GetRoom(transforms[0]);
+        foreach (var item in transforms)
+        {
+            if (GetRoom(item) != room)
+                return false;
+        }
+        return true;
+    }
+
+    public bool InSameRoom(params Vector3[] positions)
+    {
+        Vector3Int room = GetRoom(positions[0]);
+        foreach (var item in positions)
+        {
+            if (GetRoom(item) != room)
+                return false;
+        }
+        return true;
     }
 
     private void Start()
     {
         lastRoom = GetRoom(Player.main.transform);
+        onPlayerMovedRoom?.Invoke(currentRoom);
     }
 
     private void FixedUpdate()

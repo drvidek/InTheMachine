@@ -10,7 +10,7 @@ public class PopupText : MonoBehaviour
 	[SerializeField] private GameObject popupBox;
 	[SerializeField] private TextMeshProUGUI popupLabel;
 
-	private float defaultPopupTime = 6f;
+	private float defaultPopupTime = 4f;
 	private Alarm popupAlarm;
 
 	public bool PopupActive => popupAlarm.IsPlaying;
@@ -42,11 +42,11 @@ public class PopupText : MonoBehaviour
 
     private void Start()
     {
-		popupAlarm = Alarm.Get(0f, false, false);
+		popupAlarm = Alarm.Get(0f, false, false,1,Alarm.Type.unscaled);
 		popupAlarm.onComplete += () =>
 		{
 			popupBox.SetActive(false);
-
+			GameManager.main.TogglePause();
 		};
     }
 
@@ -56,39 +56,47 @@ public class PopupText : MonoBehaviour
 		string upgradeName = "";
 		string upgradeInstruction = "";
 
-		switch (ability)
-		{
-			case Player.Ability.Gun:
-				upgradeType = "OBTAINED:";
-				upgradeName = "POWERPAK";
-				upgradeInstruction = "PRESS Y FOR AIR CANNON";
-				break;
-			case Player.Ability.Flight:
+        switch (ability)
+        {
+            case Player.Ability.Gun:
+                upgradeType = "OBTAINED:";
+                upgradeName = "POWERPAK";
+                upgradeInstruction = "PRESS Y FOR AIR CANNON";
+                break;
+            case Player.Ability.Flight:
                 upgradeType = "POWERPAK UPGRADED:";
                 upgradeName = "JETPAK";
                 upgradeInstruction = "PRESS B IN AIR";
                 break;
-			case Player.Ability.Tractor:
+            case Player.Ability.Tractor:
                 upgradeType = "OBTAINED:";
                 upgradeName = "TRACTOR BEAM";
                 upgradeInstruction = "HOLD Y DURING JETPAK";
                 break;
-			case Player.Ability.Boost:
+            case Player.Ability.Boost:
                 upgradeType = "OBTAINED:";
                 upgradeName = "BOOST";
                 upgradeInstruction = "PRESS A TO DODGE";
                 break;
-			default:
-				break;
-		}
+            case Player.Ability.Special:
+                upgradeType = "POWERPAK UPGRADED:";
+                upgradeName = "BLASTER";
+                upgradeInstruction = "PRESS RB FOR SPECIAL ATTACK";
+                break;
+            case Player.Ability.UltraBoost:
+                break;
+            default:
+                break;
+        }
 
-		popupLabel.text =
+        popupLabel.text =
 			upgradeType + "\n" +
 			upgradeName + "\n" +
 			"\n" +
 			upgradeInstruction;
 
 		popupBox.SetActive(true);
+        GameManager.main.TogglePause();
 
         popupAlarm.ResetAndPlay(defaultPopupTime);
     }
@@ -117,6 +125,43 @@ public class PopupText : MonoBehaviour
             upgradeAmount;
 
         popupBox.SetActive(true);
+        GameManager.main.TogglePause();
+
+        popupAlarm.ResetAndPlay(defaultPopupTime);
+    }
+
+    public void DisplayGunText(GunProfileType type)
+    {
+        string upgradeType = "";
+        string upgradeName = "";
+        string upgradeInstruction = "";
+
+		switch (type)
+		{
+			case GunProfileType.Air:
+				break;
+			case GunProfileType.Fire:
+                upgradeType = "POWERPAK UPGRADED";
+                upgradeName = "FLAMETHROWER";
+                upgradeInstruction = "SELECT WITH D-PAD\nHOLD Y TO USE";
+                break;
+			case GunProfileType.Elec:
+				break;
+			case GunProfileType.Slime:
+				break;
+			default:
+				break;
+		}
+
+
+        popupLabel.text =
+            upgradeType + "\n" +
+            upgradeName + "\n" +
+            "\n" +
+            upgradeInstruction;
+
+        popupBox.SetActive(true);
+        GameManager.main.TogglePause();
 
         popupAlarm.ResetAndPlay(defaultPopupTime);
     }

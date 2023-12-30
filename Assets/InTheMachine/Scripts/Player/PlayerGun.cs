@@ -82,7 +82,7 @@ public class PlayerGun : Launcher
 
         SetCurrentProfile(currentProfile, myPlayer.AllAbilities);
 
-        myPlayer.onAbilityUnlock += UnlockPak;
+        myPlayer.onAbilityUnlock += UnlockGun;
     }
 
     private void Update()
@@ -93,7 +93,7 @@ public class PlayerGun : Launcher
             swapV > 0 ? GunProfileType.Air :
              swapH < 0 ? GunProfileType.Fire :
             swapV < 0 ? GunProfileType.Elec :
-            swapH > 0 ? GunProfileType.Air :
+            swapH > 0 ? GunProfileType.Slime :
             currentProfile;
 
         if (lastProfile != newProfile)
@@ -112,7 +112,7 @@ public class PlayerGun : Launcher
             return;
         }
 
-        if (!Player.main.TryToUsePower(cost * (costOnShot ? 1 : _lifetime / _speed / 2f)))
+        if (!Player.main.TryToUsePower(cost * (costOnShot ? 1 : (1f / cost) * 2f)))//_lifetime / _speed / 2f)))
             return;
 
         Projectile projectile = Instantiate(_projectilePrefab, SpawnPosition, Quaternion.identity, null);
@@ -137,7 +137,7 @@ public class PlayerGun : Launcher
         if (costOnShot)
             return;
         delayingShot = true;
-        Alarm delay = Alarm.GetAndPlay(_lifetime / _speed / 2f);
+        Alarm delay = Alarm.GetAndPlay((1f/cost)*2f);
         delay.onComplete = () => delayingShot = false;
     }
 
@@ -183,7 +183,7 @@ public class PlayerGun : Launcher
         TryToShoot();
     }
 
-    private void UnlockPak(Player.Ability ability)
+    private void UnlockGun(Player.Ability ability)
     {
         if (ability == Player.Ability.Gun)
         {
@@ -192,7 +192,7 @@ public class PlayerGun : Launcher
         }
     }
 
-    private void UnlockGunType(GunProfileType type)
+    public void UnlockGunType(GunProfileType type)
     {
         availableTypes.Add(type);
         onProfileUnlock?.Invoke(type);

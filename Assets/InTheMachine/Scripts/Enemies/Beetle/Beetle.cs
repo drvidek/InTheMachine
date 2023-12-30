@@ -6,8 +6,6 @@ using QKit;
 public class Beetle : EnemyWalking, IFlammable
 {
     [SerializeField] protected Collider2D hardCollider;
-    
-
 
     private BoxCollider2D boxCollider => _collider as BoxCollider2D;
     public Quaternion zRotation => Quaternion.AngleAxis(transform.rotation.eulerAngles.z, Vector3.forward);
@@ -16,6 +14,8 @@ public class Beetle : EnemyWalking, IFlammable
 
     public Vector2 groundBox => new Vector2(0.2f, boxCollider.size.y);
     public Vector2 wallBox => new Vector2(0.2f, 0.1f);
+
+    public override bool IsGrounded => StandingOn != null;
 
     public override Collider2D StandingOn
     {

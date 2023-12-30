@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,23 +15,37 @@ public class Checkpoint : MonoBehaviour, IActivate
 
     public Vector3 Position => new(transform.position.x, transform.position.y, Player.main.Z);
 
+    public static Action<Vector3Int> onActivate;
+
     private void Start()
     {
         animator = GetComponent<Animator>();
         ToggleActive(active);
+
+        Player.main.interact.onPress += OpenShop;
     }
 
     public void ToggleActive(bool active)
     {
         this.active = active;
         animator.SetBool("Active", active);
-        psysActivate.Play();
-        QuestManager.main.CompleteQuest(QuestID.Terminal);
+        if (active)
+        {
+            onActivate?.Invoke(RoomManager.main.GetRoom(transform));
+            psysActivate.Play();
+            QuestManager.main.CompleteQuest(QuestID.Terminal);
+        }
     }
 
     public void ToggleActiveAndLock(bool active)
     {
-
+        this.active = active;
+        animator.SetBool("Active", active);
+        if (active)
+        {
+            psysActivate.Play();
+            QuestManager.main.CompleteQuest(QuestID.Terminal);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -44,5 +58,14 @@ public class Checkpoint : MonoBehaviour, IActivate
             currentCheckpoint = this;
             Player.main.RefillRepairCharges();
         }
+    }
+
+    private void OpenShop()
+    {
+        if (!active || !Physics2D.OverlapBox(transform.position, Vector2.one, 0,1<< 6))
+            return;
+
+        Shop.main.OpenShop();
+        GameManager.main.TogglePause();
     }
 }

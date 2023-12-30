@@ -18,15 +18,33 @@ public class PhysicsObject : MonoBehaviour
     {
         if (!rb)
             rb = GetComponent<Rigidbody2D>();
-        _collider = GetComponent<CompositeCollider2D>();
+        if (TryGetComponent<CompositeCollider2D>(out CompositeCollider2D col))
+            _collider = col;
+        else
+            _collider = GetComponent<BoxCollider2D>();
     }
 
     private void FixedUpdate()
     {
-        if (sliding)
+        if (!sliding)
         {
-            rb.velocity = slidingDirection * 20f;
+            rb.velocity = new(0, rb.velocity.y);
+            return;
         }
+
+        if (_collider is BoxCollider2D)
+        {
+            RaycastHit2D[] hits = Physics2D.BoxCastAll(_collider.bounds.center, _collider.bounds.size, 0, slidingDirection, 0.02f, collidingMask);
+            foreach (var hit in hits)
+            {
+                if (hit.collider != _collider)
+                    EndSlide();
+            }
+
+        }
+
+        if (sliding)
+            rb.velocity = slidingDirection * 20f;
 
     }
 
@@ -43,18 +61,19 @@ public class PhysicsObject : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (sliding)
+        if (sliding && _collider is CompositeCollider2D)
         {
             if (QKit.QMath.DoesLayerMaskContain(collidingMask, collision.gameObject.layer))
             {
+                float forgiveness = _collider.bounds.size.y / 100f;
                 List<ContactPoint2D> list = new();
                 collision.GetContacts(list);
                 foreach (var contact in list)
                 {
-                    Debug.Log(contact.point + $" {_collider.bounds.min.y}/{_collider.bounds.max.y}");
+                    Debug.Log(contact.point.y + $" {_collider.bounds.min.y + forgiveness}/{_collider.bounds.max.y - forgiveness}");
                     if (Mathf.Sign(contact.point.x - _collider.bounds.center.x) == slidingDirection.x &&
-                        contact.point.y > _collider.bounds.min.y + 0.1f &&
-                        contact.point.y < _collider.bounds.max.y - 0.1f)
+                        contact.point.y > _collider.bounds.min.y + forgiveness &&
+                        contact.point.y < _collider.bounds.max.y - forgiveness)
                     {
                         EndSlide();
                         return;

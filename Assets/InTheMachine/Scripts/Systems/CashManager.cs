@@ -7,6 +7,8 @@ public class CashManager : MonoBehaviour
 {
     [SerializeField] private Meter cash;
 
+	public float Cash => cash.Value;
+
     public Action<int> onCashChange;
 
 

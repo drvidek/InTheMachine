@@ -472,7 +472,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_37
+      name: SlimeT0
       rect:
         serializedVersion: 2
         x: 0
@@ -493,7 +493,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_38
+      name: SlimeL0
       rect:
         serializedVersion: 2
         x: 16
@@ -514,7 +514,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_39
+      name: SlimeT1
       rect:
         serializedVersion: 2
         x: 32
@@ -535,7 +535,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_40
+      name: SlimeL1
       rect:
         serializedVersion: 2
         x: 48
@@ -556,7 +556,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_41
+      name: SlimeT2
       rect:
         serializedVersion: 2
         x: 64
@@ -577,7 +577,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_42
+      name: SlimeL2
       rect:
         serializedVersion: 2
         x: 80
@@ -598,7 +598,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_43
+      name: Slimet3
       rect:
         serializedVersion: 2
         x: 96
@@ -619,7 +619,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_44
+      name: SlimeL3
       rect:
         serializedVersion: 2
         x: 112
@@ -682,7 +682,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_47
+      name: SlimeB0
       rect:
         serializedVersion: 2
         x: 0
@@ -703,7 +703,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_48
+      name: SlimeR0
       rect:
         serializedVersion: 2
         x: 16
@@ -724,7 +724,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_49
+      name: SlimeB1
       rect:
         serializedVersion: 2
         x: 32
@@ -745,7 +745,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_50
+      name: SlimeR1
       rect:
         serializedVersion: 2
         x: 48
@@ -766,7 +766,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_51
+      name: SlimeB2
       rect:
         serializedVersion: 2
         x: 64
@@ -787,7 +787,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_52
+      name: SlimeR2
       rect:
         serializedVersion: 2
         x: 80
@@ -808,7 +808,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_53
+      name: SlimeB3
       rect:
         serializedVersion: 2
         x: 96
@@ -829,7 +829,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_54
+      name: SlimeR3
       rect:
         serializedVersion: 2
         x: 112
@@ -2026,7 +2026,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_90
+      name: Source
       rect:
         serializedVersion: 2
         x: 48
@@ -3102,6 +3102,23 @@ TextureImporter:
       MossCeiling0: -670138246
       MossCeiling1: -220253581
       MossGround1: -59916214
+      SlimeB0: 2118248221
+      SlimeB1: 1173501823
+      SlimeB2: 1642016470
+      SlimeB3: 412368694
+      SlimeL0: 541792068
+      SlimeL1: -854280918
+      SlimeL2: -958182522
+      SlimeL3: 1363393987
+      SlimeR0: -1484325982
+      SlimeR1: 1803812726
+      SlimeR2: -1860291461
+      SlimeR3: 638911469
+      SlimeT0: 544432461
+      SlimeT1: -952972587
+      SlimeT2: -1073173294
+      Slimet3: -42869373
+      Source: -2073621399
       TilesetEnvironment_10: 95239072
       TilesetEnvironment_11: -353825013
       TilesetEnvironment_115: -1406007009
@@ -3133,24 +3150,8 @@ TextureImporter:
       TilesetEnvironment_34: -456764999
       TilesetEnvironment_35: -906057144
       TilesetEnvironment_36: -2035283669
-      TilesetEnvironment_37: 544432461
-      TilesetEnvironment_38: 541792068
-      TilesetEnvironment_39: -952972587
       TilesetEnvironment_4: 261369313
-      TilesetEnvironment_40: -854280918
-      TilesetEnvironment_41: -1073173294
-      TilesetEnvironment_42: -958182522
-      TilesetEnvironment_43: -42869373
-      TilesetEnvironment_44: 1363393987
-      TilesetEnvironment_47: 2118248221
-      TilesetEnvironment_48: -1484325982
-      TilesetEnvironment_49: 1173501823
       TilesetEnvironment_5: -443219973
-      TilesetEnvironment_50: 1803812726
-      TilesetEnvironment_51: 1642016470
-      TilesetEnvironment_52: -1860291461
-      TilesetEnvironment_53: 412368694
-      TilesetEnvironment_54: 638911469
       TilesetEnvironment_6: 1574943003
       TilesetEnvironment_63: 50803107
       TilesetEnvironment_64: 141784528
@@ -3164,7 +3165,6 @@ TextureImporter:
       TilesetEnvironment_8: -438632413
       TilesetEnvironment_84: -539143867
       TilesetEnvironment_9: -815005561
-      TilesetEnvironment_90: -2073621399
       TilesetEnvironment_97: 2057486466
       TilesetEnvironment_98: -1374626637
       Timer0: 1100163533

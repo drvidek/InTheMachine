@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: 1
   speed: 6
-  power: 1
+  power: 0.2
   lifetime: 1
   count: 1
   spread: 0
@@ -25,5 +25,5 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 17024
   projectilePrefab: {fileID: 5911450181065757125, guid: e32e31826247add45873d6dc987f0e03, type: 3}
-  cost: 20
+  cost: 30
   costOnShot: 0

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using QKit;
-using System.Net.NetworkInformation;
 
 public class BurnAway : MonoBehaviour, IFlammable
 {

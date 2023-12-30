@@ -55,7 +55,10 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     protected float currentDistanceToPlayer => Vector3.Distance(transform.position, Player.main.Position);
     protected bool playerInRange => currentDistanceToPlayer < attackRange;
     protected bool playerInSight => !Physics2D.Raycast(transform.position, DirectionToPlayer, currentDistanceToPlayer, groundedMask);
-    protected bool playerInRoom => RoomManager.main.currentRoom == RoomManager.main.GetRoom(transform);
+    protected bool playerInRoom => RoomManager.main.InSameRoom(transform, Player.main.transform);
+    protected Vector3Int currentRoom => RoomManager.main.GetRoom(transform);
+
+    public static GameObject psysSplat => Resources.Load("PSysSplat") as GameObject;
 
     protected override void Start()
     {
@@ -419,6 +422,8 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
         if (questID != QuestID.Null)
             QuestManager.main.CompleteQuest(questID);
         _targetVelocity = Vector2.zero;
+
+        Instantiate(psysSplat, transform.position, Quaternion.identity);
     }
 
     /// <summary>
@@ -542,7 +547,10 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     /// </summary>
     protected virtual void OnBurnExit()
     {
+        if (healthMeter.IsEmpty)
+        {
 
+        }
     }
     #endregion
 
@@ -591,6 +599,38 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     }
 
     public abstract void OnProjectileHit(Projectile projectile);
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.collider.isTrigger)
+            return;
+        if (!collision.rigidbody)
+            return;
+
+        if (collision.rigidbody.velocity == Vector2.zero)
+            return;
+
+        if (collision.rigidbody.GetComponent<EnemyMachine>())
+            return;
+
+        ContactFilter2D filter = new();
+
+        filter.SetLayerMask(groundedMask);
+
+        RaycastHit2D[] hits = new RaycastHit2D[3];
+
+        if (_collider.Cast(collision.rigidbody.velocity.normalized, filter, hits, 0.05f) > 0)
+        {
+            foreach (var item in hits)
+            {
+                if (!item.rigidbody || (item.rigidbody != collision.rigidbody && !item.rigidbody.GetComponent<EnemyMachine>()))
+                {
+                    ChangeStateTo(EnemyState.Die);
+                    break;
+                }
+            }
+        }
+    }
 
     protected virtual void OnDrawGizmos()
     {

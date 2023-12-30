@@ -28,10 +28,23 @@ public class FungusRun : Fungus
     {
         get
         {
-            RaycastHit2D hit = Physics2D.BoxCast(transform.position + (Vector3)hardCollider.offset, hardCollider.bounds.size, transform.localEulerAngles.z, Vector2.down, 0.02f, groundedMask);
-            if (hit)
-                return hit.collider;
-            return null;
+            RaycastHit2D[] hits = new RaycastHit2D[3];
+            ContactFilter2D filter = new();
+            filter.SetLayerMask(groundedMask);
+            hardCollider.Cast(Vector2.down, filter, hits, 0.02f, true);
+            Collider2D colliderFound = null;
+            foreach (var hit in hits)
+            {
+                if (!hit)
+                    continue;
+                if (hit.collider != hardCollider)
+                {
+                    colliderFound = hit.collider;
+                    break;
+                }
+
+            }
+            return colliderFound;
         }
     }
 
@@ -39,10 +52,23 @@ public class FungusRun : Fungus
     {
         get
         {
-            RaycastHit2D hit = Physics2D.BoxCast(transform.position + (Vector3)hardCollider.offset, new(hardCollider.bounds.size.x, 0.9f), transform.localEulerAngles.z, new(TargetXDirection, 0), burning ? 0.2f : 0.02f, groundedMask);
-            if (!hit)
-                return null;
-            return hit.collider;
+            RaycastHit2D[] hits = new RaycastHit2D[3];
+            ContactFilter2D filter = new();
+            filter.SetLayerMask(groundedMask);
+            hardCollider.Cast(new(TargetXDirection, 0), filter, hits, 0.02f, true);
+            Collider2D colliderFound = null;
+            foreach (var hit in hits)
+            {
+                if (!hit)
+                    continue;
+                if (hit.collider != hardCollider)
+                {
+                    colliderFound = hit.collider;
+                    break;
+                }
+
+            }
+            return colliderFound;
         }
 
     }
@@ -146,6 +172,12 @@ public class FungusRun : Fungus
         MoveWithGravity(new(direction, 0), currentSpeed);
     }
 
+    protected override void OnBurnStay()
+    {
+        float direction = Mathf.Sign(_targetVelocity.x);
+        MoveWithGravity(new(direction, 0), currentSpeed);
+        base.OnBurnStay();
+    }
 
     private void AscendAtSpeedInDirection(float jumpSpeed, float xDirection)
     {

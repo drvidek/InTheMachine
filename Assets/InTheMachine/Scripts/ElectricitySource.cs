@@ -9,6 +9,7 @@ public class ElectricitySource : MonoBehaviour, IActivate, IElectrocutable
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private BoxCollider2D boxCollider;
     [SerializeField] private LayerMask contactMask;
+    [SerializeField] private bool powerOff;
 
     private void OnValidate()
     {
@@ -61,6 +62,9 @@ public class ElectricitySource : MonoBehaviour, IActivate, IElectrocutable
 
     public void ToggleActive(bool active)
     {
+        if (powerOff)
+            active = !active;
+
         this.active = active;
         boxCollider.enabled = active;
         spriteRenderer.enabled = active;
@@ -68,6 +72,11 @@ public class ElectricitySource : MonoBehaviour, IActivate, IElectrocutable
 
     public void ToggleActiveAndLock(bool active)
     {
-        throw new System.NotImplementedException();
+        if (powerOff)
+            active = !active;
+
+        this.active = active;
+        boxCollider.enabled = active;
+        spriteRenderer.enabled = active;
     }
 }

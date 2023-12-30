@@ -11,6 +11,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         Gun,
         Flight,
         Tractor,
+        Special,
         Boost,
         UltraBoost
     }
@@ -95,6 +96,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     public bool IsVulnerable => !IsBoosting && !IsStunned && !IFramesActive;
     public Meter PowerMeter => powerMeter;
     public bool OutOfPower => outOfPower;
+    public Meter HealthMeter => healthMeter;
     public CapsuleCollider2D CapsuleCollider => _collider as CapsuleCollider2D;
 
     public float CurrentHealth => healthMeter.Value;
@@ -864,7 +866,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     /// </summary>
     private void OnHealExit()
     {
-
+        healTimer.Stop();
     }
     #endregion
 
@@ -1105,15 +1107,26 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
                 AddPowerUp(p.TypeHeld);
                 PopupText.main.DisplayPowerupText(p.TypeHeld);
             }
+            if (c is GunUnlock)
+            {
+                var g = c as GunUnlock;
+                PlayerGun.main.UnlockGunType(g.Gun);
+                PopupText.main.DisplayGunText(g.Gun);
+
+            }
             c.Collect();
         }
 
-        if (IsVulnerable && collision.attachedRigidbody && collision.gameObject.layer == 7)
+        if (IsVulnerable && collision.gameObject.layer == 7)
         {
-            if (collision.attachedRigidbody.TryGetComponent<EnemyMachine>(out EnemyMachine enemy))
-                TakeDamage(enemy.ContactDamage);
-            if (collision.attachedRigidbody.TryGetComponent<Projectile>(out Projectile p))
-                TakeDamage(p.Power);
+            if (collision.attachedRigidbody)
+            {
+                if (collision.attachedRigidbody.TryGetComponent<EnemyMachine>(out EnemyMachine enemy))
+                    TakeDamage(enemy.ContactDamage);
+                if (collision.attachedRigidbody.TryGetComponent<Projectile>(out Projectile p))
+                    TakeDamage(p.Power);
+
+            }
 
             GetStunned(collision, 10f);
         }
@@ -1172,5 +1185,11 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             TakeDamage(1f);
             GetStunned(collider, 10f);
         }
+    }
+
+    public void IncreaseRepairCharge()
+    {
+        repairMeter.SetNewBounds(0, repairMeter.Max + 1);
+        repairMeter.Fill();
     }
 }

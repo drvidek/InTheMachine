@@ -347,7 +347,7 @@ MonoBehaviour:
     _colorType: 0
   showDebug: 0
   _currentState: 0
-  cashWorth: 2
+  questID: 2
   contactDamage: 0
   _fric: 10
   _grv: 22
@@ -357,6 +357,7 @@ MonoBehaviour:
   flySpeed: 2
   maxDistanceToNewDestination: 5
   maxDistanceFromHome: 8
+  damageFromAir: 1
 --- !u!114 &1444939075102424547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -373,3 +374,4 @@ MonoBehaviour:
   spriteRenderer: {fileID: 0}
   animator: {fileID: 0}
   pixelAligner: {fileID: 0}
+  damageFlashSpeed: 0.1

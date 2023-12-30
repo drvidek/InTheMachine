@@ -28,18 +28,20 @@ public enum QuestID
     Pest,
     Fungus,
     Terminal,
-    Elevator
+    Elevator,
+    FireDrone
 }
 
 public class QuestManager : MonoBehaviour
 {
-    [SerializeField] private float typeDelay = 0.1f; 
+    [SerializeField] private float typeDelay = 0.1f;
     [SerializeField] private TextMeshProUGUI questDisplay, questTitle;
 
     private WaitForSeconds typewriterDelay => new WaitForSeconds(typeDelay);
 
     [SerializeField] public List<Quest> questLog = new();
 
+    private QuestList questList;
 
     #region Singleton + Awake
     private static QuestManager _singleton;
@@ -73,7 +75,12 @@ public class QuestManager : MonoBehaviour
     #endregion
 
 
-    public void AddQuest(Quest quest)
+    private void Start()
+    {
+        questList = Resources.Load("QuestList") as QuestList;
+    }
+
+    public void AddQuest(QuestID questID)
     {
         if (questLog.Count == 0)
         {
@@ -82,12 +89,25 @@ public class QuestManager : MonoBehaviour
 
         foreach (var currentQuest in questLog)
         {
-            if (currentQuest.id == quest.id)
+            if (currentQuest.id == questID)
                 return;
         }
 
-        questLog.Add(quest);
-        var routine = AddQuestToTicker("\n>" + quest.name + $" ({quest.reward}c)");
+        Quest questToAdd = new();
+
+        foreach (var questInList in questList.quests)
+        {
+            if (questInList.id == questID)
+            {
+                questToAdd = questInList;
+            }
+        }
+        if (questToAdd.id == QuestID.Null)
+        {
+
+        }
+        questLog.Add(questToAdd);
+        var routine = AddQuestToTicker("\n>" + questToAdd.name + $" ({questToAdd.reward}c)");
         StartCoroutine(routine);
     }
 
@@ -103,15 +123,18 @@ public class QuestManager : MonoBehaviour
             }
         }
 
-        if (foundQuest.id != QuestID.Null)
+        if (foundQuest.id == QuestID.Null)
         {
-            CashManager.main.IncreaseCashBy(foundQuest.reward);
-            if (!foundQuest.persistent)
-            {
-                questLog.Remove(foundQuest);
-                int index = questDisplay.text.IndexOf(foundQuest.name);
-                questDisplay.text.Remove(index - 1,foundQuest.name.Length+2);
-            }
+            AddQuest(quest);
+            foundQuest = questList.quests[(int)quest];
+        }
+
+        CashManager.main.IncreaseCashBy(foundQuest.reward);
+        if (!foundQuest.persistent)
+        {
+            questLog.Remove(foundQuest);
+            int index = questDisplay.text.IndexOf(foundQuest.name);
+            questDisplay.text.Remove(index - 1, foundQuest.name.Length + 2);
         }
     }
 

@@ -43,7 +43,7 @@ public class Rat : EnemyWalking
     {
         MoveWithGravity(CurrentDirection, _walkSpeed);
 
-        if (IsGrounded && rb.velocity.y < 0)
+        if (IsGrounded && rb.velocity.y <= 0)
             ChangeStateTo(EnemyState.Idle);
     }
 

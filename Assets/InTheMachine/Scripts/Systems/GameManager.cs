@@ -58,8 +58,10 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetButtonDown("Pause"))
         {
+            if (!Shop.main.IsOpen)
+                    PauseMenu.main.OpenPauseMenu();
             TogglePause();
         }
     }
@@ -74,11 +76,14 @@ public class GameManager : MonoBehaviour
         if (currentState == GameState.Play)
         {
             currentState = GameState.Pause;
+            
             Time.timeScale = 0;
         }
         else
         {
             currentState = GameState.Play;
+            PauseMenu.main.ClosePauseMenu();
+            Shop.main.CloseShop();
             Time.timeScale = 1;
         }
     }

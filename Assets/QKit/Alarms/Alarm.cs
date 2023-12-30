@@ -24,7 +24,7 @@ namespace QKit
             _timeScale = scale;
             _autoRelease = autoRelease;
             _looping = looping;
-            _type = Type.scaled;
+            _type = type;
 
             _id = count;
             count++;
@@ -105,6 +105,8 @@ namespace QKit
         /// Returns true if the timer is neither paused nor stopped and there is time remaining
         /// </summary>
         public bool IsPlaying { get => !_paused && !_stopped && (_timeRemaining > 0 || _looping); }
+
+        public Type AlarmType => _type;
         /// <summary>
         /// Returns true if the alarm is paused
         /// </summary>
@@ -220,6 +222,7 @@ namespace QKit
             _timeScale = scale;
             _autoRelease = autoRelease;
             _looping = looping;
+            _type = type;
 
         }
         private static void CheckForAlarmRunner()

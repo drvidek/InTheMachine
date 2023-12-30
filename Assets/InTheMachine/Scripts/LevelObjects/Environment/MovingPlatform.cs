@@ -43,6 +43,7 @@ public class MovingPlatform : EnvironmentBox, IActivate
 
     private void FixedUpdate()
     {
+       
         rb.velocity = direction * (active ? ascendSpeed :
             //Vector3.Distance(transform.position, startPosition) <= 0.05f ? 0 :
             descendSpeed);

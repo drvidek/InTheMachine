@@ -34,12 +34,9 @@ public class FireProjectile : Projectile, IFlammable
     {
         IFlammable thisFlam = GetComponentInChildren<IFlammable>();
         int i = 0;
-        Vector3 start = transform.position;
         foreach (var flammable in IFlammable.FindFlammableNeighbours(collider))
         {
-            Vector3 end = (flammable as MonoBehaviour).GetComponent<Collider2D>().bounds.center;
-            if (flammable != thisFlam &&
-                !Physics2D.Raycast(start, QMath.Direction(start, end), Vector3.Distance(start, end), blockingLayer))
+            if (flammable != thisFlam)
                 flammable.CatchFlame(collider);
             i++;
         }

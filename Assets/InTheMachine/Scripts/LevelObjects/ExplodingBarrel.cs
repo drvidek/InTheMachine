@@ -31,11 +31,11 @@ public class ExplodingBarrel : MonoBehaviour, IFlammable, IProjectileTarget
             Destroy(gameObject);
     }
 
-   // private void OnCollisionEnter2D(Collision2D collision)
-   // {
-   //     if (rb.velocity.magnitude > )
-   //         Explode();
-   // }
+    // private void OnCollisionEnter2D(Collision2D collision)
+    // {
+    //     if (rb.velocity.magnitude > )
+    //         Explode();
+    // }
 
     public void PropagateFlame(Collider2D collider)
     {
@@ -69,9 +69,8 @@ public class ExplodingBarrel : MonoBehaviour, IFlammable, IProjectileTarget
 
     public void OnProjectileHit(Projectile projectile)
     {
-        if (projectile is FireProjectile)
-        {
-            Explode();
-        }
+
+        Explode();
+
     }
 }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1904561955924037914}
   - component: {fileID: 6111299231277380176}
   - component: {fileID: 8973751644837359257}
-  - component: {fileID: 6660656611296668490}
+  - component: {fileID: 2964805029781017954}
   m_Layer: 0
   m_Name: Button
   m_TagString: Untagged
@@ -107,7 +107,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &6660656611296668490
+--- !u!114 &2964805029781017954
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -116,13 +116,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 3246324398310642350}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d07f8bce3e50da847b29c94c955acd8b, type: 3}
+  m_Script: {fileID: 11500000, guid: 39cf62db34db5cc46b920671b00b0b68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   onActiveChanged:
     m_PersistentCalls:
       m_Calls: []
-  stayPressed: 0
+  stayPressed: 1
   buttonSprites:
   - {fileID: -1675052462, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}
   - {fileID: 1976051175, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}

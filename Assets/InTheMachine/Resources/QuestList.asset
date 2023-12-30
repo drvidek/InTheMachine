@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3353c35350a6ae4e9073f3f987be6a0, type: 3}
+  m_Name: QuestList
+  m_EditorClassIdentifier: 
+  quests:
+  - id: 0
+    name: 
+    reward: 0
+    persistent: 0
+  - id: 1
+    name: Clean the Machine
+    reward: 1
+    persistent: 1
+  - id: 2
+    name: Eradicate Pests
+    reward: 2
+    persistent: 1
+  - id: 3
+    name: Destroy Fungus Infestation
+    reward: 10
+    persistent: 1
+  - id: 4
+    name: Activate Checkpoint Terminals
+    reward: 50
+    persistent: 1
+  - id: 5
+    name: Open Central Elevator
+    reward: 200
+    persistent: 0
+  - id: 6
+    name: Terminate Malfunctioning Drone
+    reward: 150
+    persistent: 0

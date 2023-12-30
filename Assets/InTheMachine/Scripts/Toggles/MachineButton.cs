@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Button : LevelToggle
+public class MachineButton : LevelToggle
 {
     private List<Rigidbody2D> currentRigidbodies = new();
     private SpriteRenderer spriteRenderer;
