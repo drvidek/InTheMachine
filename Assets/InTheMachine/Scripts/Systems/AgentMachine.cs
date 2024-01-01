@@ -65,6 +65,12 @@ public abstract class AgentMachine : MonoBehaviour
         externalVelocitySources.Clear();
     }
 
+    protected void Halt()
+    {
+        rb.velocity = Vector2.zero;
+        _targetVelocity = Vector2.zero;
+    }
+
     protected virtual Vector2 CalculateOneFrameVelocity()
     {
         Vector2 totalVelocity = new();

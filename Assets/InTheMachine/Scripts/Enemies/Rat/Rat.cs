@@ -30,10 +30,7 @@ public class Rat : EnemyWalking
 
     protected override void OnAscendEnter()
     {
-        walkingRight = QMath.Choose<bool>(true, false);
-
-        if (Physics2D.Raycast(transform.position, walkingRight ? Vector2.right : Vector2.left, 1f, groundedMask))
-            walkingRight = !walkingRight;
+        ChooseDirection();
 
         _targetVelocity.x = _walkSpeed * (walkingRight ? 1 : -1) + Random.Range(-_walkSpeed / 4f, _walkSpeed / 4f);
         _targetVelocity.y = jumpPower * Random.Range(0.8f, 1.2f);
@@ -45,6 +42,14 @@ public class Rat : EnemyWalking
 
         if (IsGrounded && rb.velocity.y <= 0)
             ChangeStateTo(EnemyState.Idle);
+    }
+
+    protected virtual void ChooseDirection()
+    {
+        walkingRight = QMath.Choose<bool>(true, false);
+
+        if (Physics2D.Raycast(transform.position, walkingRight ? Vector2.right : Vector2.left, 1f, groundedMask))
+            walkingRight = !walkingRight;
     }
 
     public override Rigidbody2D GetStandingOnRigidbody()

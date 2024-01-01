@@ -5,15 +5,15 @@ using QKit;
 
 public class Beetle : EnemyWalking, IFlammable
 {
-    [SerializeField] protected Collider2D hardCollider;
+    [SerializeField] protected BoxCollider2D hardCollider;
 
     private BoxCollider2D boxCollider => _collider as BoxCollider2D;
     public Quaternion zRotation => Quaternion.AngleAxis(transform.rotation.eulerAngles.z, Vector3.forward);
 
     public Vector3 NinetyDegrees => new Vector3(0f, 0f, 90f);
 
-    public Vector2 groundBox => new Vector2(0.2f, boxCollider.size.y);
-    public Vector2 wallBox => new Vector2(0.2f, 0.1f);
+    public Vector2 groundBox => hardCollider.size;
+    public Vector2 wallBox => new Vector2(hardCollider.size.x,0.1f);
 
     public override bool IsGrounded => StandingOn != null;
 
@@ -21,7 +21,7 @@ public class Beetle : EnemyWalking, IFlammable
     {
         get
         {
-            RaycastHit2D hit = Physics2D.BoxCast(transform.position + (zRotation * (Vector3)boxCollider.offset), groundBox, transform.localEulerAngles.z, transform.up * -1, 0.02f, groundedMask);
+            RaycastHit2D hit = Physics2D.BoxCast(transform.position + (zRotation * (Vector3)hardCollider.offset), groundBox, transform.localEulerAngles.z, transform.up * -1, 0.02f, groundedMask);
             if (hit)
                 return hit.collider;
             return null;
@@ -45,7 +45,7 @@ public class Beetle : EnemyWalking, IFlammable
     protected override void OnWalkEnter()
     {
         //hardCollider.enabled = false;
-        transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / 16f), QMath.RoundToNearestFraction(transform.position.y, 1f / 4f), transform.position.z);
+        transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / 4f), QMath.RoundToNearestFraction(transform.position.y, 1f / 4f), transform.position.z);
         walkingRight = QMath.Choose<bool>(true, false);
     }
 
@@ -63,21 +63,20 @@ public class Beetle : EnemyWalking, IFlammable
                 }
                 //rotate
                 transform.localEulerAngles += walkingRight ? -NinetyDegrees : NinetyDegrees;
-                transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / 4f), QMath.RoundToNearestFraction(transform.position.y, 1f / 4f), transform.position.z) + CurrentDirection * 0.1f;
+                transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / 4f), QMath.RoundToNearestFraction(transform.position.y, 1f / 4f), transform.position.z) + CurrentDirection * 0.2f;
                 turnLock = 5;
             }
             else
             if (ColliderAhead)
             {
                 transform.localEulerAngles += walkingRight ? NinetyDegrees : -NinetyDegrees;
-                transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / 4f), QMath.RoundToNearestFraction(transform.position.y, 1f / 4f), transform.position.z) + CurrentDirection * 0.1f;
+                transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / 4f), QMath.RoundToNearestFraction(transform.position.y, 1f / 4f), transform.position.z) + CurrentDirection * 0.2f;
                 turnLock = 5;
             }
         }
 
         Move(CurrentDirection, _walkSpeed);
 
-        base.OnWalkStay();
     }
 
     protected override void OnWalkExit()

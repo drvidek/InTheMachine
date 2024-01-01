@@ -17,7 +17,7 @@ public abstract class EnemyWalking : EnemyMachine
     {
         get
         {
-            RaycastHit2D hit = Physics2D.BoxCast(transform.position, _collider.bounds.size, transform.localEulerAngles.z, gravityDirection, 0.02f, groundedMask);
+            RaycastHit2D hit = Physics2D.BoxCast(transform.position + (Vector3)_collider.offset, _collider.bounds.size, transform.localEulerAngles.z, gravityDirection, 0.02f, groundedMask);
             if (hit)
                 return hit.collider;
             return null;

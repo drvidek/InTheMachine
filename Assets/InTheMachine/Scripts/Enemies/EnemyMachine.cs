@@ -54,7 +54,7 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     public Vector3 DirectionToPlayer => QMath.Direction(transform.position, Player.main.Position);
     protected float currentDistanceToPlayer => Vector3.Distance(transform.position, Player.main.Position);
     protected bool playerInRange => currentDistanceToPlayer < attackRange;
-    protected bool playerInSight => !Physics2D.Raycast(transform.position, DirectionToPlayer, currentDistanceToPlayer, groundedMask);
+    virtual protected bool playerInSight => !Physics2D.Raycast(transform.position, DirectionToPlayer, currentDistanceToPlayer, groundedMask);
     protected bool playerInRoom => RoomManager.main.InSameRoom(transform, Player.main.transform);
     protected Vector3Int currentRoom => RoomManager.main.GetRoom(transform);
 

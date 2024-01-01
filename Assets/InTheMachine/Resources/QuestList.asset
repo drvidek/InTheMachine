@@ -27,7 +27,7 @@ MonoBehaviour:
     persistent: 1
   - id: 3
     name: Destroy Fungus Infestation
-    reward: 10
+    reward: 4
     persistent: 1
   - id: 4
     name: Activate Checkpoint Terminals

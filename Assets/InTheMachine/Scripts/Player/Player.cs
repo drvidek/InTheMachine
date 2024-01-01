@@ -1140,7 +1140,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         }
         ChangeStateTo(PlayerState.Stun);
         _targetVelocity.x = Mathf.Sign(transform.position.x - stunSource.transform.position.x);
-        _targetVelocity.y = IsGrounded ? 1 : 0;
+        _targetVelocity.y = IsGrounded ? 1 : 0.5f;
         _targetVelocity *= stunPower;
     }
 
@@ -1183,7 +1183,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         if (IsVulnerable && collider.gameObject.layer != gameObject.layer)
         {
             TakeDamage(1f);
-            GetStunned(collider, 10f);
+            GetStunned(collider, 15f);
         }
     }
 
