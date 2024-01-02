@@ -8,7 +8,7 @@ public enum GunProfileType
     Air,
     Fire,
     Elec,
-    Slime
+    Goo
 }
 
 [CreateAssetMenu(fileName = "GunProfile", menuName = "Scriptable Objects/Gun Profile")]
@@ -19,6 +19,7 @@ public class GunProfile : ScriptableObject
     public float spread;
     public LayerMask collidingLayer;
     public LayerMask piercingLayer;
+    public LayerMask pinpointLayer;
     public Projectile projectilePrefab;
     public float cost;
     public bool costOnShot;

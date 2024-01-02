@@ -227,6 +227,9 @@ MonoBehaviour:
   _piercingLayer:
     serializedVersion: 2
     m_Bits: 0
+  _pinpointLayer:
+    serializedVersion: 2
+    m_Bits: 0
   _projectilePrefab: {fileID: 781254997406162109, guid: bb35cf605e148a4419addd69a55326bb, type: 3}
 --- !u!114 &8140244692452406724
 MonoBehaviour:
@@ -244,6 +247,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 0}
   animator: {fileID: 0}
   pixelAligner: {fileID: 0}
+  damageFlashSpeed: 0.1
 --- !u!114 &-6996804090360960167
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -269,8 +273,11 @@ MonoBehaviour:
   _piercingLayer:
     serializedVersion: 2
     m_Bits: 0
+  _pinpointLayer:
+    serializedVersion: 2
+    m_Bits: 0
   _projectilePrefab: {fileID: 8368966783001793159, guid: 969608ab0ba274b498907ffd93289f35, type: 3}
-  spawn: 8
+  spawn: 10
 --- !u!1 &5118647660658802530
 GameObject:
   m_ObjectHideFlags: 0

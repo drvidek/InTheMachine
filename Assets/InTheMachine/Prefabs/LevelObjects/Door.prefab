@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2587972360898467020}
   - component: {fileID: 2513028403457363269}
   - component: {fileID: 4830404521187078216}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: tsDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -142,7 +142,7 @@ GameObject:
   - component: {fileID: 6001079305509203581}
   - component: {fileID: 2382606620018359882}
   - component: {fileID: 8792486745341069351}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -282,6 +282,10 @@ PrefabInstance:
     - target: {fileID: 1158298324351659455, guid: d96008b2bed30874ebc226fdf5fcb0db, type: 3}
       propertyPath: m_Name
       value: PSysSpark
+      objectReference: {fileID: 0}
+    - target: {fileID: 1158298324351659455, guid: d96008b2bed30874ebc226fdf5fcb0db, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 2380902651825865543, guid: d96008b2bed30874ebc226fdf5fcb0db, type: 3}
       propertyPath: m_LocalPosition.x

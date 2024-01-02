@@ -194,7 +194,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   psysDust: {fileID: 10687834549739335}
-  timeToLight: 0.2
+  timeToLight: 0.1
   burnTime: 3
   flames: {fileID: 394916683805127695}
 --- !u!1001 &19647633952498537

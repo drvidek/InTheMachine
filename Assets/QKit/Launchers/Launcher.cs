@@ -22,6 +22,7 @@ namespace QKit
         [SerializeField] protected LayerMask _collidingLayer;
         //layers to pierce
         [SerializeField] protected LayerMask _piercingLayer;
+        [SerializeField] protected LayerMask _pinpointLayer;
         [SerializeField] protected Projectile _projectilePrefab;
 
         public Action onShoot;
@@ -75,7 +76,7 @@ namespace QKit
         /// <param name="direction"></param>
         protected virtual void ApplyPropertiesToProjectile(Projectile projectile, Vector3 direction)
         {
-            projectile.ApplyProjectileProperties(direction, _size, _speed, _lifetime, _power, _collidingLayer, _piercingLayer);
+            projectile.ApplyProjectileProperties(direction, _size, _speed, _lifetime, _power, _collidingLayer, _piercingLayer,_pinpointLayer);
         }
         /// <summary>
         /// Define what action the launcher should take after shooting

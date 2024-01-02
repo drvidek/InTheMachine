@@ -83,6 +83,19 @@ public class FungusRat : Rat, IFlammable
         }
     }
 
+    public override void OnProjectileHit(Projectile projectile)
+    {
+        if (projectile is AirProjectile)
+            return;
+
+        base.OnProjectileHit(projectile);
+        if (projectile is FireballProjectile or FireProjectile)
+        {
+            CatchFlame(projectile.GetComponentInChildren<Collider2D>());
+        }
+        TakeDamage(projectile.Power);
+    }
+
     public void PropagateFlame(Vector3 position, Vector2 size)
     {
         throw new System.NotImplementedException();

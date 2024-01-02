@@ -12,8 +12,10 @@ namespace QKit
         protected LayerMask _collidingLayer;
         //layers to pierce
         protected LayerMask _piercingLayer;
+        protected LayerMask _pinpointLayer;
         protected Vector3 _direction;
         protected Rigidbody2D rb;
+        protected List<Collider2D> pierceList = new();
 
         public Vector3 Direction => _direction;
         public float Speed => _speed;
@@ -62,7 +64,7 @@ namespace QKit
             }
         }
 
-        public virtual void ApplyProjectileProperties(Vector3 direction, float size, float speed, float lifetime, float power, LayerMask colliding, LayerMask piercing)
+        public virtual void ApplyProjectileProperties(Vector3 direction, float size, float speed, float lifetime, float power, LayerMask colliding, LayerMask piercing, LayerMask pinpoint)
         {
             _direction = direction;
             _size = size;
@@ -72,6 +74,7 @@ namespace QKit
             _power = power;
             _collidingLayer = colliding;
             _piercingLayer = piercing;
+            _pinpointLayer = pinpoint;
 
             SetRigidbody();
             rb.velocity = direction * speed;
@@ -163,6 +166,48 @@ namespace QKit
             }
         }
 
+        protected virtual void OnTriggerStay2D(Collider2D other)
+        {
+            LayerMask otherLayer = other.gameObject.layer;
+            bool collision = CheckForCollision(otherLayer);
+            bool piercing = CheckForPierce(otherLayer);
+            bool pinpoint = false;
+
+            if (_pinpointLayer != 0)
+            {
+                pinpoint = CheckForPinpoint(otherLayer);
+            }
+
+
+            if (!collision && !piercing &&!pinpoint)
+                return;
+
+            if (pinpoint)
+            {
+                pinpoint = false;
+                foreach (var collider in Physics2D.OverlapPointAll(transform.position,_pinpointLayer))
+                {
+                    if (collider == other)
+                        pinpoint = true;
+                }
+                if (!pinpoint)
+                    return;
+            }
+
+            TryToHitTarget(other);
+
+            if (collision || pinpoint)
+            {
+                DoCollision(other);
+            }
+        }
+
+        private void OnTriggerExit2D(Collider2D collision)
+        {
+            if (pierceList.Contains(collision))
+                pierceList.Remove(collision);
+        }
+
 
         /// <summary>
         /// Check a collider for a valid ProjectileTarget and trigger OnProjectileHit and return true if found
@@ -171,9 +216,10 @@ namespace QKit
         /// <returns></returns>
         protected virtual bool TryToHitTarget(Collider2D collider)
         {
-            if (TryGet<IProjectileTarget>(collider.transform, out IProjectileTarget target))
+            if (!pierceList.Contains(collider) && TryGet<IProjectileTarget>(collider.transform, out IProjectileTarget target))
             {
                 target.OnProjectileHit(this);
+                pierceList.Add(collider);
                 return true;
             }
 
@@ -205,6 +251,11 @@ namespace QKit
         protected bool CheckForPierce(LayerMask layer)
         {
             return _piercingLayer == (_piercingLayer | (1 << layer));
+        }
+
+        protected bool CheckForPinpoint(LayerMask layer)
+        {
+            return _pinpointLayer == (_pinpointLayer | (1 << layer));
         }
 
         protected virtual void EndOfLife()

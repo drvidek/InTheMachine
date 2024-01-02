@@ -974,6 +974,9 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
 
     public bool TryToUsePower(float power, bool checkMin = false)
     {
+        if (allAbilities)
+            return true;
+
         if (outOfPower)
             return false;
 

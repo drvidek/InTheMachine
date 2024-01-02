@@ -10,7 +10,7 @@ public class PlayerGun : Launcher
     [SerializeField] private List<GunProfileType> availableTypes = new();
     private Player myPlayer;
     private PlayerAnimate myAnimator;
-    private bool canShoot = true;
+    private bool playerStateAllowsShot = true;
     private bool delayingShot = false;
     private GunProfileType lastProfile;
     private float cost;
@@ -19,6 +19,7 @@ public class PlayerGun : Launcher
     public Action<GunProfileType> onProfileChange;
     public Action<GunProfileType> onProfileUnlock;
 
+    public bool PlayerStateAllowsShot => playerStateAllowsShot;
     public Vector3 Direction => GetDirection();
     public float Cost => cost;
     public bool DelayingShot => delayingShot;
@@ -70,14 +71,14 @@ public class PlayerGun : Launcher
     {
         myPlayer = GetComponent<Player>();
         myAnimator = GetComponent<PlayerAnimate>();
-        myPlayer.onFlyEnter += () => canShoot = false;
-        myPlayer.onFlyExit += () => canShoot = true;
-        myPlayer.onBoostEnter += () => canShoot = false;
-        myPlayer.onBoostExit += () => canShoot = true;
-        myPlayer.onUltraBoostEnter += () => canShoot = false;
-        myPlayer.onUltraBoostExit += () => canShoot = true;
-        myPlayer.onStunEnter += () => canShoot = false;
-        myPlayer.onStunExit += () => canShoot = true;
+        myPlayer.onFlyEnter += () => playerStateAllowsShot = false;
+        myPlayer.onFlyExit += () => playerStateAllowsShot = true;
+        myPlayer.onBoostEnter += () => playerStateAllowsShot = false;
+        myPlayer.onBoostExit += () => playerStateAllowsShot = true;
+        myPlayer.onUltraBoostEnter += () => playerStateAllowsShot = false;
+        myPlayer.onUltraBoostExit += () => playerStateAllowsShot = true;
+        myPlayer.onStunEnter += () => playerStateAllowsShot = false;
+        myPlayer.onStunExit += () => playerStateAllowsShot = true;
         lastProfile = currentProfile;
 
         SetCurrentProfile(currentProfile, myPlayer.AllAbilities);
@@ -93,7 +94,7 @@ public class PlayerGun : Launcher
             swapV > 0 ? GunProfileType.Air :
              swapH < 0 ? GunProfileType.Fire :
             swapV < 0 ? GunProfileType.Elec :
-            swapH > 0 ? GunProfileType.Slime :
+            swapH > 0 ? GunProfileType.Goo :
             currentProfile;
 
         if (lastProfile != newProfile)
@@ -122,7 +123,7 @@ public class PlayerGun : Launcher
 
     protected override bool CanShoot()
     {
-        return myPlayer.HasAbility(Player.Ability.Gun) && canShoot && !delayingShot && !myPlayer.OutOfPower;
+        return myPlayer.HasAbility(Player.Ability.Gun) && playerStateAllowsShot && !delayingShot && !myPlayer.OutOfPower;
     }
 
     protected override Vector3 GetDirection()
@@ -158,6 +159,7 @@ public class PlayerGun : Launcher
         _lifetime = gun.lifetime;
         _collidingLayer = gun.collidingLayer;
         _piercingLayer = gun.piercingLayer;
+        _pinpointLayer = gun.pinpointLayer;
         _projectilePrefab = gun.projectilePrefab;
         cost = gun.cost;
         costOnShot = gun.costOnShot;

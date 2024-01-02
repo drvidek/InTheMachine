@@ -235,8 +235,11 @@ MonoBehaviour:
   _piercingLayer:
     serializedVersion: 2
     m_Bits: 0
+  _pinpointLayer:
+    serializedVersion: 2
+    m_Bits: 0
   _projectilePrefab: {fileID: 8368966783001793159, guid: 969608ab0ba274b498907ffd93289f35, type: 3}
-  spawn: 7
+  spawn: 9
 --- !u!1 &5665840390400947626
 GameObject:
   m_ObjectHideFlags: 0

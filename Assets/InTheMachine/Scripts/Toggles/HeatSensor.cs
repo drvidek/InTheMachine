@@ -4,7 +4,6 @@ using UnityEngine;
 using QKit;
 public class HeatSensor : LevelToggle, IFlammable
 {
-    [SerializeField] private Animator animator;
     [SerializeField] private float fillTime;
     private Meter activeMeter;
 

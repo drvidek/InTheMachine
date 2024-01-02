@@ -9,21 +9,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24ac626bada55cd42bb0bd58782826e4, type: 3}
-  m_Name: SlimeGun
+  m_Script: {fileID: 11500000, guid: 28307d7efcc484842998d34ec00cef2f, type: 3}
+  m_Name: AirSpecial
   m_EditorClassIdentifier: 
   size: 1
-  speed: 20
-  power: 1
-  lifetime: 100
+  speed: 5
+  power: 3
+  lifetime: 10
   count: 1
   spread: 0
   collidingLayer:
     serializedVersion: 2
-    m_Bits: 5504
+    m_Bits: 128
   piercingLayer:
     serializedVersion: 2
     m_Bits: 0
-  projectilePrefab: {fileID: 3370694102313842872, guid: 3da9e93d70e8e1e4abff9d20a2630229, type: 3}
-  cost: 20
-  costOnShot: 0
+  pinpointLayer:
+    serializedVersion: 2
+    m_Bits: 5376
+  projectilePrefab: {fileID: 148840220109008594, guid: bdb999dbf7816454d94fb21941bf737f, type: 3}

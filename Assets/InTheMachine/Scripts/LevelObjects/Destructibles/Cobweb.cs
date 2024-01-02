@@ -1,3 +1,4 @@
+using QKit;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -53,6 +54,7 @@ public class Cobweb : Debris, IFlammable
     {
         catching = true;
         flameCurrent += Time.fixedDeltaTime;
+
     }
 
     public void DouseFlame()
@@ -72,6 +74,15 @@ public class Cobweb : Debris, IFlammable
         {
             if (flammable != thisFlam)
                 flammable.CatchFlame(_collider);
+        }
+    }
+
+    public override void OnProjectileHit(Projectile projectile)
+    {
+        base.OnProjectileHit(projectile);
+        if (projectile.GetComponent<IFlammable>() != null)
+        {
+            flameCurrent = timeToLight + 0.01f;
         }
     }
 

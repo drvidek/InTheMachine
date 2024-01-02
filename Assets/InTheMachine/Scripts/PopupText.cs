@@ -147,7 +147,7 @@ public class PopupText : MonoBehaviour
                 break;
 			case GunProfileType.Elec:
 				break;
-			case GunProfileType.Slime:
+			case GunProfileType.Goo:
 				break;
 			default:
 				break;

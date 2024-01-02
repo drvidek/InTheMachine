@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using QKit;
 
-public class BurnAway : MonoBehaviour, IFlammable
+public class BurnAway : MonoBehaviour, IFlammable, IProjectileTarget
 {
-    [SerializeField] private Collider2D _collider;
+    [SerializeField] protected Collider2D _collider;
     [SerializeField] private bool canExtinguish;
     [SerializeField] private float burnTime = 1f, catchTime = 0.5f;
     private bool isBurning;
@@ -14,8 +14,8 @@ public class BurnAway : MonoBehaviour, IFlammable
     private Alarm burnAlarm;
     private Tilemap tilemap;
     private Vector3Int cell;
-    private Meter catchFlame = new(0, 1, 0, 2, 1);
-
+    protected Meter catchFlame = new(0, 1, 0, 2, 1);
+    protected float cashWorth = 1f;
     private bool dying = false;
 
     // Start is called before the first frame update
@@ -26,6 +26,11 @@ public class BurnAway : MonoBehaviour, IFlammable
         cell = tilemap.WorldToCell(transform.position);
         transform.position = QMath.ReplaceVectorValue(transform.position, VectorValue.z, Player.main.Z);
 
+        InitialiseIFlammable();
+    }
+
+    protected void InitialiseIFlammable()
+    {
         catchFlame.onMax = () =>
         {
             if (dying || isBurning)
@@ -37,7 +42,6 @@ public class BurnAway : MonoBehaviour, IFlammable
         burnAlarm = Alarm.Get(burnTime, false, false);
         burnAlarm.onComplete = EndOfLife;
     }
-
 
     // Update is called once per frame
     void FixedUpdate()
@@ -112,10 +116,22 @@ public class BurnAway : MonoBehaviour, IFlammable
         }
     }
 
+
+    public void OnProjectileHit(Projectile projectile)
+    {
+        if (projectile is AirProjectile || projectile is AirRocketProjectile)
+            DouseFlame();
+        if (projectile is FireProjectile || projectile is FireballProjectile)
+            catchFlame.Fill();
+    }
+
     private void EndOfLife()
     {
         IFlammable.ClearFireAndSmoke(burnEffect);
-        tilemap.SetTile(cell, null);
-        CashManager.main.IncreaseCashBy(1);
+        CashManager.main.IncreaseCashBy(cashWorth);
+        if (tilemap)
+            tilemap.SetTile(cell, null);
+        else
+            Destroy(gameObject);
     }
 }

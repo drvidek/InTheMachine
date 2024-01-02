@@ -7,7 +7,7 @@ public class Debris : MonoBehaviour, IProjectileTarget
 {
     [SerializeField] private ParticleSystem psysDust;
 
-    public void OnProjectileHit(Projectile projectile)
+    public virtual void OnProjectileHit(Projectile projectile)
     {
         if (projectile is AirProjectile)
         {

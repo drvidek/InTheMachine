@@ -5,7 +5,6 @@ using QKit;
 
 public class Fan : LevelToggle, IProjectileTarget
 {
-    [SerializeField] private Animator animator;
     [SerializeField] private float speed;
     [SerializeField] private float duration;
     private Alarm activeAlarm;

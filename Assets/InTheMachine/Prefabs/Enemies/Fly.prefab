@@ -308,8 +308,8 @@ MonoBehaviour:
   agentAnimator: {fileID: 0}
   healthMeter:
     _min: 0
-    _max: 4
-    _value: 4
+    _max: 3
+    _value: 3
     _rateUp: 1
     _rateDown: 1
     _colorMain: {r: 0, g: 1, b: 1, a: 1}
@@ -357,7 +357,6 @@ MonoBehaviour:
   flySpeed: 2
   maxDistanceToNewDestination: 5
   maxDistanceFromHome: 8
-  damageFromAir: 1
 --- !u!114 &1444939075102424547
 MonoBehaviour:
   m_ObjectHideFlags: 0

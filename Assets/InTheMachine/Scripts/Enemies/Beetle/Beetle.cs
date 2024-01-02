@@ -13,7 +13,7 @@ public class Beetle : EnemyWalking, IFlammable
     public Vector3 NinetyDegrees => new Vector3(0f, 0f, 90f);
 
     public Vector2 groundBox => hardCollider.size;
-    public Vector2 wallBox => new Vector2(hardCollider.size.x,0.1f);
+    public Vector2 wallBox => new Vector2(hardCollider.size.x, 0.1f);
 
     public override bool IsGrounded => StandingOn != null;
 
@@ -36,6 +36,21 @@ public class Beetle : EnemyWalking, IFlammable
             if (!hit)
                 return null;
             return hit.collider;
+        }
+    }
+
+    public Collider2D EnemyAhead
+    {
+        get
+        {
+            RaycastHit2D[] hits = Physics2D.BoxCastAll(transform.position + (zRotation * (Vector3)boxCollider.offset), wallBox, transform.localEulerAngles.z, CurrentDirection, burning ? 0.2f : 0.02f, 1 << 7);
+            foreach (var hit in hits)
+            {
+                if (hit.collider != hardCollider && hit.collider != _collider)
+                    return hit.collider;
+            }
+            return null;
+
         }
     }
 
@@ -73,6 +88,9 @@ public class Beetle : EnemyWalking, IFlammable
                 transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / 4f), QMath.RoundToNearestFraction(transform.position.y, 1f / 4f), transform.position.z) + CurrentDirection * 0.2f;
                 turnLock = 5;
             }
+
+            if (EnemyAhead)
+                walkingRight = !walkingRight;
         }
 
         Move(CurrentDirection, _walkSpeed);
@@ -139,13 +157,22 @@ public class Beetle : EnemyWalking, IFlammable
             DouseFlame();
             GetStunned(new Vector2(Mathf.Sign(projectile.Direction.x), 1), projectile.Speed * 0.4f);
             TakeDamage(projectile.Power);
+            return;
         }
         if (projectile is ElecProjectile)
         {
             GetStunned(projectile.Direction, projectile.Power * 2f);
             TakeDamage(projectile.Power);
+            return;
         }
-        
+
+        if (projectile is FireballProjectile)
+        {
+            CatchFlame(projectile.GetComponentInChildren<Collider2D>());
+        }
+
+        TakeDamage(projectile.Power);
+
     }
 
     override protected void Move(Vector3 direction, float speed)
@@ -153,7 +180,7 @@ public class Beetle : EnemyWalking, IFlammable
         _targetVelocity = direction * speed;
     }
 
-    
+
 
     override public Rigidbody2D GetStandingOnRigidbody()
     {

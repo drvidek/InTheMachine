@@ -423,6 +423,9 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
             QuestManager.main.CompleteQuest(questID);
         _targetVelocity = Vector2.zero;
 
+        if (burnEffect)
+            IFlammable.ClearFireAndSmoke(burnEffect);
+
         Instantiate(psysSplat, transform.position, Quaternion.identity);
     }
 

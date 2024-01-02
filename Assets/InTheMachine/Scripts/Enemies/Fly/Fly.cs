@@ -9,7 +9,6 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
     [SerializeField] protected float flySpeed;
     [SerializeField] protected float maxDistanceToNewDestination;
     [SerializeField] protected float maxDistanceFromHome = 10f;
-    [SerializeField] protected float damageFromAir;
 
     private Alarm stunAlarm;
 
@@ -35,7 +34,6 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
         RoomManager.main.onPlayerMovedRoom += CheckRespawnTimerReset;
         base.Start();
     }
-
 
     private void CheckRespawnTimerReset(Vector3Int room)
     {
@@ -205,15 +203,23 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
         {
             DouseFlame();
             GetStunned(new Vector2(Mathf.Sign(projectile.Direction.x), 1), projectile.Speed * 0.4f);
-            TakeDamage(damageFromAir);
+            TakeDamage(projectile.Power);
             stunAlarm?.ResetAndPlay();
         }
         if (projectile is ElecProjectile)
         {
             GetStunned(Vector2.down, 2f);
             Instantiate(IFlammable.psysObjSmokePuff, transform.position, Quaternion.identity);
-            TakeDamage(5f);
+            TakeDamage(projectile.Power);
         }
+
+
+        if (projectile is FireballProjectile)
+        {
+            CatchFlame(projectile.GetComponentInChildren<Collider2D>());
+        }
+
+        TakeDamage(projectile.Power);
     }
 
     public bool IsFlaming()

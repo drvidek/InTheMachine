@@ -7,9 +7,9 @@ public class AirProjectile : Projectile
 {
     private float baseSpeed;
     private bool lifeOver;
-    public override void ApplyProjectileProperties(Vector3 direction, float size, float speed, float lifetime, float power, LayerMask colliding, LayerMask piercing)
+    public override void ApplyProjectileProperties(Vector3 direction, float size, float speed, float lifetime, float power, LayerMask colliding, LayerMask piercing, LayerMask pinpoint)
     {
-        base.ApplyProjectileProperties(direction, size, speed, lifetime, power, colliding, piercing);
+        base.ApplyProjectileProperties(direction, size, speed, lifetime, power, colliding, piercing, pinpoint);
         baseSpeed = speed;
         SpriteRenderer sprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
         Alarm endOfLife = Alarm.GetAndPlay(_lifetime);

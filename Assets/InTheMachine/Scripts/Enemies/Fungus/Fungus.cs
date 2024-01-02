@@ -71,7 +71,15 @@ public class Fungus : EnemyStatic, IFlammable
 
     public override void OnProjectileHit(Projectile projectile)
     {
+        if (projectile is AirProjectile)
+            return;
 
+        if (projectile is FireballProjectile)
+        {
+            CatchFlame(projectile.GetComponentInChildren<Collider2D>());
+        }
+
+        TakeDamage(projectile.Power);
     }
 
 }

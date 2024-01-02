@@ -20,7 +20,7 @@ public interface IFlammable
 
     public static GameObject InstantiateSmokePuff(Transform transform)
     {
-        GameObject go = MonoBehaviour.Instantiate(psysObjSmokePuff, transform.position,Quaternion.identity);
+        GameObject go = MonoBehaviour.Instantiate(psysObjSmokePuff, transform.position, Quaternion.identity);
         return go;
     }
 
@@ -41,7 +41,7 @@ public interface IFlammable
         foreach (var item in colliders)
         {
             if (item != null &&
-                (item.TryGetComponent<IFlammable>(out f) || (item.gameObject.layer == 14 && item.transform.parent.TryGetComponent<IFlammable>(out f))) &&
+                (item.TryGetComponent<IFlammable>(out f) || ((item.gameObject.layer == 14 || item.gameObject.layer == 18) && item.transform.parent.TryGetComponent<IFlammable>(out f))) &&
                 !neighbours.Contains(f))
             {
 
@@ -62,7 +62,7 @@ public interface IFlammable
         foreach (var item in colliders)
         {
             if (item != null &&
-                (item.TryGetComponent<IFlammable>(out f) || (item.gameObject.layer == 14 && item.transform.parent.TryGetComponent<IFlammable>(out f))) &&
+                (item.TryGetComponent<IFlammable>(out f) || ((item.gameObject.layer == 14 || item.gameObject.layer == 18) && item.transform.parent.TryGetComponent<IFlammable>(out f))) &&
                 !neighbours.Contains(f))
                 neighbours.Add(f);
         }

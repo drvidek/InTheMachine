@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7243579514734921581}
   - component: {fileID: 5133984629010893574}
+  - component: {fileID: 6914366302289154009}
+  - component: {fileID: 3845270101374368455}
   m_Layer: 6
   m_Name: FireballProjectile
   m_TagString: Untagged
@@ -61,6 +63,39 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &6914366302289154009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2209979997516195421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d797dcc7616754797239e3a587ff65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!95 &3845270101374368455
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2209979997516195421}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ebd86935f0666c643985cc14afb21372, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2939090468055668298
 GameObject:
   m_ObjectHideFlags: 0

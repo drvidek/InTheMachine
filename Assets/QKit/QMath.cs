@@ -96,6 +96,17 @@ namespace QKit
         }
 
         /// <summary>
+        /// Return the difference between two numbers, always returns a positive value.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static int Difference(int a, int b)
+        {
+            return Mathf.Abs(a - b);
+        }
+
+        /// <summary>
         /// If n falls below min or above max, it will wrap to the other value
         /// </summary>
         /// <param name="n"></param>

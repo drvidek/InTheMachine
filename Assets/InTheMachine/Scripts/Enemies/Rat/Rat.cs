@@ -61,10 +61,9 @@ public class Rat : EnemyWalking
 
     public override void OnProjectileHit(Projectile projectile)
     {
-        if (projectile is FireProjectile or ElecProjectile)
-        {
-            TakeDamage(projectile.Power);
-        }
+        if (projectile is AirProjectile)
+            return;
+        TakeDamage(projectile.Power);
     }
 
     protected override void CheckForExternalVelocity()

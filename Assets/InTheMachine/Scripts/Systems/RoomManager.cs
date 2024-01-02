@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using QKit;
 
 public class RoomManager : MonoBehaviour
 {
@@ -44,6 +45,9 @@ public class RoomManager : MonoBehaviour
     /// Called when the player changes room, with the room coordinates
     /// </summary>
     public Action<Vector3Int> onPlayerMovedRoom;
+
+    private int maxRoomDistance = 1;
+
 
     private Vector3Int lastRoom;
 
@@ -89,6 +93,16 @@ public class RoomManager : MonoBehaviour
             if (GetRoom(item) != room)
                 return false;
         }
+        return true;
+    }
+    
+    public bool PlayerWithinRoomDistance(Transform transform)
+    {
+        Vector3Int room = GetRoom(transform);
+
+        if (QMath.Difference(room.x, currentRoom.x) > maxRoomDistance || QMath.Difference(room.y, currentRoom.y) > maxRoomDistance)
+            return false;
+
         return true;
     }
 

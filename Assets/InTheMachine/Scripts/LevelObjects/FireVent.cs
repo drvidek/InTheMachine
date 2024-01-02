@@ -26,6 +26,9 @@ public class FireVent : MonoBehaviour, IActivate, IFlammable, IElectrocutable
     {
 
         SetLength();
+
+        if (!Application.isPlaying)
+            return;
         if (timeToRelight > 0)
         {
             relightAlarm = Alarm.Get(timeToRelight, false, false);
