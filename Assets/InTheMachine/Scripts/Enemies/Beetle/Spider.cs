@@ -8,6 +8,7 @@ public class Spider : Beetle
     [SerializeField] private float actionDelay = 0.5f;
     [SerializeField] private float jumpVerticalPower, jumpHorizontalPower;
 
+    private bool firstAction = true;
     private Alarm nextActionAlarm;
 
 
@@ -33,7 +34,10 @@ public class Spider : Beetle
     {
         nextActionAlarm.ResetAndPlay(3f + Random.Range(-0.5f, 0.5f));
 
+        if (!firstAction)
         base.OnWalkEnter();
+
+        firstAction = true;
     }
 
     protected override void OnWalkStay()

@@ -19,6 +19,9 @@ public class EnemyList : ScriptableObject
         ShroomJump,
         ShroomRun,
         ShroomSpore,
+        Spider,
+        BabySpider,
+        SpiderNest
     }
 
     public static int Length => Enum.GetNames(typeof(Type)).Length;

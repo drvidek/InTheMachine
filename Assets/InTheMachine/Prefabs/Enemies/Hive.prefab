@@ -342,6 +342,7 @@ MonoBehaviour:
   spawnPoint: {fileID: 5941951745946214325}
   waitToSpawn: 1
   animator: {fileID: 0}
+  possibleSpawnCounts: 04000000050000000500000006000000
 --- !u!114 &3811553840589610835
 MonoBehaviour:
   m_ObjectHideFlags: 0

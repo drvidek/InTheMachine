@@ -6,7 +6,6 @@ using QKit;
 public class Fly : EnemyFlying, IFlammable, IElectrocutable
 {
     [SerializeField] protected float idleTime;
-    [SerializeField] protected float flySpeed;
     [SerializeField] protected float maxDistanceToNewDestination;
     [SerializeField] protected float maxDistanceFromHome = 10f;
 
@@ -72,7 +71,7 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
         if (Vector3.Distance(transform.position, targetDestination) > 0.05f)
         {
             Move(QMath.Direction(transform.position, targetDestination),
-                flySpeed * Mathf.Max(0.5f, Vector3.Distance(transform.position, targetDestination) / maxDistanceToNewDestination));
+                moveSpeed * Mathf.Max(0.5f, Vector3.Distance(transform.position, targetDestination) / maxDistanceToNewDestination));
 
         }
         else
@@ -109,7 +108,7 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
             targetDestination = RollNewDestination(transform.position, maxDistanceToNewDestination);
         }
 
-        ApplyForce(QMath.Direction(transform.position, targetDestination), flySpeed * 1.5f);
+        ApplyForce(QMath.Direction(transform.position, targetDestination), moveSpeed * 1.5f);
         TakeDamage(1f * Time.fixedDeltaTime);
 
         base.OnBurnStay();
@@ -172,30 +171,6 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
             Gizmos.DrawLine(transform.position, targetDestination);
     }
 
-    public void PropagateFlame(Collider2D collider)
-    {
-        IFlammable thisFlam = GetComponentInChildren<IFlammable>();
-        foreach (var flammable in IFlammable.FindFlammableNeighbours(collider))
-        {
-            if (flammable != thisFlam)
-                flammable.CatchFlame(collider);
-        }
-    }
-
-    public void PropagateFlame(Vector3 position, Vector2 size)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void CatchFlame(Collider2D collider)
-    {
-        EnemyCatchFlame(collider);
-    }
-
-    public void DouseFlame()
-    {
-        EnemyDouseFlame();
-    }
 
     public override void OnProjectileHit(Projectile projectile)
     {
@@ -222,6 +197,30 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
         TakeDamage(projectile.Power);
     }
 
+    public void PropagateFlame(Collider2D collider)
+    {
+        IFlammable thisFlam = GetComponentInChildren<IFlammable>();
+        foreach (var flammable in IFlammable.FindFlammableNeighbours(collider))
+        {
+            if (flammable != thisFlam)
+                flammable.CatchFlame(collider);
+        }
+    }
+
+    public void PropagateFlame(Vector3 position, Vector2 size)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void CatchFlame(Collider2D collider)
+    {
+        EnemyCatchFlame(collider);
+    }
+
+    public void DouseFlame()
+    {
+        EnemyDouseFlame();
+    }
     public bool IsFlaming()
     {
         return CurrentState == EnemyState.Burn;

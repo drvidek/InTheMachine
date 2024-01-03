@@ -21,11 +21,6 @@ public class Cobweb : Debris, IFlammable
 
     private void FixedUpdate()
     {
-        if (!burning && !catching)
-        {
-            //DouseFlame();
-        }
-
         if (flameCurrent > timeToLight)
         {
             if (!burning)
@@ -59,6 +54,7 @@ public class Cobweb : Debris, IFlammable
 
     public void DouseFlame()
     {
+        burning = false;
         flameCurrent = 0;
     }
 
@@ -89,5 +85,13 @@ public class Cobweb : Debris, IFlammable
     public bool IsFlaming()
     {
         return burning;
+    }
+
+    public void Reset()
+    {
+        DouseFlame();
+        burning = false;
+        GetComponent<Collider2D>().enabled = true;
+        transform.GetChild(0).gameObject.SetActive(true);
     }
 }

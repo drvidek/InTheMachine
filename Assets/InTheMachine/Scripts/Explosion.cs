@@ -33,6 +33,8 @@ public class Explosion : MonoBehaviour
 
         foreach (var item in overlappedTilemaps)
         {
+            if (item.gameObject.layer == 17)
+                continue;
             foreach (var pos in pointsToDestroy)
             {
                 item.SetTile(item.WorldToCell(pos), null);

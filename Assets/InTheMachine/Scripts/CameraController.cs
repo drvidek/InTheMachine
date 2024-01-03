@@ -7,7 +7,7 @@ using QKit;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] private Vector2 resolution = new(4, 3);
-    [SerializeField] private float zoomTime, zoomDelay;
+    [SerializeField] private float zoomTime, zoomDelay, screen;
     public static float screenWidth, screenHeight;
     private Camera _camera;
 
@@ -22,6 +22,12 @@ public class CameraController : MonoBehaviour
     private Alarm zoomDelayAlarm;
 
     new public Camera camera => _camera;
+
+
+    private Vector3 targetPosition;
+    private Vector3 lastPosition;
+    private float targetChangeTime;
+
 
     #region Singleton + Awake
     private static CameraController _singleton;
@@ -58,15 +64,40 @@ public class CameraController : MonoBehaviour
         screenHeight = camera.orthographicSize * 2;
         screenWidth = screenHeight / resolution.y * resolution.x;
         cameraOffset = new Vector3(screenWidth / 2f, screenHeight / 2f, -50f);
-        RoomManager.main.onPlayerMovedRoom += SnapToRoom;
+        RoomManager.main.onPlayerMovedRoom += SetNewTarget;// SnapToRoom;
 
         SnapToRoom(RoomManager.main.currentRoom);
     }
 
+    private void SetNewTarget(Vector3Int room)
+    {
+        targetPosition = RoomManager.main.RoomGrid.CellToWorld(room) + cameraOffset;
+        lastPosition = transform.position;
+        targetChangeTime = Time.time;
+
+       
+    }
+
+
     private void Update()
     {
         if (!specialCamLock)
+        {
+            transform.position = Vector3.Lerp(lastPosition, targetPosition, (Time.time - targetChangeTime) * 5f);
+            if (Time.time - targetChangeTime >= 1)
+            {
+                BoxCollider2D collider = FindCameraVolume() as BoxCollider2D;
+                if (collider)
+                {
+                    lockedPosition = collider.transform.position;
+                    lerpBasePosition = transform.position;
+                    zoomDelayAlarm.ResetAndPlay();
+                    specialCamLock = true;
+                    specialRoomSize = collider.size;
+                }
+            }
             return;
+        }
 
         if (zoomAlarm.IsPlaying)
         {

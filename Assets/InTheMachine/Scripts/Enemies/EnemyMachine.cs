@@ -579,6 +579,8 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     /// <param name="collider"></param>
     protected virtual void EnemyCatchFlame(Collider2D collider)
     {
+        if (CurrentState == EnemyState.Die)
+            return;
         ChangeStateTo(EnemyState.Burn);
         burning = true;
         if (!burnEffect)

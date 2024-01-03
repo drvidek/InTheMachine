@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: 1
   speed: 6
-  power: 0.2
+  power: 0.5
   lifetime: 1
   count: 1
   spread: 0

@@ -82,10 +82,8 @@ public class QuestManager : MonoBehaviour
 
     public void AddQuest(QuestID questID)
     {
-        if (questLog.Count == 0)
-        {
-            questTitle.text = "JOBS";
-        }
+            questTitle.text = "NEW JOB";
+     
 
         foreach (var currentQuest in questLog)
         {

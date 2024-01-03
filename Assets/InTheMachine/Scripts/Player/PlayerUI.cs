@@ -10,6 +10,7 @@ public class PlayerUI : MonoBehaviour
 {
     private Player player;
     private PlayerGun playerGun;
+    private PlayerSpecialGun playerSpecialGun;
     [SerializeField] private float powerPelletWorth = 2f;
     [SerializeField] private TextMeshProUGUI cashDisplay;
     [SerializeField] private TextMeshProUGUI navMemDisplay;
@@ -17,6 +18,11 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] private Transform powerPelletContainerB;
     [SerializeField] private Transform healthContainer;
     [SerializeField] private Transform repairContainer;
+    [SerializeField] private Transform specialChargeContainer;
+    [SerializeField] private Transform specialCooldownContainer;
+    [SerializeField] private GameObject RepairLabel;
+    [SerializeField] private GameObject GunLabel;
+    [SerializeField] private GameObject SpecialLabel;
 
     [SerializeField] private GameObject[] gunIcons;
 
@@ -24,25 +30,32 @@ public class PlayerUI : MonoBehaviour
     private Image[] powerPelletsB;
     private Image[] healthPellets;
     private Image[] repairPellets;
+    private Image[] chargePellets;
+    private Image[] cooldownPellets;
 
     private void Start()
     {
         player = GetComponent<Player>();
         playerGun = GetComponent<PlayerGun>();
+        playerSpecialGun = GetComponent<PlayerSpecialGun>();
 
         ScrapeContainer(powerPelletContainerA, ref powerPelletsA);
         ScrapeContainer(powerPelletContainerB, ref powerPelletsB);
         ScrapeContainer(healthContainer, ref healthPellets);
         ScrapeContainer(repairContainer, ref repairPellets);
+        ScrapeContainer(specialChargeContainer, ref chargePellets);
+        ScrapeContainer(specialCooldownContainer, ref cooldownPellets);
 
         player.PowerMeter.onMax += () => { SetPowerColor(player.PowerMeter.CurrentColor); };
         player.PowerMeter.onMin += () => { SetPowerColor(player.PowerMeter.BackgroundColor); };
         playerGun.onProfileChange += SetActiveGunIcon;
         playerGun.onProfileUnlock += EnableGunProfileIcon;
 
+
         CashManager.main.onCashChange += UpdateCashDisplay;
         UpdateCashDisplay(0);
     }
+
 
     private void ScrapeContainer(Transform container, ref Image[] array)
     {
@@ -57,6 +70,13 @@ public class PlayerUI : MonoBehaviour
     private void Update()
     {
         powerPelletContainerB.gameObject.SetActive(player.PowerMeter.Max > powerPelletWorth * powerPelletsA.Length);
+        GunLabel.SetActive(Player.main.HasAbility(Player.Ability.Gun));
+        SpecialLabel.SetActive(Player.main.HasAbility(Player.Ability.Special));
+        specialChargeContainer.gameObject.SetActive(Player.main.HasAbility(Player.Ability.Special));
+        specialCooldownContainer.gameObject.SetActive(Player.main.HasAbility(Player.Ability.Special));
+
+        RepairLabel.SetActive(player.RepairMax > 0);
+        repairContainer.gameObject.SetActive(player.RepairMax > 0);
 
         UpdateDisplay(powerPelletsA, Player.main.PowerMeter.Max / powerPelletWorth, Player.main.PowerMeter.Value / powerPelletWorth);
         float newMax = Player.main.PowerMeter.Max - (powerPelletWorth * powerPelletsA.Length);
@@ -64,6 +84,8 @@ public class PlayerUI : MonoBehaviour
         UpdateDisplay(powerPelletsB, newMax / powerPelletWorth, newValue / powerPelletWorth);
         UpdateDisplay(healthPellets, Player.main.MaxHealth, Player.main.CurrentHealth);
         UpdateDisplay(repairPellets, Player.main.RepairMax, Player.main.RepairCurrent);
+        UpdateDisplay(chargePellets, playerSpecialGun.ChargesMax, playerSpecialGun.ChargesAvailable);
+        UpdateDisplay(cooldownPellets, 1f*cooldownPellets.Length, playerSpecialGun.CooldownPercent * cooldownPellets.Length);
         navMemDisplay.text = $"{FogOfWar.TilesToClear}x NAV MEMORY";
     }
 

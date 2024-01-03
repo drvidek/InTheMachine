@@ -10,7 +10,8 @@ public class Hive : EnemyStatic, IFlammable
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private bool waitToSpawn;
     [SerializeField] private Animator animator;
-
+    [SerializeField] protected int[] possibleBurnSpawnCounts;
+    [SerializeField] protected float burnSpawnDelay = 0.5f;
     private EnemyMachine currentEnemySpawned;
 
 
@@ -34,8 +35,8 @@ public class Hive : EnemyStatic, IFlammable
 
     protected override void OnBurnEnter()
     {
-        spawnAlarm.SetTimeMaximum(0.5f);
-        int max = QMath.Choose<int>(4, 5, 5, 6);
+        spawnAlarm.SetTimeMaximum(burnSpawnDelay);
+        int max = QMath.Choose<int>(possibleBurnSpawnCounts);
         int i = 0;
         spawnAlarm.onComplete = () =>
         {
@@ -58,7 +59,7 @@ public class Hive : EnemyStatic, IFlammable
     protected override void OnBurnStay()
     {
         PropagateFlame(_collider);
-        TakeDamage(2f * Time.fixedDeltaTime);
+        TakeDamage(1f * Time.fixedDeltaTime);
         base.OnBurnStay();
     }
 

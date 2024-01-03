@@ -4,5 +4,6 @@ using UnityEngine;
 
 public abstract class EnemyFlying : EnemyMachine
 {
-   
+    [SerializeField] protected float moveSpeed;
+
 }

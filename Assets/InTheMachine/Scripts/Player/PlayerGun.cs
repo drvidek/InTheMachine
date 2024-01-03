@@ -93,8 +93,8 @@ public class PlayerGun : Launcher
         GunProfileType newProfile =
             swapV > 0 ? GunProfileType.Air :
              swapH < 0 ? GunProfileType.Fire :
-            swapV < 0 ? GunProfileType.Elec :
-            swapH > 0 ? GunProfileType.Goo :
+            swapV < 0 ? GunProfileType.Goo :
+            swapH > 0 ? GunProfileType.Elec :
             currentProfile;
 
         if (lastProfile != newProfile)

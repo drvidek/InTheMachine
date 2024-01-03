@@ -11,9 +11,11 @@ public class PlayerSpecialGun : Launcher
     [SerializeField] private Meter charge;
     [SerializeField] private float rechargeTime;
     private Player myPlayer;
-    private PlayerAnimate myAnimator;
 
     private Alarm rechargeAlarm;
+    public float CooldownPercent => rechargeAlarm.PercentComplete;
+    public int ChargesAvailable => (int)charge.Value;
+    public int ChargesMax => (int)charge.Max;
 
     protected bool canShoot => PlayerGun.main.PlayerStateAllowsShot;
    
@@ -22,7 +24,6 @@ public class PlayerSpecialGun : Launcher
 
     public Vector3 SpawnPosition => PlayerGun.main.SpawnPosition;
     
-
     private void Start()
     {
         myPlayer = GetComponent<Player>();
@@ -36,6 +37,7 @@ public class PlayerSpecialGun : Launcher
                 rechargeAlarm.ResetAndPlay();
         };
     }
+
     protected override void Shoot()
     {
 
@@ -69,7 +71,7 @@ public class PlayerSpecialGun : Launcher
 
     protected override bool CanShoot()
     {
-        return charge.Value > 0;
+        return charge.Value > 0 && myPlayer.HasAbility(Player.Ability.Special);
     }
 
     protected override Vector3 GetDirection()

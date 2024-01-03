@@ -8,7 +8,7 @@ public abstract class EnemyWalking : EnemyMachine
 
     Vector2 gravityDirection = Vector2.down;
 
-    protected bool walkingRight = true;
+    [SerializeField] protected bool walkingRight = true;
     public bool WalkingRight => walkingRight;
     public Vector3 CurrentDirection => walkingRight ? transform.right : transform.right * -1;
     public virtual bool IsGrounded => StandingOn != null;
