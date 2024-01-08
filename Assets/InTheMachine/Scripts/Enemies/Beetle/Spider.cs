@@ -16,6 +16,7 @@ public class Spider : Beetle
     {
         nextActionAlarm = Alarm.Get(actionDelay, false, false);
         nextActionAlarm.onComplete = DetermineAction;
+        //cornerRounding /= 4f;
         base.Start();
     }
 
@@ -42,7 +43,29 @@ public class Spider : Beetle
 
     protected override void OnWalkStay()
     {
-        base.OnWalkStay();
+        turnLock = (int)Mathf.MoveTowards(turnLock, 0, 1);
+        //if we're not grounded
+        if (!IsGrounded)
+        {
+            if (turnLock > 0)
+            {
+                GetStunned(Vector3.down, 1f);
+            }
+            //rotate
+            RotateAroundCorner(walkingRight ? -NinetyDegrees : NinetyDegrees);
+        }
+        else
+        if (ColliderAhead)
+        {
+            bool door = (ColliderAhead.GetComponent<Door>());
+            RotateAroundCorner(walkingRight ? NinetyDegrees : -NinetyDegrees); 
+            if (door)
+            transform.position -= transform.up * (1f / cornerRounding);
+        }
+        if (EnemyAhead)
+            walkingRight = !walkingRight;
+
+        Move(CurrentDirection, _walkSpeed);
     }
 
     protected override void OnWalkExit()

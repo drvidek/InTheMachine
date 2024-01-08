@@ -28,5 +28,5 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   projectilePrefab: {fileID: 5911450181065757125, guid: e32e31826247add45873d6dc987f0e03, type: 3}
-  cost: 30
+  cost: 40
   costOnShot: 0

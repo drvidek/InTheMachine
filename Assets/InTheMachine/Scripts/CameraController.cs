@@ -8,6 +8,9 @@ public class CameraController : MonoBehaviour
 {
     [SerializeField] private Vector2 resolution = new(4, 3);
     [SerializeField] private float zoomTime, zoomDelay, screen;
+
+    private float scrollSpeed;
+
     public static float screenWidth, screenHeight;
     private Camera _camera;
 
@@ -78,12 +81,16 @@ public class CameraController : MonoBehaviour
        
     }
 
+    public void SetScrollingSpeed(float speed)
+    {
+        scrollSpeed = speed;
+    }
 
     private void Update()
     {
         if (!specialCamLock)
         {
-            transform.position = Vector3.Lerp(lastPosition, targetPosition, (Time.time - targetChangeTime) * 5f);
+            transform.position = scrollSpeed == 0 ? targetPosition : Vector3.Lerp(lastPosition, targetPosition, (Time.time - targetChangeTime) / scrollSpeed);
             if (Time.time - targetChangeTime >= 1)
             {
                 BoxCollider2D collider = FindCameraVolume() as BoxCollider2D;

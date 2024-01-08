@@ -20,15 +20,15 @@ MonoBehaviour:
     cost: 100
     description: Hold RB to repair all hull damage.|Replenish charges at Checkpoint
       Terminals.
-    count: 0
-    costIncrease: 0
+    count: 3
+    costIncrease: 10
   - id: 1
     name: Reinforced Hull
     image: {fileID: 1806954396, guid: 90b6ce84361a2f94787d6435a336a129, type: 3}
     color: {r: 1, g: 0.14509805, b: 0, a: 1}
     cost: 200
     description: Permanently increase hull strength by one.
-    count: 0
+    count: 5
     costIncrease: 0
   - id: 2
     name: Shield
@@ -43,8 +43,8 @@ MonoBehaviour:
     image: {fileID: 1252209455, guid: 81ca3388215c4a04d98f252a8255eae0, type: 3}
     color: {r: 1, g: 1, b: 1, a: 1}
     cost: 500
-    description: Increase range and damage any target.
-    count: 0
+    description: Increased range and damage.
+    count: 1
     costIncrease: 0
   - id: 12
     name: Flamejet
@@ -55,11 +55,12 @@ MonoBehaviour:
     count: 0
     costIncrease: 0
   - id: 20
-    name: Nav Memory
+    name: Nav Chip
     image: {fileID: 1806954396, guid: 90b6ce84361a2f94787d6435a336a129, type: 3}
     color: {r: 1, g: 1, b: 1, a: 1}
     cost: 25
-    description: Add a new room to your map.|Activates on entering an unmapped room.
+    description: When you enter an unmapped room, automatically add it to your map.|One
+      use.
     count: 0
     costIncrease: 0
   - id: 21

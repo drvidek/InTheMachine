@@ -197,10 +197,10 @@ public class LevelEditorDrawer : Editor
                 switch (editor.currentPlayerType)
                 {
                     case LevelEditor.PlayerType.Ability:
-                editor.spritePreview.sprite = editor.upgradePrefabs[currentPlayerType.intValue].GetComponentInChildren<SpriteRenderer>().sprite;
+                        editor.spritePreview.sprite = editor.upgradePrefabs[currentPlayerType.intValue].GetComponentInChildren<SpriteRenderer>().sprite;
                         break;
                     case LevelEditor.PlayerType.PowerUp:
-                editor.spritePreview.sprite = editor.upgradePrefabs[currentPlayerType.intValue].GetComponentInChildren<SpriteRenderer>().sprite;
+                        editor.spritePreview.sprite = editor.upgradePrefabs[currentPlayerType.intValue].GetComponentInChildren<SpriteRenderer>().sprite;
                         break;
                     default:
                         break;
@@ -276,8 +276,8 @@ public class LevelEditorDrawer : Editor
             case LevelEditor.Category.Toggles:
                 if (toggle)
                     break;
-                if (editor.currentToggleType == LevelEditor.ToggleType.Button && walls.y != -1)
-                    break;
+                //if (editor.currentToggleType == LevelEditor.ToggleType.Button && walls.y != -1)
+                  //  break;
                 finalPrefab = editor.levelToggles[(int)editor.currentToggleType];
                 break;
             case LevelEditor.Category.Debris:
@@ -339,20 +339,25 @@ public class LevelEditorDrawer : Editor
                 break;
             case LevelEditor.Category.Toggles:
                 LevelToggle toggleSpawned = objSpawnedjInScene.GetComponent<LevelToggle>();
-                if (buttonStayPressed.boolValue)
-                {
-                    (toggleSpawned as MachineButton).SetStayPressed();
-                }
                 if (toggleSpawned is MachineButton)
-                    objSpawnedjInScene.transform.localEulerAngles = new Vector3(0, 0, editor.objectRotation);
-                foreach (var objToActivate in editor.objectsInSceneToActivate)
                 {
-                    if (QMath.TryGet<IActivate>(objToActivate.transform, out IActivate activate))
+                    if (buttonStayPressed.boolValue)
                     {
-                        UnityEventTools.AddPersistentListener(toggleSpawned.onActiveChanged, activate.ToggleActive);
+                        (toggleSpawned as MachineButton).SetStayPressed();
                     }
-                    PrefabUtility.RecordPrefabInstancePropertyModifications(toggleSpawned);
+                    objSpawnedjInScene.transform.localEulerAngles = new Vector3(0, 0, editor.objectRotation);
+
                 }
+
+                if (editor.selectObjectsFromSceneToActivate)
+                    foreach (var objToActivate in editor.objectsInSceneToActivate)
+                    {
+                        if (QMath.TryGet<IActivate>(objToActivate.transform, out IActivate activate))
+                        {
+                            UnityEventTools.AddPersistentListener(toggleSpawned.onActiveChanged, activate.ToggleActive);
+                        }
+                    }
+                PrefabUtility.RecordPrefabInstancePropertyModifications(toggleSpawned);
                 break;
             case LevelEditor.Category.Debris:
                 Vector2 wallDir = CheckOnNeighbouringCells(position, Vector2.one, (int)LevelEditor.Category.Environment);

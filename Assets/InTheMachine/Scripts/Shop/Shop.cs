@@ -7,10 +7,13 @@ public class Shop : MonoBehaviour
 {
     public static ShopItem[] inventory;
     [SerializeField] private GameObject defaultSelection;
+    [SerializeField] private GameObject weaponGroup, specialGroup;
     [SerializeField] private EventSystem eventSystem;
 
     private GameObject shop;
 
+    public GameObject DefaultSelection => defaultSelection;
+    public EventSystem ESys => eventSystem;
     public bool IsOpen => shop.activeInHierarchy;
 
     #region Singleton + Awake
@@ -49,6 +52,29 @@ public class Shop : MonoBehaviour
     {
         shop = transform.GetChild(0).gameObject;
         inventory = (Resources.Load("ShopInventory") as ShopItemList).inventory;
+        shop.SetActive(false);
+        weaponGroup.SetActive(false);
+        specialGroup.SetActive(false);
+        Player.main.onAbilityUnlock += CheckShopUnlock;
+    }
+
+    private void CheckShopUnlock(Player.Ability ability)
+    {
+        switch (ability)
+        {
+            case Player.Ability.Gun:
+                weaponGroup.SetActive(true);
+                break;
+            case Player.Ability.Special:
+                specialGroup.SetActive(true);
+                break;
+            case Player.Ability.Flight:
+            case Player.Ability.Tractor:
+            case Player.Ability.Boost:
+            case Player.Ability.UltraBoost:
+            default:
+                break;
+        }
     }
 
     public void OpenShop()

@@ -7,9 +7,12 @@ public class HeatSensor : LevelToggle, IFlammable
     [SerializeField] private float fillTime;
     private Meter activeMeter;
 
+    private PixelAligner pixelAligner;
+
     private void Start()
     {
-        activeMeter = new(0, 1, 0.1f);
+        pixelAligner = GetComponentInChildren<PixelAligner>();
+        activeMeter = new(0, 1, 0.1f,2,1);
         activeMeter.onMax += () => { if (!active) ToggleActive(true); };
         activeMeter.onMin += () => { if (active) ToggleActive(false); };
     }
@@ -23,16 +26,18 @@ public class HeatSensor : LevelToggle, IFlammable
     private void FixedUpdate()
     {
         DouseFlame();
+
+        AgentAnimator.Vibrate(pixelAligner, 1 * (active ? 1 : 0));
     }
 
     public void CatchFlame(Collider2D collider)
     {
-        activeMeter.FillOver(fillTime / 2f);
+        activeMeter.FillOver(fillTime,true);
     }
 
     public void DouseFlame()
     {
-        activeMeter.EmptyOver(fillTime);
+        activeMeter.EmptyOver(fillTime,true);
     }
 
     public void PropagateFlame(Collider2D collider)

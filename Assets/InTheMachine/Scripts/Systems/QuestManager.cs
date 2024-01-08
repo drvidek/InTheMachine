@@ -29,19 +29,26 @@ public enum QuestID
     Fungus,
     Terminal,
     Elevator,
-    FireDrone
+    FireDrone,
+    Spider
 }
 
 public class QuestManager : MonoBehaviour
 {
     [SerializeField] private float typeDelay = 0.1f;
-    [SerializeField] private TextMeshProUGUI questDisplay, questTitle;
+    [SerializeField] private TextMeshProUGUI questDisplay, questFullDisplay, questTitle;
 
-    private WaitForSeconds typewriterDelay => new WaitForSeconds(typeDelay);
+    private WaitForSeconds multiLogDelay => new WaitForSeconds(3f);
+
+    private IEnumerator typewriterRoutine = null;
+
+    private List<IEnumerator> typewriterQueue = new();
 
     [SerializeField] public List<Quest> questLog = new();
 
     private QuestList questList;
+
+    public Action onNewQuest, onQuestComplete;
 
     #region Singleton + Awake
     private static QuestManager _singleton;
@@ -65,6 +72,8 @@ public class QuestManager : MonoBehaviour
     private void Awake()
     {
         main = this;
+        questList = Resources.Load("QuestList") as QuestList;
+
     }
 
     private void OnDisable()
@@ -74,22 +83,17 @@ public class QuestManager : MonoBehaviour
     }
     #endregion
 
-
-    private void Start()
-    {
-        questList = Resources.Load("QuestList") as QuestList;
-    }
-
     public void AddQuest(QuestID questID)
     {
-            questTitle.text = "NEW JOB";
-     
-
+        //if we already have the quest
         foreach (var currentQuest in questLog)
         {
             if (currentQuest.id == questID)
+            //we shouldn't be adding it
                 return;
         }
+
+        questTitle.text = "NEW JOB";
 
         Quest questToAdd = new();
 
@@ -105,50 +109,121 @@ public class QuestManager : MonoBehaviour
 
         }
         questLog.Add(questToAdd);
-        var routine = AddQuestToTicker("\n>" + questToAdd.name + $" ({questToAdd.reward}c)");
-        StartCoroutine(routine);
+        AddQuestToLog(questToAdd);
+        onNewQuest?.Invoke();
+        string questDisplayText = $">{questToAdd.name} ({questToAdd.reward}c)";
+
+        AddTextToTickerQueue(questDisplayText, typeDelay);
     }
 
-    public void CompleteQuest(QuestID quest)
+    private void AddTextToTickerQueue(string text, float speed)
     {
-        Quest foundQuest = new();
+        if (typewriterRoutine == null)
+        {
+            typewriterRoutine = AddQuestToTicker(text, speed);
+            StartCoroutine(typewriterRoutine);
+            return;
+        }
+        var addRoudtine = AddQuestToTicker(text, speed);
+        typewriterQueue.Add(addRoudtine);
+    }
+
+    public void CompleteQuest(QuestID completedQuestID)
+    {
+        //check if we already have the quest in our log
+        Quest questFoundInList = new();
         foreach (var q in questLog)
         {
-            if (q.id == quest)
+            if (q.id == completedQuestID)
             {
-                foundQuest = q;
+                questFoundInList = q;
                 break;
             }
         }
 
-        if (foundQuest.id == QuestID.Null)
+        bool firstAdd = false;
+        //if we found no match
+        if (questFoundInList.id == QuestID.Null)
         {
-            AddQuest(quest);
-            foundQuest = questList.quests[(int)quest];
+            //add the quest to the log
+            AddQuest(completedQuestID);
+            questFoundInList = questList.quests[(int)completedQuestID];
+            firstAdd = true;
         }
+        CashManager.main.IncreaseCashBy(questFoundInList.reward);
 
-        CashManager.main.IncreaseCashBy(foundQuest.reward);
-        if (!foundQuest.persistent)
+        if (firstAdd)
+            return;
+
+        questTitle.text = "JOB DONE";
+        AddTextToTickerQueue($">{questFoundInList.reward}c earned: {questFoundInList.name}", typeDelay / 2f);
+
+        if (!questFoundInList.persistent)
         {
-            questLog.Remove(foundQuest);
-            int index = questDisplay.text.IndexOf(foundQuest.name);
-            questDisplay.text.Remove(index - 1, foundQuest.name.Length + 2);
+            questLog.Remove(questFoundInList);
+            string[] quests = questFullDisplay.text.Split("\n");
+            for (int i = 0; i < quests.Length; i++)
+            {
+                if (quests[i].Contains(questFoundInList.name))
+                {
+                    quests[i] = "";
+                    break;
+                }
+            }
+            questFullDisplay.text = "";
+
+            for (int i = 0; i < quests.Length; i++)
+            {
+                if (quests[i] == "")
+                    continue;
+
+                questFullDisplay.text += quests[i];
+                if (i == quests.Length - 1 || quests[i + 1] == "")
+                    continue;
+                questFullDisplay.text += "\n";
+
+            }
+
         }
     }
 
-    IEnumerator AddQuestToTicker(string stringToAdd)
+    private void AddQuestToLog(Quest quest)
     {
-        string currentString = "";
-        string currentQuestLog = questDisplay.text;
-        int position = 0;
+        questFullDisplay.text += "\n>" + quest.name + $" (Reward: {quest.reward}c{(quest.persistent ? " each" : "")})";
+    }
 
-        while (currentString.Length < stringToAdd.Length)
+    IEnumerator AddQuestToTicker(string stringToAdd, float typeTime)
+    {
+        bool repeat = false;
+        if (questDisplay.text == stringToAdd)
         {
-            yield return typewriterDelay;
-            currentString += stringToAdd[position];
-            questDisplay.text = currentQuestLog + currentString;
-            position++;
+            repeat = true;
         }
 
+        if (!repeat)
+        {
+            string currentString = "";
+            int position = 0;
+
+            while (currentString.Length < stringToAdd.Length)
+            {
+                yield return new WaitForSeconds(typeTime);
+                currentString += stringToAdd[position];
+                questDisplay.text = currentString;
+                position++;
+            }
+        }
+        //clear the current routine - ready for next prompt
+        typewriterRoutine = null;
+
+        //check the queue for next prompt
+        if (typewriterQueue.Count > 0)
+        {
+            typewriterRoutine = typewriterQueue[0];
+            typewriterQueue.RemoveAt(0);
+            yield return repeat ? null : multiLogDelay;
+
+            StartCoroutine(typewriterRoutine);
+        }
     }
 }

@@ -15,6 +15,8 @@ public class FireVent : MonoBehaviour, IActivate, IFlammable, IElectrocutable
     private bool isLocked;
     private Alarm relightAlarm;
 
+    private bool wasLit;
+
     public bool IsLit => isLit;
 
     private void OnValidate()
@@ -76,11 +78,13 @@ public class FireVent : MonoBehaviour, IActivate, IFlammable, IElectrocutable
                 timer.sprite = timerSprites[index];
             }
         }
+
+        wasLit = isLit;
     }
 
     public void CatchFlame(Collider2D collider)
     {
-        if (isLocked)
+        if (isLocked || wasLit)
             return;
         isLit = true;
         psysFlame.Play();

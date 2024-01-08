@@ -203,12 +203,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3830dd00b7ef8bb4caf9422ecfaee523, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  quest: 0
   _collider: {fileID: 0}
   canExtinguish: 1
   burnTime: 3
   catchTime: 0.25
   gooSprites:
   - {fileID: 2118248221, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}
+  - {fileID: -1484325982, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}
   - {fileID: 1173501823, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}
-  - {fileID: 1642016470, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}
-  - {fileID: 412368694, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}
+  - {fileID: 1803812726, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}

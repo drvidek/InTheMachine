@@ -46,8 +46,9 @@ public class RoomManager : MonoBehaviour
     /// </summary>
     public Action<Vector3Int> onPlayerMovedRoom;
 
-    private int maxRoomDistance = 1;
+    private static int maxRoomDistance = 3;
 
+    private static List<Vector3Int> secretRooms = new();
 
     private Vector3Int lastRoom;
 
@@ -104,6 +105,32 @@ public class RoomManager : MonoBehaviour
             return false;
 
         return true;
+    }
+
+    public bool PlayerWithinRoomDistance(Transform transform, int distance)
+    {
+        Vector3Int room = GetRoom(transform);
+
+        if (QMath.Difference(room.x, currentRoom.x) > distance || QMath.Difference(room.y, currentRoom.y) > distance)
+            return false;
+
+        return true;
+    }
+
+    public static bool IsRoomSecret(Vector3Int room)
+    {
+        foreach (var secret in secretRooms)
+        {
+            if (room.x == secret.x && room.y == secret.y)
+                return true;
+        }
+        return false;
+    }
+
+    public static void AddSecretRoom(Vector3Int room)
+    {
+        if (!secretRooms.Contains(room))
+        secretRooms.Add(room);
     }
 
     private void Start()

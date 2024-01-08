@@ -60,13 +60,35 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
 
     public static GameObject psysSplat => Resources.Load("PSysSplat") as GameObject;
 
+    protected bool everDoneLogic = false;
+
+    protected Coroutine currentStateCoroutine = null;
+
     protected override void Start()
     {
         base.Start();
+        RoomManager.main.onPlayerMovedRoom += CheckPlayerInRangeForLogic;
         healthMeter.onMin += () => { ChangeStateTo(EnemyState.Die); };
         NextState();
     }
+    protected override void CheckPlayerInRangeForLogic(Vector3Int room)
+    {
+        if (everDoneLogic)
+            doingLogic = RoomManager.main.PlayerWithinRoomDistance(transform);
+        else
+            doingLogic = RoomManager.main.PlayerWithinRoomDistance(transform, 0);
 
+        everDoneLogic = doingLogic || everDoneLogic;
+
+        if (CurrentState != EnemyState.Die)
+        {
+            rb.simulated = doingLogic;
+            if (agentAnimator)
+                agentAnimator.SetEnabled(doingLogic);
+        }
+
+
+    }
     #region State Machine
     /// <summary>
     /// Triggers the next state behaviour based on _currentState
@@ -74,7 +96,7 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     protected virtual void NextState()
     {
         //start the state coroutine based on the name of our _currentState enum
-        StartCoroutine(_currentState.ToString());
+        currentStateCoroutine = StartCoroutine(_currentState.ToString());
     }
     /// <summary>
     /// Changes the state, triggering the current state's exit behaviour and the new state's entry behaviour
@@ -86,6 +108,8 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
 
     IEnumerator Idle()
     {
+        while (!DoingLogic)
+            yield return null;
         //on entry
         OnIdleEnter();
         onIdleEnter?.Invoke();
@@ -93,6 +117,8 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
         while (_currentState == EnemyState.Idle)
         {
             //state behaviour here
+            while (!DoingLogic)
+                yield return null;
 
             OnIdleStay();
             onIdleStay?.Invoke();
@@ -138,13 +164,16 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     IEnumerator Walk()
     {
         //on entry
+        while (!DoingLogic)
+            yield return null;
         OnWalkEnter();
         onWalkEnter?.Invoke();
         //every frame while we're in this state
         while (_currentState == EnemyState.Walk)
         {
             //state behaviour here
-
+            while (!DoingLogic)
+                yield return null;
             OnWalkStay();
             onWalkStay?.Invoke();
             //wait a frame
@@ -189,13 +218,16 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     IEnumerator Fly()
     {
         //on entry
+        while (!DoingLogic)
+            yield return null;
         OnFlyEnter();
         onFlyEnter?.Invoke();
         //every frame while we're in this state
         while (_currentState == EnemyState.Fly)
         {
             //state behaviour here
-
+            while (!DoingLogic)
+                yield return null;
             OnFlyStay();
             onFlyStay?.Invoke();
             //wait a frame
@@ -240,13 +272,16 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     IEnumerator Ascend()
     {
         //on entry
+        while (!DoingLogic)
+            yield return null;
         OnAscendEnter();
         onAscendEnter?.Invoke();
         //every frame while we're in this state
         while (_currentState == EnemyState.Ascend)
         {
             //state behaviour here
-
+            while (!DoingLogic)
+                yield return null;
             OnAscendStay();
             onAscendStay?.Invoke();
             //wait a frame
@@ -290,6 +325,8 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     }
     IEnumerator Descend()
     {
+        while (!DoingLogic)
+            yield return null;
         //on entry
         OnDescendEnter();
         onDescendEnter?.Invoke();
@@ -297,7 +334,8 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
         while (_currentState == EnemyState.Descend)
         {
             //state behaviour here
-
+            while (!DoingLogic)
+                yield return null;
             OnDescendStay();
             onDescendStay?.Invoke();
             //wait a frame
@@ -340,6 +378,8 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     }
     IEnumerator Attack()
     {
+        while (!DoingLogic)
+            yield return null;
         //on entry
         OnAttackEnter();
         onAttackEnter?.Invoke();
@@ -347,7 +387,8 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
         while (_currentState == EnemyState.Attack)
         {
             //state behaviour here
-
+            while (!DoingLogic)
+                yield return null;
             OnAttackStay();
             onAttackStay?.Invoke();
             //wait a frame
@@ -391,6 +432,8 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     }
     IEnumerator Die()
     {
+        while (!DoingLogic)
+            yield return null;
         //on entry
         OnDieEnter();
         onDieEnter?.Invoke();
@@ -398,7 +441,8 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
         while (_currentState == EnemyState.Die)
         {
             //state behaviour here
-
+            while (!DoingLogic)
+                yield return null;
             OnDieStay();
             onDieStay?.Invoke();
             //wait a frame
@@ -418,10 +462,9 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     {
         rb.simulated = false;
         if (rb.bodyType != RigidbodyType2D.Static)
-            rb.velocity = Vector2.zero;
+            Halt();
         if (questID != QuestID.Null)
             QuestManager.main.CompleteQuest(questID);
-        _targetVelocity = Vector2.zero;
 
         if (burnEffect)
             IFlammable.ClearFireAndSmoke(burnEffect);
@@ -452,6 +495,8 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     }
     IEnumerator Stun()
     {
+        while (!DoingLogic)
+            yield return null;
         //on entry
         OnStunEnter();
         onStunEnter?.Invoke();
@@ -459,7 +504,8 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
         while (_currentState == EnemyState.Stun)
         {
             //state behaviour here
-
+            while (!DoingLogic)
+                yield return null;
             OnStunStay();
             onStunStay?.Invoke();
             //wait a frame
@@ -503,6 +549,8 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     }
     IEnumerator Burn()
     {
+        while (!DoingLogic)
+            yield return null;
         //on entry
         OnBurnEnter();
         onBurnEnter?.Invoke();
@@ -510,7 +558,8 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
         while (_currentState == EnemyState.Burn)
         {
             //state behaviour here
-
+            while (!DoingLogic)
+                yield return null;
             OnBurnStay();
             onBurnStay?.Invoke();
             //wait a frame

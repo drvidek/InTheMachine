@@ -128,7 +128,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.125}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -139,7 +139,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.8, y: 1}
+  m_Size: {x: 0.75, y: 0.75}
   m_EdgeRadius: 0
 --- !u!95 &1429656178202526306
 Animator:
@@ -182,8 +182,8 @@ MonoBehaviour:
   agentAnimator: {fileID: 0}
   healthMeter:
     _min: 0
-    _max: 5
-    _value: 5
+    _max: 6
+    _value: 6
     _rateUp: 1
     _rateDown: 1
     _colorMain: {r: 0, g: 1, b: 1, a: 1}
@@ -221,7 +221,7 @@ MonoBehaviour:
     _colorType: 0
   showDebug: 0
   _currentState: 0
-  questID: 2
+  questID: 7
   contactDamage: 0
   _fric: 0
   _grv: 0
@@ -231,7 +231,7 @@ MonoBehaviour:
     _name: 
     _id: 0
     _timeRemaining: 0
-    _timeMax: 7
+    _timeMax: 5
     _timeScale: 1
     _looping: 0
     _paused: 0
@@ -242,7 +242,9 @@ MonoBehaviour:
   spawnPoint: {fileID: 3900106628136687897}
   waitToSpawn: 0
   animator: {fileID: 0}
-  possibleSpawnCounts: 0f0000000a0000000c0000001c000000
+  possibleBurnSpawnCounts: 0f000000100000001100000012000000
+  burnSpawnDelay: 0.25
+  maxSpawn: 6
 --- !u!114 &1317073140797327475
 MonoBehaviour:
   m_ObjectHideFlags: 0

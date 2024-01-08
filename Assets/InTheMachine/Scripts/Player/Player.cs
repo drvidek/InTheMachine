@@ -50,6 +50,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
 
     #region Events
     public Action<Ability> onAbilityUnlock;
+    public Action<PowerUp.Type> onPowerUpObtained;
     public Action onIdleEnter;
     public Action onIdleStay;
     public Action onIdleExit;
@@ -891,9 +892,9 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
 
     private void MoveVerticallyWithInput()
     {
-        float change = _fric;
+        float change = _fric * (shoot.Hold && HasAbility(Ability.Tractor) ? 3f : 1f);
         if (UserInputDir.y != 0)
-            change = Mathf.Max(_accel, _fric);
+            change = Mathf.Max(_accel,change);
 
         _targetVelocity.y = Mathf.MoveTowards(_targetVelocity.y, _airVertSpeed * UserInputDir.y, change * Time.fixedDeltaTime);
     }
@@ -1028,11 +1029,13 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             default:
                 break;
         }
+                onPowerUpObtained?.Invoke(type);
     }
 
     public void RefillRepairCharges()
     {
         repairMeter.Fill();
+        healthMeter.Fill();
     }
 
     protected override void CheckForExternalVelocity()

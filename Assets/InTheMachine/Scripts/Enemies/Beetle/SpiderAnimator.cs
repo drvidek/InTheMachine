@@ -13,6 +13,7 @@ public class SpiderAnimator : EnemyAnimator
         myEnemy.onWalkEnter += () => { animator.SetBool("Walking", true); };
         myEnemy.onWalkStay += () => { pixelAligner.SetOffset(transform.up * 0.25f); };
         myEnemy.onIdleEnter += () => { animator.SetBool("Walking", false); };
+        myEnemy.onStunEnter += () => { animator.SetBool("Walking", false); };
 
         myEnemy.onAscendEnter += () => { animator.SetBool("Jumping", true); };
         myEnemy.onAscendStay += () => { pixelAligner.SetOffset(transform.up * 0.25f); };

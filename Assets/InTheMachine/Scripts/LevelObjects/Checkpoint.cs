@@ -6,6 +6,7 @@ public class Checkpoint : MonoBehaviour, IActivate
 {
     [SerializeField] private bool active;
     [SerializeField] private ParticleSystem psysActivate;
+    [SerializeField] private SpriteRenderer iconSprite;
 
     private Animator animator;
 
@@ -21,6 +22,7 @@ public class Checkpoint : MonoBehaviour, IActivate
     {
         animator = GetComponent<Animator>();
         ToggleActive(active);
+        iconSprite.enabled = false;
 
         Player.main.interact.onPress += OpenShop;
     }
@@ -56,13 +58,20 @@ public class Checkpoint : MonoBehaviour, IActivate
                 currentCheckpoint.animator.SetBool("CurrentCheckpoint", false);
             animator.SetBool("CurrentCheckpoint", true);
             currentCheckpoint = this;
+            iconSprite.enabled = true;
             Player.main.RefillRepairCharges();
         }
     }
 
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (active && collision.GetComponent<Player>())
+            iconSprite.enabled = false;
+    }
+
     private void OpenShop()
     {
-        if (!active || !Physics2D.OverlapBox(transform.position, Vector2.one, 0,1<< 6))
+        if (!active || !Physics2D.OverlapBox(transform.position, Vector2.one, 0, 1 << 6))
             return;
 
         Shop.main.OpenShop();

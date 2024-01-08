@@ -5,15 +5,17 @@ using QKit;
 
 public class Hive : EnemyStatic, IFlammable
 {
-    [SerializeField] private Alarm spawnAlarm;
-    [SerializeField] private EnemyMachine enemyToSpawn;
-    [SerializeField] private Transform spawnPoint;
-    [SerializeField] private bool waitToSpawn;
-    [SerializeField] private Animator animator;
+    [SerializeField] protected Alarm spawnAlarm;
+    [SerializeField] protected EnemyMachine enemyToSpawn;
+    [SerializeField] protected Transform spawnPoint;
+    [SerializeField] protected bool waitToSpawn;
+    [SerializeField] protected Animator animator;
     [SerializeField] protected int[] possibleBurnSpawnCounts;
     [SerializeField] protected float burnSpawnDelay = 0.5f;
     private EnemyMachine currentEnemySpawned;
 
+    [SerializeField] private int maxSpawn = 6;
+    private int currentSpawn;
 
     protected override void Start()
     {
@@ -106,8 +108,12 @@ public class Hive : EnemyStatic, IFlammable
 
     protected void SpawnEnemy()
     {
-        currentEnemySpawned = Instantiate(enemyToSpawn, spawnPoint.position, Quaternion.identity);
+        if (currentSpawn >= maxSpawn && !IsFlaming())
+            return;
 
+        currentEnemySpawned = Instantiate(enemyToSpawn, spawnPoint.position, Quaternion.identity);
+        currentSpawn++;
+        currentEnemySpawned.onDieEnter += () => currentSpawn--;
     }
 
     protected void ManageSpawnTimerReset()

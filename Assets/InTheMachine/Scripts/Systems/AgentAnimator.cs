@@ -47,6 +47,14 @@ public abstract class AgentAnimator : MonoBehaviour
         };
     }
 
+    public void SetEnabled(bool enabled)
+    {
+        if (animator)
+        animator.enabled = enabled;
+        if (spriteRenderer)
+        spriteRenderer.enabled = enabled;
+    }
+
     public static void Vibrate(PixelAligner pixelAligner, int amount)
     {
         float x = Random.Range(-amount, amount+1);

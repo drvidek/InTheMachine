@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -8,6 +8,8 @@ public class FogOfWar : MonoBehaviour
     private Tilemap fogMap;
 
     private static int tilesToClear;
+
+    public static Action onMapReveal;
 
     public static int TilesToClear => tilesToClear;
 
@@ -35,8 +37,12 @@ public class FogOfWar : MonoBehaviour
 
         fogMap.SetTile(fogTile, null);
 
+
         if (!clearingArea)
+        {
+            onMapReveal?.Invoke();
             tilesToClear--;
+        }
     }
 
     private void ClearArea(Vector3Int room)
@@ -46,7 +52,9 @@ public class FogOfWar : MonoBehaviour
         {
             for (int y = room.y - 1; y < room.y + 2; y++)
             {
-                ClearFog(new(x, y));
+                Vector3Int currentRoom = new(x, y);
+                if (!RoomManager.IsRoomSecret(currentRoom))
+                    ClearFog(currentRoom);
             }
         }
         clearingArea = false;

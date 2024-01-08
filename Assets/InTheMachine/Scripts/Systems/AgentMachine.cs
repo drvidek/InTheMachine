@@ -28,6 +28,8 @@ public abstract class AgentMachine : MonoBehaviour
     public Rigidbody2D rb => _rigidbody;
 
 
+    protected bool doingLogic = true;
+    protected bool DoingLogic => doingLogic;
 
     // Start is called before the first frame update
     protected virtual void Start()
@@ -37,7 +39,7 @@ public abstract class AgentMachine : MonoBehaviour
         if (!_collider)
             _collider = GetComponent<Collider2D>();
         if (!agentAnimator)
-            agentAnimator = GetComponent<AgentAnimator>();
+           TryGetComponent<AgentAnimator>(out agentAnimator);
 
     }
 
@@ -48,12 +50,20 @@ public abstract class AgentMachine : MonoBehaviour
         CheckForExternalVelocity();
     }
 
+    protected virtual void CheckPlayerInRangeForLogic(Vector3Int room)
+    {
+        doingLogic = RoomManager.main.PlayerWithinRoomDistance(transform);
+    }
+
     protected virtual void FixedUpdate()
     {
         if (!GameManager.IsPlaying)
             return;
 
         if (_rigidbody.bodyType == RigidbodyType2D.Static)
+            return;
+
+        if (!doingLogic)
             return;
 
         _rigidbody.velocity = _targetVelocity + CalculateOneFrameVelocity();

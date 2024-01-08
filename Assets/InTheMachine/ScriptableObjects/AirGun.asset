@@ -23,10 +23,10 @@ MonoBehaviour:
     m_Bits: 660
   piercingLayer:
     serializedVersion: 2
-    m_Bits: 16384
+    m_Bits: 0
   pinpointLayer:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 17408
   projectilePrefab: {fileID: 160887198981946752, guid: 1bebb8bcbfc57224b9a7c0567e275410, type: 3}
   cost: 5
   costOnShot: 1

@@ -18,7 +18,7 @@ MonoBehaviour:
     reward: 0
     persistent: 0
   - id: 1
-    name: Clean the Machine
+    name: Perform Cleanup Duties
     reward: 1
     persistent: 1
   - id: 2
@@ -30,7 +30,7 @@ MonoBehaviour:
     reward: 4
     persistent: 1
   - id: 4
-    name: Activate Checkpoint Terminals
+    name: Activate Communication Terminals
     reward: 50
     persistent: 1
   - id: 5
@@ -38,6 +38,10 @@ MonoBehaviour:
     reward: 200
     persistent: 0
   - id: 6
-    name: Terminate Malfunctioning Drone
+    name: Terminate Rebel Drone
     reward: 150
     persistent: 0
+  - id: 7
+    name: Clear Spider Den
+    reward: 5
+    persistent: 1

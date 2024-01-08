@@ -125,6 +125,14 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
 
     }
 
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.GetComponent<Cobweb>())
+        {
+            Halt();
+        }
+    }
+
     protected Vector3 FindValidStraightLineTarget()
     {
         //determine if we should start from our current position, or our home position

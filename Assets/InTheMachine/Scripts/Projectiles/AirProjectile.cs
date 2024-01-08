@@ -34,9 +34,30 @@ public class AirProjectile : Projectile
     protected override void DoCollision(Collider2D collider)
     {
         //if we hit a flammable object
-        if (collider.TryGetComponent<IFlammable>(out IFlammable flame) && flame.IsFlaming())
+        if (collider.TryGetComponent<IFlammable>(out IFlammable flame) || collider.transform.parent.TryGetComponent<IFlammable>(out flame))
         {
-                flame.DouseFlame();
+            if (flame.IsFlaming())
+            {
+                //if it's on enemy layer
+                if (collider.gameObject.layer == 7)
+                {
+                    //make sure it's a real enemy and collide
+                    if (collider.attachedRigidbody && collider.attachedRigidbody.GetComponent<EnemyMachine>())
+                    {
+                        flame.DouseFlame();
+                    }
+                    else    //otherwise don't do anything
+                        return;
+                }
+
+                //if it's on the TakeFire layer, douse the flame and collide
+                if (collider.gameObject.layer == 14)
+                {
+                    flame.DouseFlame();
+                }
+                base.DoCollision(collider);
+            }
+            else return;
         }
         base.DoCollision(collider);
     }

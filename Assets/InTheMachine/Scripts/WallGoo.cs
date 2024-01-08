@@ -25,7 +25,6 @@ public class WallGoo : BurnAway, IElectrocutable
     private void Start()
     {
         _collider = GetComponentInChildren<Collider2D>();
-        cashWorth = 0;
         base.InitialiseIFlammable();
     }
 

@@ -29,29 +29,48 @@ namespace QKit
 
         protected virtual void Start()
         {
-
             SetRigidbody();
-
-            ContactFilter2D filter = new();
-            List<Collider2D> list = new();
-            Physics2D.OverlapCollider(GetComponentInChildren<Collider2D>(), filter.NoFilter(), list);
-            foreach (var item in list)
+            CircleCollider2D myCollider = GetComponentInChildren<CircleCollider2D>();
+            foreach (var other in Physics2D.OverlapCircleAll(transform.position, myCollider.radius))
             {
-                int layer = item.gameObject.layer;
-                bool collision = CheckForCollision(layer);
-                bool piercing = CheckForPierce(layer);
+                Debug.Log(other.name);
+                int otherLayer = other.gameObject.layer;
+                bool collision = CheckForCollision(otherLayer);
+                bool piercing = CheckForPierce(otherLayer);
+                bool pinpoint = false;
 
-                if (!collision && !piercing)
-                    return;
-                TryToHitTarget(item);
-
-                if (collision)
+                if (_pinpointLayer != 0)
                 {
-                    DoCollision(item);
+                    pinpoint = CheckForPinpoint(otherLayer);
+                }
+
+
+                if (!collision && !piercing && !pinpoint)
+                   break;
+
+                if (pinpoint)
+                {
+                    pinpoint = false;
+                    foreach (var collider in Physics2D.OverlapCircleAll(transform.position, 0.2f, _pinpointLayer))
+                    {
+                        if (collider == other)
+                        {
+                            pinpoint = true;
+                            break;
+                        }
+                    }
+                    if (!pinpoint)
+                        break;
+                }
+
+                TryToHitTarget(other);
+
+                if (collision || pinpoint)
+                {
+                    DoCollision(other);
                 }
             }
 
-            
         }
 
         protected virtual void SetRigidbody()
@@ -185,7 +204,7 @@ namespace QKit
             if (pinpoint)
             {
                 pinpoint = false;
-                foreach (var collider in Physics2D.OverlapPointAll(transform.position,_pinpointLayer))
+                foreach (var collider in Physics2D.OverlapCircleAll(transform.position,0.2f,_pinpointLayer))
                 {
                     if (collider == other)
                         pinpoint = true;

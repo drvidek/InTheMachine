@@ -353,8 +353,8 @@ MonoBehaviour:
   _grv: 22
   stunTimeMin: 2
   attackRange: 0
+  moveSpeed: 2
   idleTime: 2
-  flySpeed: 2
   maxDistanceToNewDestination: 5
   maxDistanceFromHome: 8
 --- !u!114 &1444939075102424547

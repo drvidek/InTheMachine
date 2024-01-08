@@ -6,6 +6,7 @@ using QKit;
 
 public class BurnAway : MonoBehaviour, IFlammable, IProjectileTarget
 {
+    [SerializeField] protected QuestID quest;
     [SerializeField] protected Collider2D _collider;
     [SerializeField] private bool canExtinguish;
     [SerializeField] private float burnTime = 1f, catchTime = 0.5f;
@@ -15,7 +16,7 @@ public class BurnAway : MonoBehaviour, IFlammable, IProjectileTarget
     private Tilemap tilemap;
     private Vector3Int cell;
     protected Meter catchFlame = new(0, 1, 0, 2, 1);
-    protected float cashWorth = 1f;
+    
     private bool dying = false;
 
     // Start is called before the first frame update
@@ -128,7 +129,8 @@ public class BurnAway : MonoBehaviour, IFlammable, IProjectileTarget
     private void EndOfLife()
     {
         IFlammable.ClearFireAndSmoke(burnEffect);
-        CashManager.main.IncreaseCashBy(cashWorth);
+        if (quest != QuestID.Null)
+            QuestManager.main.CompleteQuest(quest);
         if (tilemap)
             tilemap.SetTile(cell, null);
         else

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SpiderNest : Hive
 {
+
     protected override void OnAttackEnter()
     {
         if (CheckAttackCondition())

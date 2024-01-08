@@ -144,9 +144,7 @@ public class PlayerGun : Launcher
 
     private void SetCurrentProfile(GunProfileType profile, bool force = false)
     {
-        Debug.Log("Setting profile");
-
-        if (!availableTypes.Contains(profile) || currentProfile == profile)
+                if (!availableTypes.Contains(profile) || currentProfile == profile)
         {
             if (!force)
                 return;

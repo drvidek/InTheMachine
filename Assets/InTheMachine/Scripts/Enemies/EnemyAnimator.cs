@@ -16,16 +16,6 @@ public class EnemyAnimator : AgentAnimator
         {
             spriteRenderer.enabled = false;
         };
-
-        RoomManager.main.onPlayerMovedRoom += RoomCheck;
     }
 
-
-    private void RoomCheck(Vector3Int room)
-    {
-        if (!animator)
-            return;
-        bool check = RoomManager.main.PlayerWithinRoomDistance(transform);
-        animator.enabled = check;
-    }
 }

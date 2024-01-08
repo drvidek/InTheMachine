@@ -61,7 +61,13 @@ public class ShopItemGUI : MonoBehaviour
 
     private void Update()
     {
-        button.interactable = CashManager.main.Cash >= Item.cost;
+        button.interactable = true;
+        if (CashManager.main.Cash < Item.cost)
+        {
+            if (Shop.main.ESys.currentSelectedGameObject == gameObject)
+                Shop.main.ESys.SetSelectedGameObject(Shop.main.DefaultSelection);
+            button.interactable = false;
+        }
     }
 
     public void TryToBuy()

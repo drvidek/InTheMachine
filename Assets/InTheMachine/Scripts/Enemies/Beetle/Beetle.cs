@@ -13,9 +13,11 @@ public class Beetle : EnemyWalking, IFlammable
     public Vector3 NinetyDegrees => new Vector3(0f, 0f, 90f);
 
     public Vector2 groundBox => hardCollider.size;
-    public Vector2 wallBox => new Vector2(hardCollider.size.x, 0.1f);
+    public Vector2 wallBox => new Vector2(hardCollider.size.x, hardCollider.size.y * 0.95f);
 
     public override bool IsGrounded => StandingOn != null;
+
+    protected float cornerRounding = 4f;
 
     public override Collider2D StandingOn
     {
@@ -60,53 +62,51 @@ public class Beetle : EnemyWalking, IFlammable
     protected override void OnWalkEnter()
     {
         //hardCollider.enabled = false;
-        transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / 4f), QMath.RoundToNearestFraction(transform.position.y, 1f / 4f), transform.position.z);
+        transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / cornerRounding), QMath.RoundToNearestFraction(transform.position.y, 1f / cornerRounding), transform.position.z);
         walkingRight = QMath.Choose<bool>(true, false);
     }
 
     protected override void OnWalkStay()
     {
         turnLock = (int)Mathf.MoveTowards(turnLock, 0, 1);
-        //if (turnLock == 0)
+        //if we're not grounded
+        if (!IsGrounded)
         {
-            //if we're not grounded
-            if (!IsGrounded)
+            if (turnLock > 0)
             {
-                if (turnLock > 0)
-                {
-                    GetStunned(Vector3.down, 1f);
-                }
-                //rotate
-                transform.localEulerAngles += walkingRight ? -NinetyDegrees : NinetyDegrees;
-                transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / 4f), QMath.RoundToNearestFraction(transform.position.y, 1f / 4f), transform.position.z) + CurrentDirection * 0.2f;
-                turnLock = 5;
+                GetStunned(Vector3.down, 1f);
             }
-            else
-            if (ColliderAhead)
-            {
-                transform.localEulerAngles += walkingRight ? NinetyDegrees : -NinetyDegrees;
-                transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / 4f), QMath.RoundToNearestFraction(transform.position.y, 1f / 4f), transform.position.z) + CurrentDirection * 0.2f;
-                turnLock = 5;
-            }
-
-            if (EnemyAhead)
-                walkingRight = !walkingRight;
+            //rotate
+            RotateAroundCorner(walkingRight ? -NinetyDegrees : NinetyDegrees);
         }
+        else
+        if (ColliderAhead)
+        {
+            RotateAroundCorner(walkingRight ? NinetyDegrees : -NinetyDegrees);
+        }
+        if (EnemyAhead)
+            walkingRight = !walkingRight;
 
         Move(CurrentDirection, _walkSpeed);
+    }
 
+    protected virtual void RotateAroundCorner(Vector3 direction)
+    {
+        transform.localEulerAngles += direction; 
+        transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / cornerRounding), QMath.RoundToNearestFraction(transform.position.y, 1f / cornerRounding), transform.position.z) + CurrentDirection * 0.2f;
+        turnLock = 5;
     }
 
     protected override void OnWalkExit()
     {
         if (transform.localEulerAngles.z > 90 || transform.localEulerAngles.z < -90)
             transform.position += Vector3.down * 0.5f;
-        transform.localEulerAngles = Vector3.zero;
+
     }
 
     protected override void OnStunEnter()
     {
-        //hardCollider.enabled = true;
+        transform.localEulerAngles = Vector3.zero;
         rb.velocity = _targetVelocity;
     }
 

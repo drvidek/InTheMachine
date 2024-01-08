@@ -84,6 +84,9 @@ public class PopupText : MonoBehaviour
                 upgradeInstruction = "PRESS RB FOR SPECIAL ATTACK";
                 break;
             case Player.Ability.UltraBoost:
+                upgradeType = "BOOST UPGRADED:";
+                upgradeName = "ULTABOOST";
+                upgradeInstruction = "HOLD A TO ULTRABOOST";
                 break;
             default:
                 break;
