@@ -110,8 +110,11 @@ public class Door : MonoBehaviour, IActivate
         if (startOpen)
             open = !active;
 
+            everOpened = open || everOpened;
+
+
         if (open)
-            everOpened = true;
+            QuestManager.main.CompleteQuest(QuestID.Door);
 
         psysActive.Play();
     }

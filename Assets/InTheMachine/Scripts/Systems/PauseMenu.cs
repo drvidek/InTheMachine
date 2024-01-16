@@ -15,6 +15,10 @@ public class PauseMenu : MonoBehaviour
     private float oneRoomZoom = 9f;
     private float zoomMultilpier = 3f;
     private float defaultZoom = 27f;
+    private float minimapZoom = 18f;
+
+    private Vector3 tempPanPosition;
+    private float panReleaseTime;
 
     #region Singleton + Awake
     private static PauseMenu _singleton;
@@ -51,7 +55,9 @@ public class PauseMenu : MonoBehaviour
     void Start()
     {
         mapCameraLocalHome = mapCamera.transform.localPosition;
+        tempPanPosition = mapCamera.transform.position;
         pauseMenu = transform.GetChild(0).gameObject;
+        SetMiniMapCameraZoom();
     }
 
     private void Update()
@@ -62,11 +68,18 @@ public class PauseMenu : MonoBehaviour
         if (eventSystem.currentSelectedGameObject == mapObject)
         {
             Vector2 input = new(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-            if (input.magnitude == 0)
+            if (input.magnitude > 0)
             {
-
+                mapCamera.transform.position += (Vector3)input * mapPanSpeed * Time.unscaledDeltaTime;
+                tempPanPosition = mapCamera.transform.position;
+                panReleaseTime = Time.unscaledTime;
             }
-            mapCamera.transform.position += (Vector3)input * mapPanSpeed * Time.unscaledDeltaTime;
+            else
+            {
+                Vector3Int currentCell = RoomManager.main.RoomGrid.WorldToCell(mapCamera.transform.position);
+                Vector3 targetPos = RoomManager.main.RoomGrid.CellToWorld(currentCell) + new Vector3(CameraController.screenWidth / 2, CameraController.screenHeight / 2);
+                mapCamera.transform.position = Vector3.Lerp(tempPanPosition, targetPos, (Time.unscaledTime - panReleaseTime) * 4f);
+            }
 
             if (Input.GetButtonDown("Shoot"))
             {
@@ -94,7 +107,12 @@ public class PauseMenu : MonoBehaviour
         mapCamera.transform.localPosition = mapCameraLocalHome;
     }
 
-    private void ResetMapCameraZoom()
+    private void SetMiniMapCameraZoom()
+    {
+        mapCamera.orthographicSize = minimapZoom;
+    }
+
+    private void SetPauseMapCameraZoom()
     {
         mapCamera.orthographicSize = defaultZoom;
     }
@@ -103,12 +121,13 @@ public class PauseMenu : MonoBehaviour
     {
         pauseMenu.SetActive(true);
         eventSystem.SetSelectedGameObject(defaultSelection);
+        SetPauseMapCameraZoom();
     }
 
     public void ClosePauseMenu()
     {
         ResetMapCameraPosition();
-        ResetMapCameraZoom();
+        SetMiniMapCameraZoom();
         pauseMenu.SetActive(false);
     }
 }

@@ -20,6 +20,7 @@ public class OneWayPlatform : EnvironmentBox
     {
         base.SetSprite();
         sprite.size = new Vector2(size.x, size.y);
+        transform.GetChild(0).GetComponent<SpriteRenderer>().size = new Vector2(size.x, .25f);
     }
 
     protected override void SetCollider()

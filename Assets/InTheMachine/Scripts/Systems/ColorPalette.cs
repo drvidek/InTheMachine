@@ -6,17 +6,18 @@ using UnityEngine;
 public enum ColorType
 {
     Actor,
-    World,
+    Door,
     Button,
     Physics,
     Debris,
     Air,
     Fire,
     Elec,
-    Slime,
+    Goo,
     Liquid,
     BurnIt,
     ZapIt
+
 }
 
 [CreateAssetMenu(fileName = "NewPalette", menuName = "Scriptable Objects/Color Palette")]

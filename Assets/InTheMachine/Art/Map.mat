@@ -44,8 +44,15 @@ Material:
     - _EnableExternalAlpha: 0
     m_Colors:
     - _BackgroundColor: {r: 0.4009612, g: 0.5283019, b: 0.34638664, a: 1}
+    - _BackgroundColorIn: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _DoorColor: {r: 0, g: 0.4, b: 0, a: 1}
+    - _DoorColorIn: {r: 0.30588236, g: 0.34117648, b: 0.39607847, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _FogColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FogColorIn: {r: 1, g: 0, b: 1, a: 1}
+    - _PlayerColor: {r: 0, g: 1, b: 0, a: 1}
+    - _PlayerColorIn: {r: 0, g: 1, b: 0, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
     - _WallColor: {r: 0, g: 0.106000006, b: 0, a: 1}
   m_BuildTextureStacks: []

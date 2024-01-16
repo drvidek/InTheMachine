@@ -15,33 +15,46 @@ MonoBehaviour:
   quests:
   - id: 0
     name: 
+    clearName: 
     reward: 0
     persistent: 0
   - id: 1
-    name: Perform Cleanup Duties
+    name: Clean the Machine
+    clearName: Cleanup Duty
     reward: 1
     persistent: 1
   - id: 2
-    name: Eradicate Pests
-    reward: 2
+    name: Open Ventilation System
+    clearName: Vent Open
+    reward: 1
     persistent: 1
   - id: 3
-    name: Destroy Fungus Infestation
-    reward: 4
+    name: Exterminate Stray Pests
+    clearName: Pest Removal
+    reward: 2
     persistent: 1
   - id: 4
-    name: Activate Communication Terminals
-    reward: 50
+    name: Remove Fungus Infestation
+    clearName: Fungus Removal
+    reward: 4
     persistent: 1
   - id: 5
-    name: Open Central Elevator
+    name: Activate Communications Terminals
+    clearName: Comms Repair
+    reward: 50
+    persistent: 1
+  - id: 6
+    name: Clear Central Elevator
+    clearName: Elevator Clear
     reward: 200
     persistent: 0
-  - id: 6
+  - id: 7
     name: Terminate Rebel Drone
+    clearName: Drone Termination
     reward: 150
     persistent: 0
-  - id: 7
-    name: Clear Spider Den
+  - id: 8
+    name: Clear Spider's Den
+    clearName: Spider Removal
     reward: 5
     persistent: 1

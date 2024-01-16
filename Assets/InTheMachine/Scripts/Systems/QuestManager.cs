@@ -10,12 +10,14 @@ public struct Quest
 {
     public QuestID id;
     public string name;
+    public string clearName;
     public int reward;
     public bool persistent;
-    public Quest(QuestID id = QuestID.Null, string name = "QuestName", int reward = 0, bool persistent = false)
+    public Quest(QuestID id = QuestID.Null, string name = "QuestName", string clearName = "QuestClear", int reward = 0, bool persistent = false)
     {
         this.id = id;
         this.name = name;
+        this.clearName = clearName;
         this.reward = reward;
         this.persistent = persistent;
     }
@@ -25,6 +27,7 @@ public enum QuestID
 {
     Null,
     Clean,
+    Door,
     Pest,
     Fungus,
     Terminal,
@@ -49,6 +52,8 @@ public class QuestManager : MonoBehaviour
     private QuestList questList;
 
     public Action onNewQuest, onQuestComplete;
+
+    private string lastQuestName = "";
 
     #region Singleton + Awake
     private static QuestManager _singleton;
@@ -113,7 +118,8 @@ public class QuestManager : MonoBehaviour
         onNewQuest?.Invoke();
         string questDisplayText = $">{questToAdd.name} ({questToAdd.reward}c)";
 
-        AddTextToTickerQueue(questDisplayText, typeDelay);
+
+        //AddTextToTickerQueue(questDisplayText, typeDelay);
     }
 
     private void AddTextToTickerQueue(string text, float speed)
@@ -141,23 +147,26 @@ public class QuestManager : MonoBehaviour
             }
         }
 
-        bool firstAdd = false;
+        //bool firstAdd = false;
         //if we found no match
         if (questFoundInList.id == QuestID.Null)
         {
             //add the quest to the log
             AddQuest(completedQuestID);
             questFoundInList = questList.quests[(int)completedQuestID];
-            firstAdd = true;
+           // firstAdd = true;
         }
         CashManager.main.IncreaseCashBy(questFoundInList.reward);
 
-        if (firstAdd)
-            return;
+        //if (firstAdd)
+        //    return;
 
         questTitle.text = "JOB DONE";
-        AddTextToTickerQueue($">{questFoundInList.reward}c earned: {questFoundInList.name}", typeDelay / 2f);
 
+        questDisplay.text += $"\n{questFoundInList.clearName} +{questFoundInList.reward}c";
+        //AddTextToTickerQueue($"\n{questFoundInList.name} +{questFoundInList.reward}c", typeDelay);
+
+        //remove a non-persistent quest
         if (!questFoundInList.persistent)
         {
             questLog.Remove(questFoundInList);
@@ -194,25 +203,38 @@ public class QuestManager : MonoBehaviour
 
     IEnumerator AddQuestToTicker(string stringToAdd, float typeTime)
     {
-        bool repeat = false;
-        if (questDisplay.text == stringToAdd)
+        //bool repeat = false;
+        //if (questDisplay.text == stringToAdd)
+        //{
+        //    repeat = true;
+        //}
+        //
+        //if (!repeat)
+        //{
+        //    string currentString = "";
+        //    int position = 0;
+        //
+        //    while (currentString.Length < stringToAdd.Length)
+        //    {
+        //        yield return new WaitForSeconds(typeTime);
+        //        currentString += stringToAdd[position];
+        //        questDisplay.text = currentString;
+        //        position++;
+        //    }
+        //}
+
+        string currentString = "";
+        string currentQuestLog = questDisplay.text;
+        int position = 0;
+
+        while (currentString.Length < stringToAdd.Length)
         {
-            repeat = true;
+            yield return new WaitForSeconds(typeTime);
+            currentString += stringToAdd[position];
+            questDisplay.text = currentQuestLog + currentString;
+            position++;
         }
 
-        if (!repeat)
-        {
-            string currentString = "";
-            int position = 0;
-
-            while (currentString.Length < stringToAdd.Length)
-            {
-                yield return new WaitForSeconds(typeTime);
-                currentString += stringToAdd[position];
-                questDisplay.text = currentString;
-                position++;
-            }
-        }
         //clear the current routine - ready for next prompt
         typewriterRoutine = null;
 
@@ -221,7 +243,7 @@ public class QuestManager : MonoBehaviour
         {
             typewriterRoutine = typewriterQueue[0];
             typewriterQueue.RemoveAt(0);
-            yield return repeat ? null : multiLogDelay;
+            yield return null;
 
             StartCoroutine(typewriterRoutine);
         }
