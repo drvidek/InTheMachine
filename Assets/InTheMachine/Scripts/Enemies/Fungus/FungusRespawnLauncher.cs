@@ -7,7 +7,7 @@ public class FungusRespawnLauncher : FungusShootLauncher
 
     protected override void Shoot()
     {
-        Vector3 direction = GetDirection();
+        Vector3 direction = Vector3.up;
         if (!_projectilePrefab)
         {
             Debug.LogError($"No projectile prefab is installed in {gameObject.name}'s launcher.");

@@ -13,10 +13,11 @@ public class AirRocketProjectile : Projectile
         base.Start();
     }
 
-    private void FixedUpdate()
+    protected override void FixedUpdate()
     {
         _speed += accelPerSec * Time.fixedDeltaTime;
         rb.velocity = Direction * Speed;
+        base.FixedUpdate();
     }
 
     protected override void EndOfLife()

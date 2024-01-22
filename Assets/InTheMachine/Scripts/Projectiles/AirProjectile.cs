@@ -23,43 +23,45 @@ public class AirProjectile : Projectile
             sprite.flipX = PlayerAnimate.main.FacingDirection.x < 0;
     }
 
-    private void FixedUpdate()
+    protected override void FixedUpdate()
     {
         if (lifeOver)
             return;
         _speed -= (baseSpeed / _lifetime) * Time.fixedDeltaTime;
         rb.velocity = Direction * Speed;
+        base.FixedUpdate();
     }
 
     protected override void DoCollision(Collider2D collider)
     {
+        bool doCollision = true;
         //if we hit a flammable object
         if (collider.TryGetComponent<IFlammable>(out IFlammable flame) || collider.transform.parent.TryGetComponent<IFlammable>(out flame))
         {
-            if (flame.IsFlaming())
+            //if it's on enemy layer
+            if (collider.gameObject.layer == 7)
             {
-                //if it's on enemy layer
-                if (collider.gameObject.layer == 7)
-                {
-                    //make sure it's a real enemy and collide
-                    if (collider.attachedRigidbody && collider.attachedRigidbody.GetComponent<EnemyMachine>())
-                    {
-                        flame.DouseFlame();
-                    }
-                    else    //otherwise don't do anything
-                        return;
-                }
-
-                //if it's on the TakeFire layer, douse the flame and collide
-                if (collider.gameObject.layer == 14)
+                //make sure it's a real enemy and collide
+                if (collider.attachedRigidbody && collider.attachedRigidbody.GetComponent<EnemyMachine>())
                 {
                     flame.DouseFlame();
                 }
-                base.DoCollision(collider);
+                else doCollision = false;
             }
-            else return;
+            else
+            //if it's on the TakeFire layer, douse the flame and collide
+            if (collider.gameObject.layer == 14)
+            {
+                if (flame.IsFlaming())
+                {
+                    flame.DouseFlame();
+                }
+                else
+                    doCollision = false;
+            }
         }
-        base.DoCollision(collider);
+        if (doCollision)
+            base.DoCollision(collider);
     }
 
     protected override void EndOfLife()

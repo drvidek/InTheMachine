@@ -8,6 +8,7 @@ public class Shop : MonoBehaviour
     public static ShopItem[] inventory;
     [SerializeField] private GameObject defaultSelection;
     [SerializeField] private GameObject weaponGroup, specialGroup;
+    [SerializeField] private GameObject[] airItems, fireItems, elecItems, gooItems;
     [SerializeField] private EventSystem eventSystem;
 
     private GameObject shop;
@@ -56,6 +57,7 @@ public class Shop : MonoBehaviour
         weaponGroup.SetActive(false);
         specialGroup.SetActive(false);
         Player.main.onAbilityUnlock += CheckShopUnlock;
+        PlayerGun.main.onProfileUnlock += CheckShopUnlock;
     }
 
     private void CheckShopUnlock(Player.Ability ability)
@@ -72,6 +74,39 @@ public class Shop : MonoBehaviour
             case Player.Ability.Tractor:
             case Player.Ability.Boost:
             case Player.Ability.UltraBoost:
+            default:
+                break;
+        }
+    }
+
+    private void CheckShopUnlock(GunProfileType gunType)
+    {
+        switch (gunType)
+        {
+            case GunProfileType.Air:
+                foreach (var item in airItems)
+                {
+                    item.SetActive(true);
+                }
+                break;
+            case GunProfileType.Fire:
+                foreach (var item in fireItems)
+                {
+                    item.SetActive(true);
+                }
+                break;
+            case GunProfileType.Elec:
+                foreach (var item in elecItems)
+                {
+                    item.SetActive(true);
+                }
+                break;
+            case GunProfileType.Goo:
+                foreach (var item in gooItems)
+                {
+                    item.SetActive(true);
+                }
+                break;
             default:
                 break;
         }

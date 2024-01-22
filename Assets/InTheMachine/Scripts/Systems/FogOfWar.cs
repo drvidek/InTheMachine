@@ -5,6 +5,8 @@ using UnityEngine.Tilemaps;
 
 public class FogOfWar : MonoBehaviour
 {
+    [SerializeField] private bool chargePoint;
+    
     private Tilemap fogMap;
 
     private static int tilesToClear;
@@ -25,7 +27,7 @@ public class FogOfWar : MonoBehaviour
 
     private void ClearFog(Vector3Int room)
     {
-        if (!clearingArea && tilesToClear <= 0)
+        if (!clearingArea && (tilesToClear <= 0 && chargePoint))
             return;
 
         Vector3 roomPos = RoomManager.main.RoomGrid.CellToWorld(room);
@@ -38,7 +40,7 @@ public class FogOfWar : MonoBehaviour
         fogMap.SetTile(fogTile, null);
 
 
-        if (!clearingArea)
+        if (!clearingArea && chargePoint)
         {
             onMapReveal?.Invoke();
             tilesToClear--;

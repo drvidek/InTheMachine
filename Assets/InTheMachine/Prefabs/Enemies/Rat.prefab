@@ -290,13 +290,14 @@ MonoBehaviour:
     _colorType: 0
   showDebug: 0
   _currentState: 0
-  questID: 2
+  questID: 3
   contactDamage: 0
   _fric: 15
   _grv: 15
   stunTimeMin: 1
   attackRange: 0
   _walkSpeed: 8
+  walkingRight: 1
   jumpPower: 2
   jumpDelayTime: 0.25
 --- !u!114 &7725364686676554133

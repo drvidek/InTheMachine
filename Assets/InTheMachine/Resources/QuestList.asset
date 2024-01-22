@@ -16,45 +16,54 @@ MonoBehaviour:
   - id: 0
     name: 
     clearName: 
+    failName: 
     reward: 0
     persistent: 0
   - id: 1
     name: Clean the Machine
     clearName: Cleanup Duty
+    failName: 
     reward: 1
     persistent: 1
   - id: 2
     name: Open Ventilation System
     clearName: Vent Open
+    failName: Vent Closed
     reward: 1
     persistent: 1
   - id: 3
     name: Exterminate Stray Pests
     clearName: Pest Removal
+    failName: Pest Returned
     reward: 2
     persistent: 1
   - id: 4
     name: Remove Fungus Infestation
     clearName: Fungus Removal
+    failName: Fungal Growth
     reward: 4
     persistent: 1
   - id: 5
     name: Activate Communications Terminals
     clearName: Comms Repair
+    failName: 
     reward: 50
     persistent: 1
   - id: 6
     name: Clear Central Elevator
     clearName: Elevator Clear
+    failName: 
     reward: 200
     persistent: 0
   - id: 7
     name: Terminate Rebel Drone
     clearName: Drone Termination
+    failName: 
     reward: 150
     persistent: 0
   - id: 8
     name: Clear Spider's Den
     clearName: Spider Removal
+    failName: 
     reward: 5
     persistent: 1

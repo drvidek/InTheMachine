@@ -20,6 +20,8 @@ public class Door : MonoBehaviour, IActivate
     private bool open;
     private bool everOpened;
 
+    private bool initialTrigger = true;
+
     private void OnValidate()
     {
         Initialise();
@@ -106,17 +108,26 @@ public class Door : MonoBehaviour, IActivate
         if (stayOpen && everOpened)
             return;
 
+        bool wasOpen = open;
+
         open = active;
         if (startOpen)
             open = !active;
 
-            everOpened = open || everOpened;
+        everOpened = open || everOpened;
 
+        if (!initialTrigger)
+        {
+            if (open && !wasOpen)
+                QuestManager.main.CompleteQuest(QuestID.Door);
+            if (!open && wasOpen)
+                QuestManager.main.FailQuest(QuestID.Door);
 
-        if (open)
-            QuestManager.main.CompleteQuest(QuestID.Door);
+            psysActive.Play();
 
-        psysActive.Play();
+        }
+
+        initialTrigger = false;
     }
 
     public void ToggleActiveAndLock(bool active)

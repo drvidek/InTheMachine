@@ -180,7 +180,7 @@ MonoBehaviour:
     _colorType: 0
   showDebug: 0
   _currentState: 0
-  questID: 2
+  questID: 3
   contactDamage: 1
   _fric: 15
   _grv: 22

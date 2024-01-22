@@ -11,7 +11,7 @@ public class FungusRun : Fungus
 
     private Vector3 homePosition;
 
-    private Collider2D hardCollider;
+    private BoxCollider2D hardCollider;
 
     private Alarm returnAlarm;
 
@@ -52,15 +52,14 @@ public class FungusRun : Fungus
     {
         get
         {
-            RaycastHit2D[] hits = new RaycastHit2D[3];
-            ContactFilter2D filter = new();
-            filter.SetLayerMask(groundedMask);
-            hardCollider.Cast(new(TargetXDirection, 0), filter, hits, 0.02f, true);
+            //RaycastHit2D[] hits = new RaycastHit2D[3];
+            //ContactFilter2D filter = new();
+            //filter.SetLayerMask(groundedMask);
+
+            //hardCollider.Cast(new(TargetXDirection, 0), filter, hits, 0.02f, true);
             Collider2D colliderFound = null;
-            foreach (var hit in hits)
+            foreach (var hit in Physics2D.BoxCastAll(transform.position+(Vector3)hardCollider.offset,new(hardCollider.size.x, hardCollider.size.y * .8f),0,new(TargetXDirection,0),0.02f,groundedMask))
             {
-                if (!hit)
-                    continue;
                 if (hit.collider != hardCollider)
                 {
                     colliderFound = hit.collider;
@@ -76,7 +75,7 @@ public class FungusRun : Fungus
     protected override void Start()
     {
         homePosition = transform.position;
-        hardCollider = transform.GetChild(1).GetComponent<Collider2D>();
+        hardCollider = transform.GetChild(1).GetComponent<BoxCollider2D>();
         returnAlarm = Alarm.Get(5f, false, false);
         returnAlarm.onComplete = () =>
         {
@@ -134,6 +133,7 @@ public class FungusRun : Fungus
     protected override void OnWalkEnter()
     {
         _targetVelocity.y = 0;
+        rb.velocity = _targetVelocity;
     }
 
     protected override void OnWalkStay()

@@ -22,6 +22,8 @@ namespace QKit
         public float Size => _size;
         public float Power => _power;
 
+        protected Vector3 lastPosition = new();
+
         protected virtual void OnValidate()
         {
             SetRigidbody();
@@ -30,8 +32,8 @@ namespace QKit
         protected virtual void Start()
         {
             SetRigidbody();
-            CircleCollider2D myCollider = GetComponentInChildren<CircleCollider2D>();
-            foreach (var other in Physics2D.OverlapCircleAll(transform.position, myCollider.radius))
+            lastPosition = transform.position;
+            foreach (var other in Physics2D.OverlapCircleAll(transform.position, 0.5f))
             {
                 Debug.Log(other.name);
                 int otherLayer = other.gameObject.layer;
@@ -46,7 +48,7 @@ namespace QKit
 
 
                 if (!collision && !piercing && !pinpoint)
-                   break;
+                    break;
 
                 if (pinpoint)
                 {
@@ -71,6 +73,22 @@ namespace QKit
                 }
             }
 
+        }
+
+        protected virtual void FixedUpdate()
+        {
+            if (_pinpointLayer != 0 && rb.simulated)
+            {
+                foreach (var item in Physics2D.RaycastAll(lastPosition, Direction, Speed * Time.fixedDeltaTime, _pinpointLayer))
+                {
+                    TryToHitTarget(item.collider);
+
+                    Debug.Log("Pinpoint hit");
+                    DoCollision(item.collider);
+                    break;
+                }
+                lastPosition = transform.position;
+            }
         }
 
         protected virtual void SetRigidbody()
@@ -190,32 +208,16 @@ namespace QKit
             LayerMask otherLayer = other.gameObject.layer;
             bool collision = CheckForCollision(otherLayer);
             bool piercing = CheckForPierce(otherLayer);
-            bool pinpoint = false;
-
-            if (_pinpointLayer != 0)
-            {
-                pinpoint = CheckForPinpoint(otherLayer);
-            }
 
 
-            if (!collision && !piercing &&!pinpoint)
+
+            if (!collision && !piercing)
                 return;
 
-            if (pinpoint)
-            {
-                pinpoint = false;
-                foreach (var collider in Physics2D.OverlapCircleAll(transform.position,0.2f,_pinpointLayer))
-                {
-                    if (collider == other)
-                        pinpoint = true;
-                }
-                if (!pinpoint)
-                    return;
-            }
 
             TryToHitTarget(other);
 
-            if (collision || pinpoint)
+            if (collision)
             {
                 DoCollision(other);
             }

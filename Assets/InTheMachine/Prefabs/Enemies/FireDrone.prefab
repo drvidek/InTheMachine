@@ -533,19 +533,23 @@ MonoBehaviour:
     _colorType: 0
   showDebug: 0
   _currentState: 0
-  questID: 6
+  questID: 7
   contactDamage: 1
   _fric: 15
   _grv: 15
   stunTimeMin: 0
   attackRange: 2
   _walkSpeed: 3
+  walkingRight: 1
   chargeAttackSpeed: 6
   burstAttackDelay: 0.5
   burstAttackRecovery: 1.5
   burstCollider: {fileID: 3746705811911544294}
   flamethrowerCollider: {fileID: 2190023919339570748}
   reward: {fileID: 6448807981197934538, guid: b450bcd7b1e21a942b995db060d508a4, type: 3}
+  killEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &4089832701203915021
 MonoBehaviour:
   m_ObjectHideFlags: 0

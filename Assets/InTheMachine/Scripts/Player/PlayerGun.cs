@@ -24,6 +24,7 @@ public class PlayerGun : Launcher
     public float Cost => cost;
     public bool DelayingShot => delayingShot;
     public GunProfileType CurrentProfile => currentProfile;
+    public float Speed => _speed;
 
     public Vector3 SpawnPosition
     {
@@ -138,13 +139,13 @@ public class PlayerGun : Launcher
         if (costOnShot)
             return;
         delayingShot = true;
-        Alarm delay = Alarm.GetAndPlay((1f/cost)*2f);
+        Alarm delay = Alarm.GetAndPlay((1f / cost) * 2f);
         delay.onComplete = () => delayingShot = false;
     }
 
     private void SetCurrentProfile(GunProfileType profile, bool force = false)
     {
-                if (!availableTypes.Contains(profile) || currentProfile == profile)
+        if (!availableTypes.Contains(profile) || currentProfile == profile)
         {
             if (!force)
                 return;
@@ -196,6 +197,12 @@ public class PlayerGun : Launcher
     {
         availableTypes.Add(type);
         onProfileUnlock?.Invoke(type);
+        SetCurrentProfile(type, true);
+    }
+
+    public void UpgradeGun(GunProfileType type)
+    {
+        gunProfile[(int)type] = gunProfile[(int)type].Upgrade();
         SetCurrentProfile(type, true);
     }
 }

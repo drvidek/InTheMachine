@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[System.Serializable]
+[Serializable]
 public class ShopItem
 {
     public enum ID
@@ -29,15 +29,28 @@ public class ShopItem
     public string name;
     public Sprite image;
     public Color color;
-    public float cost;
-    public string description;
     public int count;
-    public float costIncrease;
+    public float[] cost;
+    public string description;
+
+    private int currentCount;
+    public int CurrentCount => currentCount;
+    public float CurrentCost => currentCount > 0 ? cost[cost.Length - currentCount] : 0;
+
+    public void Initialise()
+    {
+        currentCount = count;
+    }
 
     public void TryToBuy()
     {
-        if (!CashManager.main.TryToBuy(cost))
+        if (currentCount == 0)
             return;
+
+        if (!CashManager.main.TryToBuy(CurrentCost))
+            return;
+
+        currentCount--;
 
         switch (id)
         {
@@ -51,10 +64,12 @@ public class ShopItem
             case ID.Shield:
                 break;
             case ID.AirUpgrade:
+                PlayerGun.main.UpgradeGun(GunProfileType.Air);
                 break;
             case ID.AirAltUpgrade:
                 break;
             case ID.FireUpgrade:
+                PlayerGun.main.UpgradeGun(GunProfileType.Fire);
                 break;
             case ID.FireAltUpgrade:
                 break;
@@ -74,5 +89,6 @@ public class ShopItem
             default:
                 break;
         }
+
     }
 }

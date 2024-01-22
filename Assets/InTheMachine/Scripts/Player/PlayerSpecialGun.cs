@@ -12,7 +12,7 @@ public class PlayerSpecialGun : Launcher
     [SerializeField] private float rechargeTime;
     private Player myPlayer;
 
-    private Alarm rechargeAlarm;
+    public Alarm rechargeAlarm;
     public float CooldownPercent => rechargeAlarm.PercentComplete;
     public int ChargesAvailable => (int)charge.Value;
     public int ChargesMax => (int)charge.Max;
@@ -24,7 +24,7 @@ public class PlayerSpecialGun : Launcher
 
     public Vector3 SpawnPosition => PlayerGun.main.SpawnPosition;
     
-    private void Start()
+    private void Awake()
     {
         myPlayer = GetComponent<Player>();
         myPlayer.special.onPress += () => TryToShoot();

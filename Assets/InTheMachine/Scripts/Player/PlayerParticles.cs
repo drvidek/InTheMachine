@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerParticles : MonoBehaviour
 {
     private Player player;
+    private PlayerSpecialGun playerSpecial;
     private PlayerAnimate animPlayer;
     [SerializeField] private ParticleSystem _psysFly;
     [SerializeField] private ParticleSystem _psysBoost;
@@ -13,6 +14,7 @@ public class PlayerParticles : MonoBehaviour
     [SerializeField] private ParticleSystem _psysHealingActive, _psysHealingComplete;
     [SerializeField] private ParticleSystem _psysOutOfPower, _psysPowerRecharged;
     [SerializeField] private ParticleSystem _psysTakeHit;
+    [SerializeField] private ParticleSystem _psysSpecialRecharged;
     [SerializeField] private ParticleSystem _psysFlameGun;
     [SerializeField] private Color boostColor, ultraBoostColor;
 
@@ -26,6 +28,7 @@ public class PlayerParticles : MonoBehaviour
     void Start()
     {
         player = GetComponent<Player>();
+        playerSpecial = GetComponent<PlayerSpecialGun>();
         animPlayer = GetComponent<PlayerAnimate>();
 
         player.onTakeDamage += (float f) =>
@@ -51,7 +54,7 @@ public class PlayerParticles : MonoBehaviour
         player.PowerMeter.onMax += () =>
         {
             if (outOfPower)
-            _psysPowerRecharged.Play();
+                _psysPowerRecharged.Play();
             outOfPower = false;
         };
 
@@ -104,11 +107,22 @@ public class PlayerParticles : MonoBehaviour
             _psysFlameGun.Stop();
         };
 
+        playerSpecial.rechargeAlarm.onComplete += SpecialRecharged;
+
         _psysFly.Stop();
         _psysFlyPositionBase = _psysFly.transform.localPosition;
 
         flameGunMain = _psysFlameGun.main;
         flameGunShape = _psysFlameGun.shape;
+    }
+
+    private void SpecialRecharged()
+    {
+        var emit = _psysSpecialRecharged.emission;
+        var burst = emit.GetBurst(0);
+        burst.count = playerSpecial.ChargesAvailable;
+        emit.SetBurst(0, burst);
+        _psysSpecialRecharged.Play();
     }
 
     private void FixedUpdate()
@@ -117,12 +131,12 @@ public class PlayerParticles : MonoBehaviour
         if (PlayerGun.main.Direction.y != 0)
         {
             flameGunShape.rotation = new Vector3(0, 0, 90 - (2.5f));
-            flameGunMain.startSpeed = 6f;
+            flameGunMain.startSpeed = PlayerGun.main.Speed;
         }
         else
         {
             flameGunShape.rotation = new Vector3(0, 0, (PlayerGun.main.Direction.x > 0 ? 0 : 180) - (2.5f));
-            flameGunMain.startSpeed = 6f + Mathf.Abs(player.rb.velocity.x);
+            flameGunMain.startSpeed = PlayerGun.main.Speed + Mathf.Abs(player.rb.velocity.x);
         }
     }
 

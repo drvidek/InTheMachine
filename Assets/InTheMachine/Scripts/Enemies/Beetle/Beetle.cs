@@ -12,7 +12,7 @@ public class Beetle : EnemyWalking, IFlammable
 
     public Vector3 NinetyDegrees => new Vector3(0f, 0f, 90f);
 
-    public Vector2 groundBox => hardCollider.size;
+    public Vector2 groundBox => new(hardCollider.size.x*0.99f,hardCollider.size.y);
     public Vector2 wallBox => new Vector2(hardCollider.size.x, hardCollider.size.y * 0.95f);
 
     public override bool IsGrounded => StandingOn != null;
@@ -62,8 +62,12 @@ public class Beetle : EnemyWalking, IFlammable
     protected override void OnWalkEnter()
     {
         //hardCollider.enabled = false;
-        transform.position = new Vector3(QMath.RoundToNearestFraction(transform.position.x, 1f / cornerRounding), QMath.RoundToNearestFraction(transform.position.y, 1f / cornerRounding), transform.position.z);
         walkingRight = QMath.Choose<bool>(true, false);
+        transform.position = new Vector3(transform.position.x, QMath.RoundToNearestFraction(transform.position.y, 1f / cornerRounding), transform.position.z);
+        if (ColliderAhead)
+        {
+            RotateAroundCorner(walkingRight ? NinetyDegrees : -NinetyDegrees);
+        }
     }
 
     protected override void OnWalkStay()

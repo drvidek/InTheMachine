@@ -1018,7 +1018,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_63
+      name: Radar0
       rect:
         serializedVersion: 2
         x: 96
@@ -1039,7 +1039,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_64
+      name: Radar2
       rect:
         serializedVersion: 2
         x: 112
@@ -1060,7 +1060,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_65
+      name: Radar1
       rect:
         serializedVersion: 2
         x: 128
@@ -1081,7 +1081,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_66
+      name: Radar3
       rect:
         serializedVersion: 2
         x: 144
@@ -1207,7 +1207,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MossCeiling1
+      name: PlayerMapIcon
       rect:
         serializedVersion: 2
         x: 80
@@ -3102,7 +3102,11 @@ TextureImporter:
       Monitor1: -2116036166
       Monitor2: 395328457
       Monitor3: 1435569986
-      MossCeiling1: -220253581
+      PlayerMapIcon: -220253581
+      Radar0: 50803107
+      Radar1: -1388659400
+      Radar2: 141784528
+      Radar3: -42204568
       Respawner: -59916214
       SlimeL0: 541792068
       SlimeL1: -854280918
@@ -3148,10 +3152,6 @@ TextureImporter:
       TilesetEnvironment_4: 261369313
       TilesetEnvironment_5: -443219973
       TilesetEnvironment_6: 1574943003
-      TilesetEnvironment_63: 50803107
-      TilesetEnvironment_64: 141784528
-      TilesetEnvironment_65: -1388659400
-      TilesetEnvironment_66: -42204568
       TilesetEnvironment_7: 1473367495
       TilesetEnvironment_73: 1221166841
       TilesetEnvironment_74: 1776749278

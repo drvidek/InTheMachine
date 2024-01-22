@@ -401,7 +401,7 @@ MonoBehaviour:
     _colorType: 0
   showDebug: 0
   _currentState: 0
-  questID: 3
+  questID: 4
   contactDamage: 1
   _fric: 45
   _grv: 0

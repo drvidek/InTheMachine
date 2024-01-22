@@ -43,6 +43,7 @@ public class ShopItemGUI : MonoBehaviour
 
     void Start()
     {
+        Item.Initialise();
         ApplyProperties();
     }
 
@@ -50,7 +51,7 @@ public class ShopItemGUI : MonoBehaviour
     {
         name = Item.name + " Parent";
         nameLabel.text = Item.name;
-        costLabel.text = $"{Item.cost}c";
+        costLabel.text = $"{Item.CurrentCost}c";
         string rawDescription = Item.description;
         string formattedDescription = rawDescription.Replace("|", "\n");
         descriptionLabel.text = formattedDescription;
@@ -61,8 +62,13 @@ public class ShopItemGUI : MonoBehaviour
 
     private void Update()
     {
+        if (Item.CurrentCount == 0)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
         button.interactable = true;
-        if (CashManager.main.Cash < Item.cost)
+        if (CashManager.main.Cash < Item.CurrentCost)
         {
             if (Shop.main.ESys.currentSelectedGameObject == gameObject)
                 Shop.main.ESys.SetSelectedGameObject(Shop.main.DefaultSelection);
@@ -73,5 +79,6 @@ public class ShopItemGUI : MonoBehaviour
     public void TryToBuy()
     {
         Item.TryToBuy();
+        ApplyProperties();
     }
 }

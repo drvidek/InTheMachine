@@ -23,11 +23,12 @@ public class FireProjectile : Projectile, IFlammable
         base.Start();
     }
 
-    private void FixedUpdate()
+    protected override void FixedUpdate()
     {
         float speed = Speed * curve.Evaluate(Time.time - startTime);
         Move(Direction, speed);
         PropagateFlame(_collider);
+        base.FixedUpdate();
     }
 
     public void PropagateFlame(Collider2D collider)

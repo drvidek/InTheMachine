@@ -7,6 +7,7 @@ public class Checkpoint : MonoBehaviour, IActivate
     [SerializeField] private bool active;
     [SerializeField] private ParticleSystem psysActivate;
     [SerializeField] private SpriteRenderer iconSprite;
+    [SerializeField] private PixelAligner radarAligner;
 
     private Animator animator;
 
@@ -18,6 +19,9 @@ public class Checkpoint : MonoBehaviour, IActivate
 
     public static Action<Vector3Int> onActivate;
 
+    private float radarTop = 10;
+    private float radarCurrentYOffset;
+
     private void Start()
     {
         animator = GetComponent<Animator>();
@@ -25,6 +29,15 @@ public class Checkpoint : MonoBehaviour, IActivate
         iconSprite.enabled = false;
 
         Player.main.interact.onPress += OpenShop;
+    }
+
+    private void FixedUpdate()
+    {
+        if (active && GameManager.IsPlaying)
+        {
+            radarCurrentYOffset = Mathf.MoveTowards(radarCurrentYOffset, radarTop, Time.fixedDeltaTime * 15f);
+            radarAligner.AddTempOffset(new(0, radarCurrentYOffset));
+        }
     }
 
     public void ToggleActive(bool active)

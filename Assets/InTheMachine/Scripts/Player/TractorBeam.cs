@@ -88,7 +88,7 @@ public class TractorBeam : MonoBehaviour
 
         foreach (var collider in colliders)
         {
-            if (collider is TilemapCollider2D)
+            if (collider is TilemapCollider2D or CompositeCollider2D)
                 continue;
 
             float newDistance = Vector3.Distance(collider.ClosestPoint(beamOrigin.position), beamOrigin.position);

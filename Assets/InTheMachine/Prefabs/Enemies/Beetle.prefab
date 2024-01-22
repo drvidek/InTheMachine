@@ -290,13 +290,14 @@ MonoBehaviour:
     _colorType: 0
   showDebug: 0
   _currentState: 1
-  questID: 2
+  questID: 3
   contactDamage: 0
   _fric: 10
   _grv: 22
   stunTimeMin: 0
   attackRange: 0
   _walkSpeed: 1
+  walkingRight: 1
   hardCollider: {fileID: 23597838642139603}
   turnLock: 0
 --- !u!114 &2312947636591606973

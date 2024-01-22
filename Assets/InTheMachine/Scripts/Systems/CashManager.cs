@@ -57,7 +57,7 @@ public class CashManager : MonoBehaviour
 
     public void ChargeCash(float amount)
     {
-        cash.Adjust(-amount, false);
+        cash.Adjust(-amount);
         onCashChange?.Invoke((int)cash.Value);
     }
 

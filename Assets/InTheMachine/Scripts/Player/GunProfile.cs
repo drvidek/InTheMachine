@@ -23,4 +23,12 @@ public class GunProfile : ScriptableObject
     public Projectile projectilePrefab;
     public float cost;
     public bool costOnShot;
+
+    public GunProfile Upgrade()
+    {
+        string name = this.name;
+        if (name.Contains("Plus"))
+            return this;
+        return Resources.Load($"Guns/{name}Plus") as GunProfile;
+    }
 }

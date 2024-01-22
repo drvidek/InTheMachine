@@ -114,6 +114,8 @@ public class Hive : EnemyStatic, IFlammable
         currentEnemySpawned = Instantiate(enemyToSpawn, spawnPoint.position, Quaternion.identity);
         currentSpawn++;
         currentEnemySpawned.onDieEnter += () => currentSpawn--;
+
+        QuestManager.main.FailQuest(QuestID.Pest);
     }
 
     protected void ManageSpawnTimerReset()

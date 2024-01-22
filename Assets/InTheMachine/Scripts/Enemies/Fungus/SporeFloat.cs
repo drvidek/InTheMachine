@@ -58,11 +58,24 @@ public class SporeFloat : SporeProjectile
         if (!burning)
         {
             Vector3Int cell = RoomManager.main.environmentGrid.WorldToCell(transform.position);
+            Vector3Int floor = cell;
+            floor.y -= 1;
+            Vector3 floorPos = RoomManager.main.environmentGrid.CellToWorld(floor) + RoomManager.main.environmentGrid.cellSize / 2f;
             Vector3 position = RoomManager.main.environmentGrid.CellToWorld(cell) + RoomManager.main.environmentGrid.cellSize / 2f;
             position.z = 0;
             EnemyList enemies = Resources.Load("EnemyList") as EnemyList;
 
             bool doNotSpawn = false;
+            foreach (var item in Physics2D.OverlapPointAll(floorPos))
+            {
+                doNotSpawn = true;
+                if (item.gameObject.layer == 10)
+                {
+                    doNotSpawn = false;
+                    break;
+                }
+            }
+
             foreach (var item in Physics2D.OverlapPointAll(position, 1 << 7))
             {
                 if (item != _collider && item != hardCollider)
@@ -72,7 +85,10 @@ public class SporeFloat : SporeProjectile
                 }
             }
             if (!doNotSpawn)
+            {
                 Instantiate(enemies.enemyPrefabs[(int)spawn], position, Quaternion.identity);
+                QuestManager.main.FailQuest(QuestID.Fungus);
+            }
         }
 
         base.DoCollision(collider);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public  class RoomEvent : MonoBehaviour
+public class RoomEvent : MonoBehaviour
 {
     public enum Type
     {
@@ -16,6 +16,7 @@ public  class RoomEvent : MonoBehaviour
     }
 
     [SerializeField] protected Type type;
+    [SerializeField] protected bool hasCondition;
     [SerializeField] private UnityEvent roomEvent;
 
     protected bool triggerNextRoomChange;
@@ -31,6 +32,9 @@ public  class RoomEvent : MonoBehaviour
 
     private void CheckEvent(Vector3Int room)
     {
+        if (hasCondition && !CheckCondition())
+            return;
+
         //if entering the room
         if (this.room.x == room.x && this.room.y == room.y)
             switch (type)
@@ -99,6 +103,11 @@ public  class RoomEvent : MonoBehaviour
                 default:
                     break;
             }
+    }
+
+    protected virtual bool CheckCondition()
+    {
+        return true;
     }
 
     public void EnableGroup(Transform group)

@@ -86,7 +86,7 @@ public class PlayerUI : MonoBehaviour
         UpdateDisplay(repairPellets, Player.main.RepairMax, Player.main.RepairCurrent);
         UpdateDisplay(chargePellets, playerSpecialGun.ChargesMax, playerSpecialGun.ChargesAvailable);
         UpdateDisplay(cooldownPellets, 1f*cooldownPellets.Length, playerSpecialGun.CooldownPercent * cooldownPellets.Length);
-        navMemDisplay.text = $"{FogOfWar.TilesToClear}x NAV MEMORY";
+        navMemDisplay.text = $"{FogOfWar.TilesToClear}x NAV CHIPS";
     }
 
     private void UpdateDisplay(Image[] collection, float activeValue, float filledValue)

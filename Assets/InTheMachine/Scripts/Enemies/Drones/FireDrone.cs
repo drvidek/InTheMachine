@@ -49,7 +49,7 @@ public class FireDrone : EnemyWalking
         onFlamethrower += () =>
         {
             flamethrowerCollider.enabled = true;
-            flamethrowerCollider.size = new(0,0.5f);
+            flamethrowerCollider.size = new(0, 0.5f);
         };
         base.Start();
     }
@@ -233,14 +233,8 @@ public class FireDrone : EnemyWalking
         if (!vulnerable)
             return;
 
-        if (projectile is AirProjectile)
-        {
-            TakeDamage(0.5f);
-        }
-        else
-        {
-            TakeDamage(projectile.Power);
-        }
+        TakeDamage(projectile.Power);
+
     }
 
     protected void UpdateFlamethrowerCollider(Vector2 size)
