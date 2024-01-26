@@ -13,9 +13,10 @@ public class FireballProjectile : Projectile, IFlammable
         base.Start();
     }
 
-    private void FixedUpdate()
+    protected override void FixedUpdate()
     {
         PropagateFlame(_collider);
+        base.FixedUpdate();
     }
 
     public void CatchFlame(Collider2D collider)

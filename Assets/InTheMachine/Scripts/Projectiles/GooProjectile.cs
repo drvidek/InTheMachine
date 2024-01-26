@@ -27,13 +27,15 @@ public class GooProjectile : Projectile
     }
 
 
-    private void FixedUpdate()
+    protected override void FixedUpdate()
     {
         if (dead)
             return;
         _direction.y -= currentGrav * Time.fixedDeltaTime;
         _direction.x = Mathf.MoveTowards(_direction.x, 0, fric * Time.fixedDeltaTime);
         rb.velocity = Direction;
+
+        base.FixedUpdate();
     }
 
     protected override void SetRigidbody()
