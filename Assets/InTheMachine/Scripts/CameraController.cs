@@ -21,8 +21,8 @@ public class CameraController : MonoBehaviour
 
     private Vector3 cameraOffset;
 
-    private Alarm zoomAlarm;
-    private Alarm zoomDelayAlarm;
+    private Alarm zoomAlarm, zoomDelayAlarm;
+    private AlarmBook<string> alarmBook = new();
 
     new public Camera camera => _camera;
 
@@ -59,8 +59,8 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
-        zoomAlarm = Alarm.Get(zoomTime, false, false);
-        zoomDelayAlarm = Alarm.Get(zoomDelay, false, false);
+        zoomAlarm = alarmBook.AddAlarm("Zoom",zoomTime, false);
+        zoomDelayAlarm = alarmBook.AddAlarm("Delay", zoomDelay, false);
         zoomDelayAlarm.onComplete += () => zoomAlarm.ResetAndPlay();
 
         _camera = GetComponent<Camera>();
@@ -88,6 +88,8 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
+        alarmBook.TickAll(Time.deltaTime);
+
         if (!specialCamLock)
         {
             transform.position = scrollSpeed == 0 ? targetPosition : Vector3.Lerp(lastPosition, targetPosition, (Time.time - targetChangeTime) / scrollSpeed);

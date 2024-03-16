@@ -11,7 +11,7 @@ public class Rat : EnemyWalking
 
     protected override void Start()
     {
-        jumpAlarm = Alarm.Get(jumpDelayTime, false, false);
+        jumpAlarm = alarmBook.AddAlarm("Jump",jumpDelayTime, false);
         jumpAlarm.onComplete = () => ChangeStateTo(EnemyState.Ascend);
         base.Start();
     }

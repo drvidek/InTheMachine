@@ -12,7 +12,7 @@ public class AirProjectile : Projectile
         base.ApplyProjectileProperties(direction, size, speed, lifetime, power, colliding, piercing, pinpoint);
         baseSpeed = speed;
         SpriteRenderer sprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
-        Alarm endOfLife = Alarm.GetAndPlay(_lifetime);
+        Alarm endOfLife = AlarmPool.GetAndPlay(_lifetime);
         endOfLife.onComplete = EndOfLife;
         if (Direction.x == 0)
         {

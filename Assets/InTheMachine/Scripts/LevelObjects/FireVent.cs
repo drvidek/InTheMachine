@@ -33,7 +33,8 @@ public class FireVent : MonoBehaviour, IActivate, IFlammable, IElectrocutable
             return;
         if (timeToRelight > 0)
         {
-            relightAlarm = Alarm.Get(timeToRelight, false, false);
+            relightAlarm = new(timeToRelight, false);
+            relightAlarm.Stop();
             relightAlarm.onComplete += () =>
             {
                 CatchFlame(_collider);
@@ -44,6 +45,11 @@ public class FireVent : MonoBehaviour, IActivate, IFlammable, IElectrocutable
             CatchFlame(_collider);
         else
             DouseFlame();
+    }
+
+    private void Update()
+    {
+        relightAlarm?.Tick(Time.deltaTime);
     }
 
     private void SetLength()

@@ -42,12 +42,18 @@ public class PopupText : MonoBehaviour
 
     private void Start()
     {
-		popupAlarm = Alarm.Get(0f, false, false,1,Alarm.Type.unscaled);
+		popupAlarm = new(0f,false);
+        popupAlarm.Stop();
 		popupAlarm.onComplete += () =>
 		{
 			popupBox.SetActive(false);
 			GameManager.main.TogglePause();
 		};
+    }
+
+    private void Update()
+    {
+        popupAlarm.Tick(Time.unscaledDeltaTime);
     }
 
     public void DisplayAbilityText(Player.Ability ability)

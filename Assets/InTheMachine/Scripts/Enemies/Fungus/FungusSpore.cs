@@ -13,7 +13,7 @@ public class FungusSpore : Fungus
 
     protected override void Start()
     {
-        attackAlarm = Alarm.Get(attackDelay, false, false);
+        attackAlarm = alarmBook.AddAlarm("Attack",attackDelay, false);
         attackAlarm.onComplete = () =>
         {
             if (CurrentState == EnemyState.Idle)

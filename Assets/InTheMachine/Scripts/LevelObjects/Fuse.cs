@@ -18,7 +18,7 @@ public class Fuse : MonoBehaviour, IFlammable
         if (burning || !canBurn)
             return;
         burning = true;
-        Alarm propagate = Alarm.GetAndPlay(burnTime);
+        Alarm propagate = AlarmPool.GetAndPlay(burnTime);
         propagate.onComplete = () => { PropagateFlame(_collider); DouseFlame(); };
         burnEffect = Instantiate(IFlammable.psysObjFire, transform);
         if (burnWithSmoke)
@@ -30,7 +30,7 @@ public class Fuse : MonoBehaviour, IFlammable
         burning = false;
         canBurn = false;
 
-        Alarm readyToBurn = Alarm.GetAndPlay(burnTime * 10f);
+        Alarm readyToBurn = AlarmPool.GetAndPlay(burnTime * 10f);
         readyToBurn.onComplete = () => canBurn = true;
         if (burnEffect)
         {

@@ -35,7 +35,7 @@ public class Checkpoint : MonoBehaviour, IActivate
     {
         if (active && GameManager.IsPlaying)
         {
-            radarCurrentYOffset = Mathf.MoveTowards(radarCurrentYOffset, radarTop, Time.fixedDeltaTime * 15f);
+            radarCurrentYOffset = Mathf.MoveTowards(radarCurrentYOffset, radarTop, Time.fixedDeltaTime * 16f);
             radarAligner.AddTempOffset(new(0, radarCurrentYOffset));
         }
     }
@@ -46,21 +46,21 @@ public class Checkpoint : MonoBehaviour, IActivate
         animator.SetBool("Active", active);
         if (active)
         {
-            onActivate?.Invoke(RoomManager.main.GetRoom(transform));
             psysActivate.Play();
-            QuestManager.main.CompleteQuest(QuestID.Terminal);
+            QKit.Alarm alarm = QKit.AlarmPool.GetAndPlay(1f);
+            alarm.onComplete += () =>
+            {
+                onActivate?.Invoke(RoomManager.main.GetRoom(transform));
+                GameManager.main.TogglePause();
+                PauseMenu.main.OpenMap();
+                QuestManager.main.CompleteQuest(QuestID.Terminal);
+            };
         }
     }
 
     public void ToggleActiveAndLock(bool active)
     {
-        this.active = active;
-        animator.SetBool("Active", active);
-        if (active)
-        {
-            psysActivate.Play();
-            QuestManager.main.CompleteQuest(QuestID.Terminal);
-        }
+        ToggleActive(active);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

@@ -16,6 +16,8 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     [SerializeField] protected float stunTimeMin;
     [SerializeField] protected float attackRange;
 
+    protected AlarmBook<string> alarmBook = new();
+
     #region Events
     public Action onIdleEnter;
     public Action onIdleStay;
@@ -71,6 +73,16 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
         healthMeter.onMin += () => { ChangeStateTo(EnemyState.Die); };
         NextState();
     }
+
+    protected override void Update()
+    {
+        base.Update();
+        if (doingLogic)
+        {
+            alarmBook.TickAll(Time.deltaTime);
+        }
+    }
+
     protected override void CheckPlayerInRangeForLogic(Vector3Int room)
     {
         if (everDoneLogic)

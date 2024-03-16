@@ -29,7 +29,8 @@ public class PlayerSpecialGun : Launcher
         myPlayer = GetComponent<Player>();
         myPlayer.special.onPress += () => TryToShoot();
         PlayerGun.main.onProfileChange += SetCurrentProfile;
-        rechargeAlarm = Alarm.Get(rechargeTime,false,false);
+        rechargeAlarm = new(rechargeTime,false);
+        rechargeAlarm.Stop();
         rechargeAlarm.onComplete = () =>
         {
             charge.Adjust(1);

@@ -26,7 +26,8 @@ public class BurnAway : MonoBehaviour, IFlammable, IProjectileTarget
         tilemap = GetComponentInParent<Tilemap>();
         cell = tilemap.WorldToCell(transform.position);
         transform.position = QMath.ReplaceVectorValue(transform.position, VectorValue.z, Player.main.Z);
-
+        burnAlarm = new(burnTime, false);
+        burnAlarm.Stop();
         InitialiseIFlammable();
     }
 
@@ -40,13 +41,13 @@ public class BurnAway : MonoBehaviour, IFlammable, IProjectileTarget
             burnEffect = Instantiate(IFlammable.psysObjFire, transform.position, Quaternion.identity);
             burnAlarm.ResetAndPlay();
         };
-        burnAlarm = Alarm.Get(burnTime, false, false);
         burnAlarm.onComplete = EndOfLife;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        burnAlarm.Tick(Time.fixedDeltaTime);
         if (!isBurning)
         {
             catchFlame.EmptyOver(catchTime, true, true, true);

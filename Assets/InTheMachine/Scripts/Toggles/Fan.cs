@@ -11,13 +11,14 @@ public class Fan : LevelToggle, IProjectileTarget
 
     private void Start()
     {
-        activeAlarm = Alarm.Get(duration, false, false);
+        activeAlarm = new(duration, false);
         activeAlarm.Stop();
         activeAlarm.onComplete = () => ToggleActive(false);
     }
 
     private void Update()
     {
+        activeAlarm.Tick(Time.deltaTime);
         animator.SetFloat("SpinSpeed", speed * activeAlarm.PercentRemaining);
     }
 

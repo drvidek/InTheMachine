@@ -16,7 +16,7 @@ public class FireProjectile : Projectile, IFlammable
     {
         startTime = Time.time;
         _collider = GetComponentInChildren<Collider2D>();
-        endOfLife = Alarm.GetAndPlay(_lifetime);
+        var endOfLife = AlarmPool.GetAndPlay(_lifetime);
         endOfLife.onComplete = EndOfLife;
         if (Direction.x != 0)
         _speed += Mathf.Abs(Player.main.rb.velocity.x);

@@ -17,6 +17,7 @@ public class PauseMenu : MonoBehaviour
     private float defaultZoom = 27f;
     private float minimapZoom = 18f;
 
+    [SerializeField] private Vector2 input = new();
     private Vector3 tempPanPosition;
     private float panReleaseTime;
 
@@ -67,7 +68,7 @@ public class PauseMenu : MonoBehaviour
 
         if (eventSystem.currentSelectedGameObject == mapObject)
         {
-            Vector2 input = new(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+            input = new(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
             if (input.magnitude > 0)
             {
                 mapCamera.transform.position += (Vector3)input * mapPanSpeed * Time.unscaledDeltaTime;
@@ -123,6 +124,14 @@ public class PauseMenu : MonoBehaviour
         eventSystem.SetSelectedGameObject(defaultSelection);
         SetPauseMapCameraZoom();
     }
+    public void OpenMap()
+    {
+        pauseMenu.SetActive(true);
+        mapObject.SetActive(true);
+        eventSystem.SetSelectedGameObject(mapObject);
+        SetPauseMapCameraZoom();
+    }
+
 
     public void ClosePauseMenu()
     {

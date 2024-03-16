@@ -5,7 +5,7 @@ using QKit;
 
 public class Hive : EnemyStatic, IFlammable
 {
-    [SerializeField] protected Alarm spawnAlarm;
+    [SerializeField] protected float spawnDelay = 4f;
     [SerializeField] protected EnemyMachine enemyToSpawn;
     [SerializeField] protected Transform spawnPoint;
     [SerializeField] protected bool waitToSpawn;
@@ -16,15 +16,16 @@ public class Hive : EnemyStatic, IFlammable
 
     [SerializeField] private int maxSpawn = 6;
     private int currentSpawn;
+    protected Alarm spawnAlarm;
 
     protected override void Start()
     {
-        Alarm.Add(spawnAlarm);
+        spawnAlarm = alarmBook.AddAlarm("Spawn", spawnDelay, false);
         spawnAlarm.ResetAndPlay();
         spawnAlarm.onComplete = () => ChangeStateTo(EnemyState.Attack);
         base.Start();
     }
-
+    
     protected override void OnAttackEnter()
     {
         base.OnAttackEnter();

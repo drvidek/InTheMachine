@@ -76,7 +76,7 @@ public class FungusRun : Fungus
     {
         homePosition = transform.position;
         hardCollider = transform.GetChild(1).GetComponent<BoxCollider2D>();
-        returnAlarm = Alarm.Get(5f, false, false);
+        returnAlarm = alarmBook.AddAlarm("Return",5f, false);
         returnAlarm.onComplete = () =>
         {
             transform.position = homePosition;

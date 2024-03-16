@@ -14,10 +14,11 @@ public class Buzzfly : Fly
 
     protected override void Start()
     {
-        attackDelay = Alarm.Get(attackDelayTime, false, false);
+        attackDelay = alarmBook.AddAlarm("AttackDelay",attackDelayTime, false);
         attackDelay.onComplete += () => { direction = QMath.Direction(transform.position, Player.main.Position); currentSpeed = attackSpeed; };
         base.Start();
     }
+
 
     protected override void OnFlyStay()
     {

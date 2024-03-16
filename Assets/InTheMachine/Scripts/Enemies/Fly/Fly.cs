@@ -10,26 +10,28 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
     [SerializeField] protected float maxDistanceFromHome = 10f;
 
     private Alarm stunAlarm;
-
+    private Alarm idleAlarm;
     private Alarm respawnAlarm;
 
     protected Vector3 homePosition;
     protected CircleCollider2D circleCollider => _collider as CircleCollider2D;
 
-    private Alarm idleAlarm;
+    
     protected Vector3 targetDestination = Vector3.zero;
 
     protected override void Start()
     {
         homePosition = transform.position;
-        idleAlarm = Alarm.Get(idleTime, false, false);
+        idleAlarm = alarmBook.AddAlarm("Idle",idleTime, false);
         idleAlarm.onComplete += () => { targetDestination = FindValidStraightLineTarget(); ChangeStateTo(EnemyState.Fly); };
-        respawnAlarm = Alarm.Get(5f, false, false);
+        respawnAlarm = alarmBook.AddAlarm("Respawn", 5f, false);
         respawnAlarm.onComplete += () =>
         {
             transform.position = homePosition;
             ChangeStateTo(EnemyState.Idle);
         };
+        stunAlarm = alarmBook.AddAlarm("Stun", stunTimeMin, false);
+        stunAlarm.onComplete = () => { if (CurrentState == EnemyState.Stun) ChangeStateTo(EnemyState.Idle); };
         RoomManager.main.onPlayerMovedRoom += CheckRespawnTimerReset;
         base.Start();
     }
@@ -84,8 +86,7 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
 
     protected override void OnStunEnter()
     {
-        stunAlarm = Alarm.GetAndPlay(stunTimeMin);
-        stunAlarm.onComplete = () => { if (CurrentState == EnemyState.Stun) ChangeStateTo(EnemyState.Idle); };
+        stunAlarm.ResetAndPlay();
     }
 
     protected override void OnStunStay()

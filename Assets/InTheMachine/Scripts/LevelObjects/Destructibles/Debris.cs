@@ -20,7 +20,7 @@ public class Debris : MonoBehaviour, IProjectileTarget
         GetComponent<Collider2D>().enabled = false;
         transform.GetChild(0).gameObject.SetActive(false);
         psysDust.Play();
-        Alarm alarm = Alarm.GetAndPlay(1f);
+        Alarm alarm = AlarmPool.GetAndPlay(1f);
         alarm.onComplete = () => gameObject.SetActive(false);
         QuestManager.main.CompleteQuest(QuestID.Clean);
     }

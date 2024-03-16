@@ -46,6 +46,9 @@ public class PixelAligner : MonoBehaviour
 
     protected virtual void LateUpdate()
     {
+        if (!sprite.enabled || !sprite.isVisible)
+            return;
+
         Vector2 realPosition = parent.position;
         Vector3 PixelPosition = new(
             RoundFloatToPixel(realPosition.x, GameManager.pixelsPerUnit),

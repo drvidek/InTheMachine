@@ -14,7 +14,7 @@ public class Spider : Beetle
 
     protected override void Start()
     {
-        nextActionAlarm = Alarm.Get(actionDelay, false, false);
+        nextActionAlarm = alarmBook.AddAlarm("ActionDelay",actionDelay, false);
         nextActionAlarm.onComplete = DetermineAction;
         //cornerRounding /= 4f;
         base.Start();

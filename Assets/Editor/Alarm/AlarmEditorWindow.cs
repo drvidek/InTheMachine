@@ -52,9 +52,9 @@ namespace QKit
             EditorGUILayout.LabelField("Alarm Options", EditorStyles.boldLabel);
             showAllDefault = EditorGUILayout.ToggleLeft("Show extended alarm options in the inspector by default", showAllDefault);
             EditorGUIUtility.labelWidth = defaultLabelWidth;
-            AlarmRunner.maxAlarmsAllowed = EditorGUILayout.IntField("Max alarms held in pool:", AlarmRunner.maxAlarmsAllowed);
+            AlarmPool.maxAlarmsAllowedInPool = EditorGUILayout.IntField("Max alarms held in pool:", AlarmPool.maxAlarmsAllowedInPool);
             EditorGUILayout.LabelField("Decimal places to display:");
-            Alarm.alarmPrecision = EditorGUILayout.IntSlider(Alarm.alarmPrecision, 0, 6);
+            AlarmForPool.alarmPrecision = EditorGUILayout.IntSlider(AlarmForPool.alarmPrecision, 0, 6);
             lockActionButtons = EditorGUILayout.ToggleLeft("Lock alarm action buttons", lockActionButtons);
             disableAlarmChanges = EditorGUILayout.ToggleLeft("Disable changes to alarms", disableAlarmChanges);
             EditorGUILayout.Space();
@@ -69,20 +69,20 @@ namespace QKit
             EditorGUI.BeginDisabledGroup(!playing);
 
             #region Alarm Selection
-            string[] alarms = new string[AlarmRunner.AlarmsInUse.Count + 1];
+            string[] alarms = new string[AlarmPool.AlarmsInUse.Count + 1];
             alarms[0] = "All";
-            for (int i = 0; i < AlarmRunner.AlarmsInUse.Count; i++)
+            for (int i = 0; i < AlarmPool.AlarmsInUse.Count; i++)
             {
-                alarms[i + 1] = AlarmRunner.AlarmsInUse[i].Label;
+                alarms[i + 1] = AlarmPool.AlarmsInUse[i].Label;
             }
 
-            if (alarmIndex > AlarmRunner.AlarmsInUse.Count)
+            if (alarmIndex > AlarmPool.AlarmsInUse.Count)
                 alarmIndex = 0;
 
             alarmIndex = EditorGUILayout.Popup(alarmIndex, alarms);
             #endregion
 
-            Alarm alarm;
+            AlarmForPool alarm;
 
             float width = windowRect.width * 0.95f;
 
@@ -95,19 +95,19 @@ namespace QKit
                     EditorGUILayout.BeginHorizontal(GUILayout.Width(windowRect.width * 0.98f));
                     if (GUILayout.Button("Play All"))
                     {
-                        Alarm.PlayAll();
+                        AlarmPool.PlayAll();
                     }
                     if (GUILayout.Button("Pause All"))
                     {
-                        Alarm.PauseAll();
+                        AlarmPool.PauseAll();
                     }
                     if (GUILayout.Button("Stop All"))
                     {
-                        Alarm.StopAll();
+                        AlarmPool.StopAll();
                     }
                     if (GUILayout.Button("Reset All"))
                     {
-                        Alarm.ResetAll();
+                        AlarmPool.ResetAll();
                     }
                     EditorGUILayout.EndHorizontal();
                     EditorGUI.EndDisabledGroup();
@@ -115,9 +115,9 @@ namespace QKit
 
                     #region Draw alarm fields
                     allAlarmScrollPos = EditorGUILayout.BeginScrollView(allAlarmScrollPos, GUILayout.MaxHeight(windowRect.height / 2));
-                    for (int i = 0; i < AlarmRunner.AlarmsInUse.Count; i++)
+                    for (int i = 0; i < AlarmPool.AlarmsInUse.Count; i++)
                     {
-                        alarm = AlarmRunner.AlarmsInUse[i];
+                        alarm = AlarmPool.AlarmsInUse[i];
                         EditorGUILayout.Space();
                         AlarmDisplay(alarm, width);
                         EditorGUILayout.Space();
@@ -129,7 +129,7 @@ namespace QKit
                     break;
                 default:
                     int index = alarmIndex - 1;
-                    alarm = AlarmRunner.AlarmsInUse[index];
+                    alarm = AlarmPool.AlarmsInUse[index];
                     AlarmDisplay(alarm, width);
                     for (int i = 0; i < 10; i++)
                     {
@@ -140,8 +140,6 @@ namespace QKit
             }
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Debug options", EditorStyles.boldLabel);
-            Alarm.disableAllAutoRelease = EditorGUILayout.ToggleLeft("Prevent AutoRelease for all", Alarm.disableAllAutoRelease);
-            Alarm.disableAllComplete = EditorGUILayout.ToggleLeft("Disable Complete events for all", Alarm.disableAllComplete);
             EditorGUILayout.Space();
             #region Release All
             EditorGUILayout.BeginHorizontal();
@@ -150,7 +148,7 @@ namespace QKit
             EditorGUI.BeginDisabledGroup(!allowReleaseAll);
             if (GUILayout.Button("Release All"))
             {
-                Alarm.ReleaseAll();
+                AlarmPool.ReleaseAll();
             }
             EditorGUI.EndDisabledGroup();
             EditorGUILayout.EndHorizontal();
@@ -161,7 +159,7 @@ namespace QKit
             Repaint();
         }
 
-        private void AlarmDisplay(Alarm alarm, float width)
+        private void AlarmDisplay(AlarmForPool alarm, float width)
         {
             GUILayout.BeginHorizontal(GUILayout.Width(width));
 
@@ -202,11 +200,10 @@ namespace QKit
 
             Rect toggleGroup = EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(width), GUILayout.ExpandWidth(true));
             bool looping = EditorGUILayout.ToggleLeft("Looping", alarm.Looping, GUILayout.Width(width / 4));
-            bool release = EditorGUILayout.ToggleLeft("AutoRelease", alarm.AutoRelease, GUILayout.Width(width / 4));
             EditorGUILayout.Separator();
             if (GUILayout.Button("Release", GUILayout.Width(width / 4)))
             {
-                alarm.Release();
+                AlarmPool.Release(alarm);
             }
             EditorGUILayout.EndHorizontal();
 
@@ -214,8 +211,6 @@ namespace QKit
             {
                 alarm.SetTimeRemaining(timeRemaining);
                 alarm.SetTimeMaximum(timeMax);
-                alarm.SetLooping(looping);
-                alarm.SetAutoRelease(release);
             }
             EditorGUI.EndDisabledGroup();
 
@@ -232,8 +227,8 @@ namespace QKit
 
             StreamWriter writer = new(path, false);
             writer.WriteLine(showAllDefault);
-            writer.WriteLine(Alarm.alarmPrecision);
-            writer.WriteLine(AlarmRunner.maxAlarmsAllowed);
+            writer.WriteLine(AlarmForPool.alarmPrecision);
+            writer.WriteLine(AlarmPool.maxAlarmsAllowedInPool);
             writer.Close();
         }
 
@@ -244,9 +239,9 @@ namespace QKit
             if ((load = reader.ReadLine()) != "")
                 showAllDefault = bool.Parse(load);
             if ((load = reader.ReadLine()) != "")
-                Alarm.alarmPrecision = int.Parse(load);
+                AlarmForPool.alarmPrecision = int.Parse(load);
             if ((load = reader.ReadLine()) != "")
-                AlarmRunner.maxAlarmsAllowed = int.Parse(load);
+                AlarmPool.maxAlarmsAllowedInPool = int.Parse(load);
 
             reader.Close();
 

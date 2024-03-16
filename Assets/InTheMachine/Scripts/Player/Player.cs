@@ -34,12 +34,24 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     private bool usingPower, outOfPower;
     private Vector3 boostDirection;
     private PlayerState returnFromBoost;
+
+    private enum PlayerAlarm
+    {
+        CoyoteTime,
+        TriedToJump,
+        StunMin,
+        IFrames,
+        HealDelay,
+        PowerChargeDelay
+    }
+
     private Alarm coyoteTime;
     private Alarm triedToJump;
     private Alarm stunMinAlarm;
     private Alarm iframesAlarm;
     private Alarm healTimer;
     private Alarm powerChargeDelay;
+    private AlarmBook<PlayerAlarm> alarmBook = new();
 
     private Vector3 startPosition;
 
@@ -150,12 +162,15 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         base.Start();
         _targetHorSpeed = _walkSpeed;
         boost.onPress += () => TryToBoost();
-        coyoteTime = Alarm.Get(_coyoteSec, false, false);
-        triedToJump = Alarm.Get(_jumpInputAllowance, false, false);
-        stunMinAlarm = Alarm.Get(stunTimeMin, false, false);
-        iframesAlarm = Alarm.Get(iframeLength, false, false);
-        healTimer = Alarm.Get(healDelay, false, false);
-        powerChargeDelay = Alarm.Get(powerChargeDelayTime, false, false);
+        coyoteTime = alarmBook.AddAlarm(PlayerAlarm.CoyoteTime, _coyoteSec, false);
+        triedToJump = alarmBook.AddAlarm(PlayerAlarm.TriedToJump, _jumpInputAllowance, false);
+        stunMinAlarm = alarmBook.AddAlarm(PlayerAlarm.StunMin, stunTimeMin, false);
+        iframesAlarm = alarmBook.AddAlarm(PlayerAlarm.IFrames, iframeLength, false);
+        healTimer = alarmBook.AddAlarm(PlayerAlarm.HealDelay, healDelay, false);
+        powerChargeDelay = alarmBook.AddAlarm(PlayerAlarm.PowerChargeDelay, powerChargeDelayTime, false);
+
+        alarmBook.StopAll();
+
         startPosition = transform.position;
         powerMeter.onMin += () => { outOfPower = true; };
         powerMeter.onMax += () => { outOfPower = false; };
@@ -190,7 +205,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         if (!GameManager.IsPlaying)
             return;
         base.Update();
-
+        alarmBook.TickAll(Time.deltaTime);
         FixedInput.ReadAll();
         _userInputDir = new(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
@@ -413,7 +428,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         //on entry
         OnHangEnter();
         onHangEnter?.Invoke();
-        Alarm hang = Alarm.Get(_hangTime); ;
+        Alarm hang = AlarmPool.Get(_hangTime);
         if (_hangTime > 0)
         {
             hang.Play();
@@ -438,7 +453,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         //on exit
         OnHangExit();
         onHangExit?.Invoke();
-        hang.Release();
+        AlarmPool.Release(hang as AlarmForPool);
         //trigger the next state
         NextState();
     }
@@ -619,7 +634,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     private void OnBoostEnter()
     {
         boostDirection = PlayerAnimate.main.FacingDirection;
-        Alarm boostEnd = Alarm.GetAndPlay(boostDistance / boostSpeed);
+        Alarm boostEnd = AlarmPool.GetAndPlay(boostDistance / boostSpeed);
         boostEnd.onComplete = () => ChangeStateTo(returnFromBoost);
         _targetVelocity.y = 0f;
     }
@@ -894,7 +909,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     {
         float change = _fric * (shoot.Hold && HasAbility(Ability.Tractor) ? 3f : 1f);
         if (UserInputDir.y != 0)
-            change = Mathf.Max(_accel,change);
+            change = Mathf.Max(_accel, change);
 
         _targetVelocity.y = Mathf.MoveTowards(_targetVelocity.y, _airVertSpeed * UserInputDir.y, change * Time.fixedDeltaTime);
     }
@@ -1029,7 +1044,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             default:
                 break;
         }
-                onPowerUpObtained?.Invoke(type);
+        onPowerUpObtained?.Invoke(type);
     }
 
     public void RefillRepairCharges()

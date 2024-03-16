@@ -15,12 +15,11 @@ public class FungusCloud : Fungus
 
     protected override void Start()
     {
-        attackWindupAlarm = Alarm.Get(attackWindupTime, false, false);
+        attackWindupAlarm = alarmBook.AddAlarm("Attack",attackWindupTime, false);
         attackWindupAlarm.onComplete += () => { if (CurrentState == EnemyState.Idle) ChangeStateTo(EnemyState.Attack); };
         onPreAttack += OnPreAttack;
         base.Start();
     }
-
     protected override void OnIdleStay()
     {
         if (playerInRange && playerInSight && playerInRoom && !preAttackActive)
@@ -41,7 +40,7 @@ public class FungusCloud : Fungus
     {
         attackHitbox.enabled = true;
         psysAttack.Play();
-        Alarm alarm = Alarm.GetAndPlay(attackDuration);
+        Alarm alarm = AlarmPool.GetAndPlay(attackDuration);
         alarm.onComplete = () => { if (IsAttacking) ChangeStateTo(EnemyState.Idle); };
         base.OnAttackEnter();
     }

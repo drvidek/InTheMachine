@@ -18,7 +18,7 @@ public class GooProjectile : Projectile
 
     protected override void Start()
     {
-        Alarm gravAlarm = Alarm.GetAndPlay(gravDelay);
+        Alarm gravAlarm = AlarmPool.GetAndPlay(gravDelay);
         gravAlarm.onComplete = () => currentGrav = grav;
         if (_direction.y != 0)
             _direction.x = 0;
@@ -43,7 +43,7 @@ public class GooProjectile : Projectile
         _collider = GetComponentInChildren<Collider2D>();
 
         base.SetRigidbody();
-        Alarm alarm = Alarm.GetAndPlay(gravDelay);
+        Alarm alarm = AlarmPool.GetAndPlay(gravDelay);
         alarm.onComplete = () => _collider.isTrigger = false;
     }
 

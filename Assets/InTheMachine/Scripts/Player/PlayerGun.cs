@@ -139,7 +139,7 @@ public class PlayerGun : Launcher
         if (costOnShot)
             return;
         delayingShot = true;
-        Alarm delay = Alarm.GetAndPlay((1f / cost) * 2f);
+        Alarm delay = AlarmPool.GetAndPlay((1f / cost) * 2f);
         delay.onComplete = () => delayingShot = false;
     }
 

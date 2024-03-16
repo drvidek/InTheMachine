@@ -37,11 +37,11 @@ public abstract class AgentAnimator : MonoBehaviour
 
             damageAnimationActive = true;
             spriteRenderer.color = Color.red;
-            Alarm alarmA = Alarm.GetAndPlay(damageFlashSpeed);
+            Alarm alarmA = AlarmPool.GetAndPlay(damageFlashSpeed);
             alarmA.onComplete = () =>
             {
                 spriteRenderer.color = myBaseColor;
-                Alarm alarmB = Alarm.GetAndPlay(damageFlashSpeed);
+                Alarm alarmB = AlarmPool.GetAndPlay(damageFlashSpeed);
                 alarmB.onComplete = () => damageAnimationActive = false;
             };
         };

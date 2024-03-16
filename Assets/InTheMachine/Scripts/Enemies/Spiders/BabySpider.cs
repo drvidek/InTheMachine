@@ -18,7 +18,7 @@ public class BabySpider : EnemyFlying, IFlammable
 
     protected override void OnIdleEnter()
     {
-        Alarm alarm = Alarm.GetAndPlay(idleTime);
+        Alarm alarm = alarmBook.AddAlarm("Idle",idleTime,true);
         alarm.onComplete = () =>
         {
             if (CurrentState == EnemyState.Idle)
@@ -36,7 +36,7 @@ public class BabySpider : EnemyFlying, IFlammable
         oldDirection = currentDirection;
         moveStartTime = Time.time;
 
-        Alarm alarm = Alarm.GetAndPlay(Random.Range(1f, 6f));
+        Alarm alarm = alarmBook.GetAlarm("Idle");
         alarm.onComplete = () =>
         {
             if (CurrentState == EnemyState.Walk)

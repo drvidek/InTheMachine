@@ -29,16 +29,14 @@ public class FireDrone : EnemyWalking
     private Attack currentAttack;
     public Attack CurrentAttack => currentAttack;
 
-    private Alarm idleAlarm, attackAlarm;
-
     private float maxLength = 4f;
 
     public bool GroundAhead => Physics2D.Raycast(transform.position, new Vector2(CurrentDirection.x, -1), 1f, groundedMask);
 
     protected override void Start()
     {
-        idleAlarm = Alarm.Get(0.5f, false, false);
-        attackAlarm = Alarm.Get(burstAttackRecovery, false, false);
+        var idleAlarm = alarmBook.AddAlarm("Idle",0.5f, false);
+        var attackAlarm = alarmBook.AddAlarm("Attack",burstAttackRecovery, false);
         idleAlarm.onComplete = () =>
         {
             if (!GroundAhead || ColliderAhead)
@@ -54,6 +52,7 @@ public class FireDrone : EnemyWalking
         base.Start();
     }
 
+
     protected virtual void SetVulnerable(float isVulnerable)
     {
         vulnerable = isVulnerable == 0 ? false : true;
@@ -64,7 +63,7 @@ public class FireDrone : EnemyWalking
     {
         _targetVelocity = Vector2.zero;
         rb.velocity = _targetVelocity;
-        idleAlarm.ResetAndPlay();
+        alarmBook.GetAlarm("Idle").ResetAndPlay();
         if (!playerInRoom)
             healthMeter.Fill();
     }
@@ -72,7 +71,7 @@ public class FireDrone : EnemyWalking
     protected override void OnIdleStay()
     {
         if (!playerInRoom)
-            idleAlarm.ResetAndPlay();
+            alarmBook.GetAlarm("Idle").ResetAndPlay();
     }
 
     protected override void OnWalkEnter()
@@ -111,15 +110,16 @@ public class FireDrone : EnemyWalking
                 break;
             case Attack.Burst:
                 onPreAttack?.Invoke();
-                attackAlarm.ResetAndPlay(burstAttackDelay);
-                attackAlarm.onComplete = () =>
+                var alarm = alarmBook.GetAlarm("Attack");
+                alarm.ResetAndPlay(burstAttackDelay);
+                alarm.onComplete = () =>
                 {
                     onBurst?.Invoke();
                     burstCollider.enabled = true;
-                    Alarm killCollider = Alarm.GetAndPlay(0.8f);
+                    Alarm killCollider = AlarmPool.GetAndPlay(0.8f);
                     killCollider.onComplete = () => burstCollider.enabled = false;
-                    attackAlarm.ResetAndPlay(burstAttackRecovery);
-                    attackAlarm.onComplete = () =>
+                    alarm.ResetAndPlay(burstAttackRecovery);
+                    alarm.onComplete = () =>
                         ChooseNewAttack();
                 };
                 break;
