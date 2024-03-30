@@ -223,8 +223,6 @@ namespace QKit
 
         private void SaveOptions()
         {
-
-
             StreamWriter writer = new(path, false);
             writer.WriteLine(showAllDefault);
             writer.WriteLine(AlarmForPool.alarmPrecision);

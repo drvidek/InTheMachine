@@ -97,6 +97,11 @@ public class LevelEditor : MonoBehaviour
         spritePreview = GetComponentInChildren<SpriteRenderer>();
     }
 
+    private void Awake()
+    {
+        Destroy(gameObject);
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = new(1, 1, 1, 0.5f);

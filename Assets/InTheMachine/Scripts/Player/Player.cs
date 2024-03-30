@@ -633,6 +633,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     /// </summary>
     private void OnBoostEnter()
     {
+
         boostDirection = PlayerAnimate.main.FacingDirection;
         Alarm boostEnd = AlarmPool.GetAndPlay(boostDistance / boostSpeed);
         boostEnd.onComplete = () => ChangeStateTo(returnFromBoost);

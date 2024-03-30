@@ -35,7 +35,6 @@ namespace QKit
             lastPosition = transform.position;
             foreach (var other in Physics2D.OverlapCircleAll(transform.position, 0.5f))
             {
-                Debug.Log(other.name);
                 int otherLayer = other.gameObject.layer;
                 bool collision = CheckForCollision(otherLayer);
                 bool piercing = CheckForPierce(otherLayer);

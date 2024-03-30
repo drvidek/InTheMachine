@@ -50,7 +50,7 @@ public class RoomManager : MonoBehaviour
 
     private static List<Vector3Int> secretRooms = new();
 
-    private Vector3Int lastRoom;
+    private Vector3Int lastRoom = new();
 
     /// <summary>
     /// Returns the current room coordinates of the provided transform.
@@ -61,7 +61,6 @@ public class RoomManager : MonoBehaviour
     {
         Vector3Int cell = roomGrid.WorldToCell(transform.position);
         return cell; //roomGrid.CellToWorld(cell);
-
     }
 
     /// <summary>
@@ -136,6 +135,7 @@ public class RoomManager : MonoBehaviour
     private void Start()
     {
         lastRoom = GetRoom(Player.main.transform);
+        onPlayerMovedRoom += (room) => { Debug.LogAssertion($"Triggered room move:{onPlayerMovedRoom}"); };
         onPlayerMovedRoom?.Invoke(currentRoom);
     }
 
@@ -146,6 +146,11 @@ public class RoomManager : MonoBehaviour
 
         lastRoom = currentRoom;
 
+    }
+
+    private void OnGUI()
+    {
+        GUILayout.Box($"{currentRoom.x}/{currentRoom.y}");
     }
 
 }

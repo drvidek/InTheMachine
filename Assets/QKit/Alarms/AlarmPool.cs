@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Security.Claims;
-using Unity.Android.Gradle;
 using UnityEngine;
 
 namespace QKit
@@ -50,10 +48,9 @@ namespace QKit
         }
         #endregion
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             _singleton = null;
-            Destroy(gameObject);
         }
 
         void Update()
@@ -100,7 +97,7 @@ namespace QKit
 
         private static void CheckForAlarmRunner()
         {
-            if (Singleton == null)
+            if (_singleton == null)
             {
                 CreateAlarmRunner();
                 Debug.LogWarning("No AlarmPool found in scene. Spawned an AlarmPool object.");
@@ -109,6 +106,8 @@ namespace QKit
 
         private static void CreateAlarmRunner()
         {
+            if (!Application.isPlaying)
+                return;
             if (_singleton == null)
             {
                 GameObject obj = new GameObject();

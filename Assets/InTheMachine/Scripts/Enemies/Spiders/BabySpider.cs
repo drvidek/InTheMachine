@@ -18,7 +18,9 @@ public class BabySpider : EnemyFlying, IFlammable
 
     protected override void OnIdleEnter()
     {
-        Alarm alarm = alarmBook.AddAlarm("Idle",idleTime,true);
+        Alarm alarm = alarmBook.GetAlarm("Idle");
+        if (alarm == null)
+            alarm = alarmBook.AddAlarm("Idle",idleTime,true);
         alarm.onComplete = () =>
         {
             if (CurrentState == EnemyState.Idle)

@@ -29,7 +29,7 @@ namespace QKit
         {
             if (!alarmBook.TryGetValue(key, out Alarm alarm))
             {
-                Debug.LogError($"Alarm not found with key {key} in {name}");
+                Debug.Log($"Alarm not found with key {key} in {name}");
                 return null;
             }
             return alarm;

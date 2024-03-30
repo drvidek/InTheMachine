@@ -16,7 +16,7 @@ public class FireProjectile : Projectile, IFlammable
     {
         startTime = Time.time;
         _collider = GetComponentInChildren<Collider2D>();
-        var endOfLife = AlarmPool.GetAndPlay(_lifetime);
+        endOfLife = new(_lifetime,false);
         endOfLife.onComplete = EndOfLife;
         if (Direction.x != 0)
         _speed += Mathf.Abs(Player.main.rb.velocity.x);
@@ -25,6 +25,7 @@ public class FireProjectile : Projectile, IFlammable
 
     protected override void FixedUpdate()
     {
+        endOfLife.Tick(Time.fixedDeltaTime);
         float speed = Speed * curve.Evaluate(Time.time - startTime);
         Move(Direction, speed);
         PropagateFlame(_collider);

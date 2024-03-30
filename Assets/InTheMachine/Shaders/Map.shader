@@ -22,17 +22,9 @@ Shader "Unlit/Map"
         {
             "RenderType"="Opaque"
         }
-        LOD 100
-
         Pass
         {
-            //Stencil
-            // {
-            //     Ref 1
-            //     Comp Equal
-            //
-            //     Pass Keep
-            // }  
+ 
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag

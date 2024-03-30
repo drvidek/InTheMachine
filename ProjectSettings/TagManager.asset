@@ -42,3 +42,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Permanent
+    uniqueID: 4099273585
+    locked: 0
+  - name: Undetailed
+    uniqueID: 563122677
+    locked: 0
+  - name: Unexplored
+    uniqueID: 2418719465
+    locked: 0

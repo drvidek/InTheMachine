@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2692637732880325412}
   - component: {fileID: 7592277092440508076}
-  - component: {fileID: 8040238356794798274}
   m_Layer: 9
   m_Name: DebrisSprite
   m_TagString: Untagged
@@ -85,21 +84,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &8040238356794798274
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3797831470510431142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2623ee494ba270d49b0c4c67e21e39ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objectRotates: 0
-  animOffset: {x: 0, y: 0}
-  parent: {fileID: 0}
 --- !u!1 &8451997271787077418
 GameObject:
   m_ObjectHideFlags: 0
