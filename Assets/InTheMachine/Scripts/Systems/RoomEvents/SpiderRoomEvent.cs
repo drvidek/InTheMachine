@@ -5,9 +5,22 @@ using UnityEngine;
 public class SpiderRoomEvent : RoomEvent
 {
     [SerializeField] private Transform webParent;
-    
+
     protected override bool CheckCondition()
     {
+        bool hasQuest = false;
+        foreach (var item in QuestManager.main.QuestLog)
+        {
+            if (item.id == QuestID.Spider)
+            {
+                hasQuest = true;
+                break;
+            }
+        }
+
+        if (hasQuest)
+            return false;
+
         int count = 0;
         for (int i = 0; i < webParent.childCount; i++)
         {

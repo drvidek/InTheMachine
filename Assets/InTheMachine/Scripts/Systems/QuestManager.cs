@@ -49,13 +49,15 @@ public class QuestManager : MonoBehaviour
 
     private List<IEnumerator> typewriterQueue = new();
 
-    [SerializeField] public List<Quest> questLog = new();
+    [SerializeField] private List<Quest> questLog = new();
 
     private QuestList questList;
 
     public Action onNewQuest, onQuestComplete;
 
     private string lastQuestName = "";
+
+    public List<Quest> QuestLog => new(questLog);
 
     #region Singleton + Awake
     private static QuestManager _singleton;
