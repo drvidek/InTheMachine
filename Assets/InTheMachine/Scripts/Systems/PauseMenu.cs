@@ -7,7 +7,7 @@ public class PauseMenu : MonoBehaviour
 {
     [SerializeField] private Camera mapCamera;
     [SerializeField] private float mapPanSpeed = 48f;
-    [SerializeField] private GameObject defaultSelection, cancelButton, mapObject;
+    [SerializeField] private GameObject contentPanel, defaultSelection, cancelButton, mapObject;
     [SerializeField] private EventSystem eventSystem;
     [SerializeField] private float zoomMin = 1f, zoomMax = 9f;
     private GameObject pauseMenu;
@@ -126,6 +126,11 @@ public class PauseMenu : MonoBehaviour
     }
     public void OpenMap()
     {
+        for (int i = 0; i < contentPanel.transform.childCount; i++)
+        {
+            contentPanel.transform.GetChild(i).gameObject.SetActive(false);
+        }
+        
         pauseMenu.SetActive(true);
         mapObject.SetActive(true);
         eventSystem.SetSelectedGameObject(mapObject);

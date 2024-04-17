@@ -17,15 +17,6 @@ public class ShopItemGUI : MonoBehaviour
     {
         get
         {
-#if UNITY_EDITOR
-            foreach (ShopItem item in (Resources.Load("ShopInventory") as ShopItemList).inventory)
-            {
-                if (item.id == id)
-                    return item;
-            }
-            Debug.LogError("Invalid item ID! Returning default entry");
-            return (Resources.Load("ShopInventory") as ShopItemList).inventory[0];
-#endif
             foreach (ShopItem item in Shop.inventory)
             {
                 if (item.id == id)

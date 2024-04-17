@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        
         LoadColorPalette();
     }
 
@@ -88,4 +89,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
 }

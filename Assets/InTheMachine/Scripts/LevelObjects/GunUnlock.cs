@@ -8,11 +8,11 @@ public class GunUnlock : Collectible
 
     public GunProfileType Gun => gun;
 
+#if UNITY_EDITOR
     public void SetType(GunProfileType type)
     {
-#if UNITY_EDITOR
         gun = type;
-#endif
     }
+#endif
 
 }

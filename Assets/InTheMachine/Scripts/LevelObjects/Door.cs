@@ -42,13 +42,13 @@ public class Door : MonoBehaviour, IActivate
         ToggleActive(false);
     }
 
+#if UNITY_EDITOR
     public void SetValues(int length, float rotation)
     {
-#if UNITY_EDITOR
         doorLength = length;
         transform.localEulerAngles = new(0, 0, rotation);
-#endif
     }
+#endif
 
     public void Initialise()
     {

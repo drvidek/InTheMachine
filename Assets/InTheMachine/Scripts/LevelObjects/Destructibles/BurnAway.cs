@@ -47,7 +47,6 @@ public class BurnAway : MonoBehaviour, IFlammable, IProjectileTarget
     // Update is called once per frame
     void FixedUpdate()
     {
-        burnAlarm.Tick(Time.fixedDeltaTime);
         if (!isBurning)
         {
             catchFlame.EmptyOver(catchTime, true, true, true);
@@ -62,6 +61,7 @@ public class BurnAway : MonoBehaviour, IFlammable, IProjectileTarget
         {
             PropagateFlame(transform.position, Vector2.one);
         }
+        burnAlarm.Tick(Time.fixedDeltaTime);
     }
 
     public void CatchFlame(Collider2D collider)

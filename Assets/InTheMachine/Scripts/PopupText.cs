@@ -67,32 +67,32 @@ public class PopupText : MonoBehaviour
             case Player.Ability.Gun:
                 upgradeType = "OBTAINED:";
                 upgradeName = "POWERPAK";
-                upgradeInstruction = "PRESS Y FOR AIR CANNON";
+                upgradeInstruction = "PRESS CTRL FOR AIR CANNON";
                 break;
             case Player.Ability.Flight:
                 upgradeType = "POWERPAK UPGRADED:";
                 upgradeName = "JETPAK";
-                upgradeInstruction = "PRESS B IN AIR";
+                upgradeInstruction = "PRESS SPACE IN AIR";
                 break;
             case Player.Ability.Tractor:
                 upgradeType = "OBTAINED:";
                 upgradeName = "TRACTOR BEAM";
-                upgradeInstruction = "HOLD Y DURING JETPAK";
+                upgradeInstruction = "HOLD CTRL DURING JETPAK";
                 break;
             case Player.Ability.Boost:
                 upgradeType = "OBTAINED:";
                 upgradeName = "BOOST";
-                upgradeInstruction = "PRESS A TO DODGE";
+                upgradeInstruction = "PRESS SHIFT TO DODGE";
                 break;
             case Player.Ability.Special:
                 upgradeType = "POWERPAK UPGRADED:";
                 upgradeName = "BLASTER";
-                upgradeInstruction = "PRESS RB FOR SPECIAL ATTACK";
+                upgradeInstruction = "PRESS E FOR SPECIAL ATTACK";
                 break;
             case Player.Ability.UltraBoost:
                 upgradeType = "BOOST UPGRADED:";
                 upgradeName = "ULTABOOST";
-                upgradeInstruction = "HOLD A TO ULTRABOOST";
+                upgradeInstruction = "HOLD SHIFT TO ULTRABOOST";
                 break;
             default:
                 break;
@@ -152,7 +152,7 @@ public class PopupText : MonoBehaviour
 			case GunProfileType.Fire:
                 upgradeType = "POWERPAK UPGRADED";
                 upgradeName = "FLAMETHROWER";
-                upgradeInstruction = "SELECT WITH D-PAD\nHOLD Y TO USE";
+                upgradeInstruction = "SELECT WITH D-PAD\nHOLD CTRL TO USE";
                 break;
 			case GunProfileType.Elec:
 				break;

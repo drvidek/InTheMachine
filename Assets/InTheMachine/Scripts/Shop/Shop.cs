@@ -5,7 +5,19 @@ using UnityEngine.EventSystems;
 
 public class Shop : MonoBehaviour
 {
-    public static ShopItem[] inventory;
+    private static ShopItem[] _inventory;
+    public static ShopItem[] inventory
+    {
+        get
+        {
+            if (_inventory == null)
+            {
+               _inventory = (Resources.Load("ShopInventory") as ShopItemList).inventory;
+            }
+            return _inventory;
+        }
+    }
+
     [SerializeField] private GameObject defaultSelection;
     [SerializeField] private GameObject weaponGroup, specialGroup;
     [SerializeField] private GameObject[] airItems, fireItems, elecItems, gooItems;
@@ -48,11 +60,9 @@ public class Shop : MonoBehaviour
     }
     #endregion
 
-
     private void Start()
     {
         shop = transform.GetChild(0).gameObject;
-        inventory = (Resources.Load("ShopInventory") as ShopItemList).inventory;
         shop.SetActive(false);
         weaponGroup.SetActive(false);
         specialGroup.SetActive(false);

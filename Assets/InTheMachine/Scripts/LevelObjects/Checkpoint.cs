@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using QKit;
 
 public class Checkpoint : MonoBehaviour, IActivate
 {
@@ -19,8 +20,8 @@ public class Checkpoint : MonoBehaviour, IActivate
 
     public static Action<Vector3Int> onActivate;
 
-    private float radarTop = 10;
-    private float radarCurrentYOffset;
+    [SerializeField] private float radarTop = 10;
+    [SerializeField] private float radarCurrentYOffset = 0;
 
     private void Start()
     {
@@ -47,7 +48,7 @@ public class Checkpoint : MonoBehaviour, IActivate
         if (active)
         {
             psysActivate.Play();
-            QKit.Alarm alarm = QKit.AlarmPool.GetAndPlay(1f);
+            Alarm alarm = AlarmPool.GetAndPlay(1f);
             alarm.onComplete += () =>
             {
                 onActivate?.Invoke(RoomManager.main.GetRoom(transform));

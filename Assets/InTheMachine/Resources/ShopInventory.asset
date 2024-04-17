@@ -22,7 +22,7 @@ MonoBehaviour:
     - 100
     - 1000
     - 5000
-    description: Hold RB to repair all hull damage.|Replenish charges at Checkpoint
+    description: Hold Q to repair all hull damage.|Replenish charges at Checkpoint
       Terminals.
   - id: 1
     name: Reinforced Hull
@@ -165,7 +165,8 @@ MonoBehaviour:
     - 15
     - 15
     - 15
-    description: Add room detail to your map when entering a room.|One use.
+    description: When you enter an unmapped room, add the room to your map. One room
+      per chip.
   - id: 21
     name: Radar
     image: {fileID: 1780119636, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}

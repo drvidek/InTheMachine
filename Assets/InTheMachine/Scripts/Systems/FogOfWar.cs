@@ -27,10 +27,8 @@ public class FogOfWar : MonoBehaviour
 
     private void ClearFog(Vector3Int room)
     {
-        Debug.Log($"Trying to clear {room}");
         if (!clearingArea && (tilesToClear <= 0 && chargePoint))
         {
-            Debug.LogAssertion($"Failed to clear: Area?{clearingArea} Pips?{tilesToClear} Cost?{chargePoint}");
             return;
         }
         
@@ -40,28 +38,23 @@ public class FogOfWar : MonoBehaviour
         
         if (fogMap.GetTile(fogTile) == null)
         {
-            Debug.LogAssertion($"Did not find tile on {fogMap} at {roomPos}");
-        
             return;
         }
         
-        fogMap.SetTile(fogTile, null);
+        fogMap.SetColor(fogTile, Color.clear);
         
         if (!clearingArea)
         {
-            fogMap.RefreshAllTiles();
             if (chargePoint)
             {
                 onMapReveal?.Invoke();
                 tilesToClear--;
             }
         }
-        Debug.LogAssertion($"Cleared tile");
     }
 
     private void ClearArea(Vector3Int room)
     {
-        Debug.LogAssertion($"Trying to clear area");
         clearingArea = true;
         for (int x = room.x - 1; x < room.x + 2; x++)
         {
@@ -70,13 +63,11 @@ public class FogOfWar : MonoBehaviour
                 Vector3Int currentRoom = new(x, y);
                 if (RoomManager.IsRoomSecret(currentRoom))
                 {
-                    Debug.LogAssertion($"Secret room at {x}/{y}");
                     continue;
                 }
                 ClearFog(currentRoom);
             }
         }
-        //fogMap.RefreshAllTiles();
         clearingArea = false;
     }
 

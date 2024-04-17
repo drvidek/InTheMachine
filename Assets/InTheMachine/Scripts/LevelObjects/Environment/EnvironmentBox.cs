@@ -22,13 +22,13 @@ public class EnvironmentBox : MonoBehaviour
         SetColliderAndSprite();
     }
 
+#if UNITY_EDITOR
     public void SetSize(Vector2 size)
     {
-#if UNITY_EDITOR
         this.size = size;
         SetColliderAndSprite();
-#endif
     }
+#endif
 
     protected virtual void SetColliderAndSprite()
     {

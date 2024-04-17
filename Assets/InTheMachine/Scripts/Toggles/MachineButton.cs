@@ -11,14 +11,14 @@ public class MachineButton : LevelToggle
     [SerializeField] private bool stayPressed;
     [SerializeField] private Sprite[] buttonSprites;
     [SerializeField] private LayerMask blockingLayer;
-
+#if UNITY_EDITOR
     public void SetStayPressed()
     {
-#if UNITY_EDITOR
-        stayPressed = true;
-#endif
-    }
 
+        stayPressed = true;
+
+    }
+#endif
     private void Start()
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();

@@ -28,7 +28,6 @@ public class PlayerSpecialGun : Launcher
     {
         myPlayer = GetComponent<Player>();
         myPlayer.special.onPress += () => TryToShoot();
-        PlayerGun.main.onProfileChange += SetCurrentProfile;
         rechargeAlarm = new(rechargeTime,false);
         rechargeAlarm.Stop();
         rechargeAlarm.onComplete = () =>
@@ -37,6 +36,11 @@ public class PlayerSpecialGun : Launcher
             if (!charge.IsFull)
                 rechargeAlarm.ResetAndPlay();
         };
+    }
+
+    private void Start()
+    {
+        PlayerGun.main.onProfileChange += SetCurrentProfile;
     }
 
     protected override void Shoot()

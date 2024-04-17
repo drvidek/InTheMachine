@@ -13,11 +13,11 @@ public class PowerUp : Collectible
 
     public Type TypeHeld => typeHeld;
 
+#if UNITY_EDITOR
     public void SetType(Type type)
     {
-#if UNITY_EDITOR
         typeHeld = type;
-#endif
     }    
+#endif
     
 }
