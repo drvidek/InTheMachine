@@ -27,7 +27,7 @@ public class TractorBeam : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        tractorForgivenessAlarm = new(tractorForgiveness,false);
+        tractorForgivenessAlarm = new(tractorForgiveness, false);
         tractorForgivenessAlarm.Stop();
         beam = transform.GetChild(0).GetComponent<Collider2D>();
         Player.main.onFlyExit += () => ToggleBeam(false);

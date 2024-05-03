@@ -4,19 +4,10 @@ using System.Drawing;
 using UnityEngine;
 using QKit;
 
-public class ExplodingBarrel : MonoBehaviour, IFlammable, IProjectileTarget
+public class ExplodingBarrel : PhysicsObject, IFlammable, IProjectileTarget
 {
     [SerializeField] private GameObject explosionPrefab;
-    [SerializeField] private bool respawn;
-    private Rigidbody2D rb;
-    private Vector3 homePos;
-
-
-    private void Start()
-    {
-        rb = GetComponent<Rigidbody2D>();
-        homePos = transform.position;
-    }
+    
 
     private void Explode()
     {
@@ -25,10 +16,8 @@ public class ExplodingBarrel : MonoBehaviour, IFlammable, IProjectileTarget
         Destroy(explosion, 0.75f);
 
         PropagateFlame(explosion.GetComponent<Collider2D>());
-        if (respawn)
-            transform.position = homePos;
-        else
-            Destroy(gameObject);
+        
+        Destroy(gameObject);
     }
 
     // private void OnCollisionEnter2D(Collision2D collision)

@@ -103,7 +103,7 @@ public abstract class AgentMachine : MonoBehaviour
     /// </summary>
     protected abstract void CheckForExternalVelocity();
 
-    public void TakeDamage(float damage)
+    public virtual void TakeDamage(float damage)
     {
         healthMeter.Adjust(-damage);
         onTakeDamage?.Invoke(damage);

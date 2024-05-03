@@ -26,15 +26,9 @@ public class PhysicsObject : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!sliding)
+        if (sliding && _collider is BoxCollider2D)
         {
-            rb.velocity = new(0, rb.velocity.y);
-            return;
-        }
-
-        if (_collider is BoxCollider2D)
-        {
-            RaycastHit2D[] hits = Physics2D.BoxCastAll(_collider.bounds.center, _collider.bounds.size, 0, slidingDirection, 0.02f, collidingMask);
+            RaycastHit2D[] hits = Physics2D.BoxCastAll(_collider.bounds.center, _collider.bounds.size, 0, slidingDirection, Mathf.Abs(rb.velocity.x * Time.fixedDeltaTime), collidingMask);
             foreach (var hit in hits)
             {
                 if (hit.collider != _collider)
@@ -94,9 +88,10 @@ public class PhysicsObject : MonoBehaviour
     private void ActivateSlide()
     {
         rb.gravityScale = 0;
-        rb.mass = 1f;
+        //rb.mass = 1f;
         sliding = true;
         slidingDirection.x = PlayerAnimate.main.FacingDirection.x;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
 
     private void EndSlide()
@@ -105,6 +100,8 @@ public class PhysicsObject : MonoBehaviour
         rb.velocity = Vector2.zero;
         slidingDirection = Vector2.zero;
         rb.gravityScale = 1;
-        rb.mass = 1000f;
+        //rb.mass = 1000f;
+        QKit.Alarm alarm = QKit.AlarmPool.GetAndPlay(0.1f);
+        alarm.onComplete = () => rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
     }
 }

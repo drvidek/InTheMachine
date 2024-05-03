@@ -7,60 +7,75 @@ using QKit;
 public class PopupText : MonoBehaviour
 {
 
-	[SerializeField] private GameObject popupBox;
-	[SerializeField] private TextMeshProUGUI popupLabel;
+    [SerializeField] private GameObject popupBox;
+    [SerializeField] private TextMeshProUGUI popupLabel;
+    [SerializeField] private GameObject pointer;
 
-	private float defaultPopupTime = 4f;
-	private Alarm popupAlarm;
+    private float defaultPopupTime = 4f;
+    private Alarm popupAlarm;
 
-	public bool PopupActive => popupAlarm.IsPlaying;
+    public bool PopupActive => popupAlarm.IsPlaying;
 
-	#region Singleton + Awake
-	private static PopupText _singleton;
-	public static PopupText main
-	{
-		get => _singleton;
-		private set
-		{
-			if (_singleton == null)
-			{
-				_singleton = value;
-			}
-			else if (_singleton != value)
-			{
-				Debug.LogWarning("PopupText instance already exists, destroy duplicate!");
-				Destroy(value);
-			}
-		}
-	}
+    #region Singleton + Awake
+    private static PopupText _singleton;
+    public static PopupText main
+    {
+        get => _singleton;
+        private set
+        {
+            if (_singleton == null)
+            {
+                _singleton = value;
+            }
+            else if (_singleton != value)
+            {
+                Debug.LogWarning("PopupText instance already exists, destroy duplicate!");
+                Destroy(value);
+            }
+        }
+    }
 
-	private void Awake()
-	{
-		main = this;
-	}
+    private void Awake()
+    {
+        main = this;
+    }
     #endregion
 
     private void Start()
     {
-		popupAlarm = new(0f,false);
+        popupAlarm = new(0f, false);
         popupAlarm.Stop();
-		popupAlarm.onComplete += () =>
-		{
-			popupBox.SetActive(false);
-			GameManager.main.TogglePause();
-		};
+        popupAlarm.onComplete += EndPopup;
+
     }
 
     private void Update()
     {
         popupAlarm.Tick(Time.unscaledDeltaTime);
+        pointer.SetActive(false);
+
+
+        if (popupAlarm.IsPlaying && popupAlarm.PercentComplete > 0.25f)
+        {
+
+            pointer.SetActive(true);
+            if (Input.GetButtonDown("Jump"))
+                EndPopup();
+        }
+    }
+
+    private void EndPopup()
+    {
+        popupBox.SetActive(false);
+        GameManager.main.TogglePause();
+        popupAlarm.Stop();
     }
 
     public void DisplayAbilityText(Player.Ability ability)
-	{
-		string upgradeType = "";
-		string upgradeName = "";
-		string upgradeInstruction = "";
+    {
+        string upgradeType = "";
+        string upgradeName = "";
+        string upgradeInstruction = "";
 
         switch (ability)
         {
@@ -99,12 +114,12 @@ public class PopupText : MonoBehaviour
         }
 
         popupLabel.text =
-			upgradeType + "\n" +
-			upgradeName + "\n" +
-			"\n" +
-			upgradeInstruction;
+            upgradeType + "\n" +
+            upgradeName + "\n" +
+            "\n" +
+            upgradeInstruction;
 
-		popupBox.SetActive(true);
+        popupBox.SetActive(true);
         GameManager.main.TogglePause();
 
         popupAlarm.ResetAndPlay(defaultPopupTime);
@@ -116,19 +131,19 @@ public class PopupText : MonoBehaviour
         string upgradeName = "";
         string upgradeAmount = "";
 
-		switch (type)
-		{
-			case PowerUp.Type.Power:
+        switch (type)
+        {
+            case PowerUp.Type.Power:
                 upgradeType = "UPGRADE FOUND";
                 upgradeName = "MAX POWER";
                 upgradeAmount = "INCREASED +10";
                 break;
-			default:
-				break;
-		}
+            default:
+                break;
+        }
 
-		popupLabel.text =
-			upgradeType + "\n" +
+        popupLabel.text =
+            upgradeType + "\n" +
             "\n" +
             upgradeName + "\n" +
             upgradeAmount;
@@ -145,22 +160,22 @@ public class PopupText : MonoBehaviour
         string upgradeName = "";
         string upgradeInstruction = "";
 
-		switch (type)
-		{
-			case GunProfileType.Air:
-				break;
-			case GunProfileType.Fire:
+        switch (type)
+        {
+            case GunProfileType.Air:
+                break;
+            case GunProfileType.Fire:
                 upgradeType = "POWERPAK UPGRADED";
                 upgradeName = "FLAMETHROWER";
                 upgradeInstruction = "SELECT WITH D-PAD\nHOLD CTRL TO USE";
                 break;
-			case GunProfileType.Elec:
-				break;
-			case GunProfileType.Goo:
-				break;
-			default:
-				break;
-		}
+            case GunProfileType.Elec:
+                break;
+            case GunProfileType.Goo:
+                break;
+            default:
+                break;
+        }
 
 
         popupLabel.text =

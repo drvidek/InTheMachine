@@ -35,6 +35,9 @@ public class MachineButton : LevelToggle
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (!RoomManager.main.InSameRoom(transform, Player.main.transform))
+            return;
+
         if (active && stayPressed)
             return;
 

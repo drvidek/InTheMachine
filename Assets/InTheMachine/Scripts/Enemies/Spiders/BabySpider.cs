@@ -16,11 +16,20 @@ public class BabySpider : EnemyFlying, IFlammable
 
     protected bool ColliderAhead => Physics2D.Raycast(transform.position, _targetVelocity, avoidRange, groundedMask);
 
+    protected override void Start()
+    {
+        alarmBook.AddAlarmAndPlay("Idle", idleTime, true).onComplete = () =>
+        {
+            if (CurrentState == EnemyState.Idle)
+                ChangeStateTo(EnemyState.Walk);
+        };
+        base.Start();
+    }
+
     protected override void OnIdleEnter()
     {
-        Alarm alarm = alarmBook.GetAlarm("Idle");
-        if (alarm == null)
-            alarm = alarmBook.AddAlarm("Idle",idleTime,true);
+        var alarm = alarmBook.GetAlarm("Idle");
+        alarm.ResetAndPlay();
         alarm.onComplete = () =>
         {
             if (CurrentState == EnemyState.Idle)
@@ -42,7 +51,7 @@ public class BabySpider : EnemyFlying, IFlammable
         alarm.onComplete = () =>
         {
             if (CurrentState == EnemyState.Walk)
-            ChangeStateTo(EnemyState.Idle);
+                ChangeStateTo(EnemyState.Idle);
         };
     }
 

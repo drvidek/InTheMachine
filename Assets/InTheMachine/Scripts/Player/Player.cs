@@ -19,6 +19,8 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     [SerializeField] private PlayerState _currentState;
     [SerializeField] private List<Ability> abilities = new();
     [SerializeField] private bool allAbilities = false;
+    [SerializeField] private bool endlessEnergy = false;
+    [SerializeField] private bool noDamage = false;
     [SerializeField] private float _walkSpeed, _walkAccel, _walkFric, _jumpPower, _jumpDecayRate, _jumpInputAllowance, _coyoteSec, _airAccelPenalty, stunTimeMin = 1f;
     [SerializeField] private float _gravUp, _gravDown, _hangTime;
     [SerializeField] private float _airVertSpeed, _airHorSpeed, _airAccel, _airFric, _flightCost;
@@ -991,13 +993,14 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
 
     public bool TryToUsePower(float power, bool checkMin = false)
     {
-        if (allAbilities)
+#if UNITY_EDITOR
+        if (endlessEnergy)
             return true;
-
+#endif
         if (outOfPower)
             return false;
 
-        if (PowerRemaining < power && checkMin)
+        if (checkMin && PowerRemaining < power)
             return false;
 
         powerMeter.Adjust(-power);
@@ -1107,7 +1110,11 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         {
             if (Mathf.Sign(contact.point.x - _collider.bounds.center.x) == Mathf.Sign(rb.velocity.x) && contact.point.y > _collider.bounds.min.y)
             {
-                ChangeStateTo(PlayerState.Idle);
+                Alarm alarm = AlarmPool.GetAndPlay(0.01f);
+                alarm.onComplete = () =>
+                {
+                    if (_currentState == PlayerState.UltraBoost) ChangeStateTo(PlayerState.Idle);
+                };
             }
         }
     }
@@ -1213,5 +1220,13 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     {
         repairMeter.SetNewBounds(0, repairMeter.Max + 1);
         repairMeter.Fill();
+    }
+
+    public override void TakeDamage(float damage)
+    {
+        if (noDamage)
+            return;
+
+        base.TakeDamage(damage);
     }
 }

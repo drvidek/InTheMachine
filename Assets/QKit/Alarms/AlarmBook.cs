@@ -20,10 +20,17 @@ namespace QKit
         public Alarm AddAlarm(T key, float time, bool looping)
         {
             Alarm alarm = new Alarm(time, looping);
+            alarm.Stop();
             alarmBook.Add(key, alarm);
             return alarm;
         }
 
+        public Alarm AddAlarmAndPlay(T key, float time, bool looping)
+        {
+            Alarm alarm = new Alarm(time, looping);
+            alarmBook.Add(key, alarm);
+            return alarm;
+        }
 
         public Alarm GetAlarm(T key)
         {

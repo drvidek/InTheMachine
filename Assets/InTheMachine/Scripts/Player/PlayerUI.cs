@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-[RequireComponent(typeof(Player))]
 public class PlayerUI : MonoBehaviour
 {
     private Player player;
@@ -32,11 +31,10 @@ public class PlayerUI : MonoBehaviour
     private Image[] chargePellets;
     private Image[] cooldownPellets;
 
+
     private void Start()
     {
-        player = GetComponent<Player>();
-        playerGun = GetComponent<PlayerGun>();
-        playerSpecialGun = GetComponent<PlayerSpecialGun>();
+        FindPlayer();
 
         ScrapeContainer(powerPelletContainerA, ref powerPelletsA);
         ScrapeContainer(powerPelletContainerB, ref powerPelletsB);
@@ -55,6 +53,12 @@ public class PlayerUI : MonoBehaviour
         UpdateCashDisplay(0);
     }
 
+    private void FindPlayer()
+    {
+        player = FindObjectOfType<Player>();
+        playerGun = player.GetComponent<PlayerGun>();
+        playerSpecialGun = player.GetComponent<PlayerSpecialGun>();
+    }
 
     private void ScrapeContainer(Transform container, ref Image[] array)
     {

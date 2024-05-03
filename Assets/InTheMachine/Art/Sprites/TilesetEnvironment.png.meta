@@ -1228,7 +1228,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TilesetEnvironment_73
+      name: Pointer
       rect:
         serializedVersion: 2
         x: 96
@@ -3103,6 +3103,7 @@ TextureImporter:
       Monitor2: 395328457
       Monitor3: 1435569986
       PlayerMapIcon: -220253581
+      Pointer: 1221166841
       Radar0: 50803107
       Radar1: -1388659400
       Radar2: 141784528
@@ -3153,7 +3154,6 @@ TextureImporter:
       TilesetEnvironment_5: -443219973
       TilesetEnvironment_6: 1574943003
       TilesetEnvironment_7: 1473367495
-      TilesetEnvironment_73: 1221166841
       TilesetEnvironment_74: 1776749278
       TilesetEnvironment_75: -1415075470
       TilesetEnvironment_76: -38399577
