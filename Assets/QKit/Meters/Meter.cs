@@ -90,13 +90,13 @@ namespace QKit
         /// </summary>
         public bool IsEmpty { get => _value <= _min; }
         /// <summary>
-        /// Returns true if the meter is at or below minimum value
+        /// Returns true if the meter is at or above maximum value
         /// </summary>
         public bool IsFull { get => _value >= _max; }
         /// <summary>
         /// Returns the numerical range of the meter
         /// </summary>
-        public float Range { get => _max - _min; }
+        public float Range { get => Mathf.Abs(_max - _min); }
         /// <summary>
         /// Returns the current color of the meter, either the single color or evaluating the gradient based on current value
         /// </summary>

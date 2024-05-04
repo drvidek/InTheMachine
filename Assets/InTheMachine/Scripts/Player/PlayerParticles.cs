@@ -16,6 +16,7 @@ public class PlayerParticles : MonoBehaviour
     [SerializeField] private ParticleSystem _psysTakeHit;
     [SerializeField] private ParticleSystem _psysSpecialRecharged;
     [SerializeField] private ParticleSystem _psysFlameGun;
+    [SerializeField] private ParticleSystem _psysDead;
     [SerializeField] private Color boostColor, ultraBoostColor;
 
     private ParticleSystem.MainModule flameGunMain;
@@ -105,6 +106,11 @@ public class PlayerParticles : MonoBehaviour
         player.PowerMeter.onMin += () =>
         {
             _psysFlameGun.Stop();
+        };
+
+        player.onDieEnter += () =>
+        {
+            _psysDead.Play();
         };
 
         playerSpecial.rechargeAlarm.onComplete += SpecialRecharged;

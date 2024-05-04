@@ -73,7 +73,6 @@ namespace QKit
 
             if (_timeRemaining <= 0)
             {
-                onComplete?.Invoke();
                 if (Looping)
                 {
                     _timeRemaining = _timeMax + _timeRemaining;
@@ -83,6 +82,7 @@ namespace QKit
                     _timeRemaining = 0;
                     _stopped = true;
                 }
+                onComplete?.Invoke();
             }
 
             _timeRemaining -= time;

@@ -17,7 +17,7 @@ public class RevealSecret : MonoBehaviour
     private void Start()
     {
         map = GetComponent<Tilemap>();
-        _collider = GetComponent<Collider2D>();
+        _collider = GetComponent<CompositeCollider2D>();
         homeColor = map.color;
     }
 

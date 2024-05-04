@@ -62,7 +62,7 @@ public class Hive : EnemyStatic, IFlammable
     protected override void OnBurnStay()
     {
         PropagateFlame(_collider);
-        TakeDamage(1f * Time.fixedDeltaTime);
+        TakeDamage(1.5f * Time.fixedDeltaTime);
         base.OnBurnStay();
     }
 
@@ -121,6 +121,8 @@ public class Hive : EnemyStatic, IFlammable
 
     protected void ManageSpawnTimerReset()
     {
+        if (!IsAlive)
+            return;
         if (waitToSpawn)
             currentEnemySpawned.onDieEnter += spawnAlarm.ResetAndPlay;
         else

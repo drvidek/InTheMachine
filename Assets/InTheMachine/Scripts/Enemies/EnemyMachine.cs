@@ -52,6 +52,7 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     public EnemyState CurrentState => _currentState;
     public float ContactDamage => contactDamage;
     public bool IsAttacking => CurrentState == EnemyState.Attack;
+    public bool IsAlive => CurrentState != EnemyState.Die;
 
     public Vector3 DirectionToPlayer => QMath.Direction(transform.position, Player.main.Position);
     protected float currentDistanceToPlayer => Vector3.Distance(transform.position, Player.main.Position);

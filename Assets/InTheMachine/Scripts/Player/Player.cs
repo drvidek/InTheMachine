@@ -15,7 +15,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         Boost,
         UltraBoost
     }
-    public enum PlayerState { Idle, Walk, Ascend, Hang, Descend, Fly, Boost, UltraBoost, Stun, Burn, Heal }
+    public enum PlayerState { Idle, Walk, Ascend, Hang, Descend, Fly, Boost, UltraBoost, Stun, Burn, Heal, Die }
     [SerializeField] private PlayerState _currentState;
     [SerializeField] private List<Ability> abilities = new();
     [SerializeField] private bool allAbilities = false;
@@ -44,7 +44,8 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         StunMin,
         IFrames,
         HealDelay,
-        PowerChargeDelay
+        PowerChargeDelay,
+        Death
     }
 
     private Alarm coyoteTime;
@@ -98,6 +99,9 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     public Action onHealEnter;
     public Action onHealStay;
     public Action onHealExit;
+    public Action onDieEnter;
+    public Action onDieStay;
+    public Action onDieExit;
     #endregion
 
 
@@ -106,9 +110,10 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     public bool IsGrounded => Physics2D.CapsuleCast(transform.position + (Vector3)_collider.offset, CapsuleCollider.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.02f, groundedMask);
     public bool IsStunned => CurrentState == PlayerState.Stun;
     public bool IsHealing => CurrentState == PlayerState.Heal;
+    public bool IsDead => CurrentState == PlayerState.Die;
     public bool IsBoosting => CurrentState == PlayerState.Boost || CurrentState == PlayerState.UltraBoost;
     public bool IFramesActive => iframesAlarm.IsPlaying;
-    public bool IsVulnerable => !IsBoosting && !IsStunned && !IFramesActive;
+    public bool IsVulnerable => !IsBoosting && !IsStunned && !IFramesActive &&!IsDead;
     public Meter PowerMeter => powerMeter;
     public bool OutOfPower => outOfPower;
     public Meter HealthMeter => healthMeter;
@@ -171,6 +176,8 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         healTimer = alarmBook.AddAlarm(PlayerAlarm.HealDelay, healDelay, false);
         powerChargeDelay = alarmBook.AddAlarm(PlayerAlarm.PowerChargeDelay, powerChargeDelayTime, false);
 
+        alarmBook.AddAlarm(PlayerAlarm.Death, 2f, false).onComplete = Restart;
+
         alarmBook.StopAll();
 
         startPosition = transform.position;
@@ -179,11 +186,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
 
         jump.onPress = JumpPressed;
 
-        healthMeter.onMin += () =>
-        {
-            transform.position = Checkpoint.Current != null ? Checkpoint.Current.Position : startPosition;
-            healthMeter.Fill();
-        };
+        healthMeter.onMin += () => ChangeStateTo(PlayerState.Die);
 
         heal.onPress += () =>
         {
@@ -196,7 +199,6 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             repairMeter.Adjust(-1);
             healthMeter.Fill();
             ChangeStateTo(PlayerState.Idle);
-
         };
 
 
@@ -887,6 +889,66 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     {
         healTimer.Stop();
     }
+
+    IEnumerator Die()
+    {
+        //on entry
+        OnDieEnter();
+        onDieEnter?.Invoke();
+        //every frame while we're in this state
+        while (_currentState == PlayerState.Die)
+        {
+            //state behaviour here
+
+            OnDieStay();
+            onDieStay?.Invoke();
+            //wait a frame
+            yield return waitForFixedUpdate;
+        }
+        //on exit
+        OnDieExit();
+        onDieExit?.Invoke();
+        //trigger the next state
+        NextState();
+    }
+
+    /// <summary>
+    /// Called once when entering Heal state
+    /// </summary>
+    private void OnDieEnter()
+    {
+        alarmBook.GetAlarm(PlayerAlarm.Death).ResetAndPlay();
+        foreach (SpriteRenderer sprite in GetComponentsInChildren<SpriteRenderer>())
+        {
+            sprite.gameObject.SetActive(false);
+        }
+        rb.velocity = Vector3.zero;
+    }
+
+    /// <summary>
+    /// Called every fixed update when in Heal state
+    /// </summary>
+    private void OnDieStay()
+    {
+        //set our next state to...
+        PlayerState nextState =
+            _currentState;
+        //trigger the next state
+
+        FixedInput.EatAll();
+    }
+
+    /// <summary>
+    /// Called once when exiting Heal state
+    /// </summary>
+    private void OnDieExit()
+    {
+        foreach (SpriteRenderer sprite in GetComponentsInChildren<SpriteRenderer>(true))
+        {
+            sprite.gameObject.SetActive(true);
+        }
+        iframesAlarm.ResetAndPlay();
+    }
     #endregion
 
     private void MoveHorizontallyWithInput()
@@ -1229,4 +1291,13 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
 
         base.TakeDamage(damage);
     }
+
+    private void Restart()
+    {
+        transform.position = Checkpoint.Current != null ? Checkpoint.Current.Position : startPosition;
+        ChangeStateTo(PlayerState.Idle);
+
+        healthMeter.Fill();
+    }
+
 }

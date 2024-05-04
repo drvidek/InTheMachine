@@ -18,29 +18,29 @@ public class PlayerSpecialGun : Launcher
     public int ChargesMax => (int)charge.Max;
 
     protected bool canShoot => PlayerGun.main.PlayerStateAllowsShot;
-   
+
     public Vector3 Direction => GetDirection();
     public GunProfileType CurrentProfile => currentProfile;
 
     public Vector3 SpawnPosition => PlayerGun.main.SpawnPosition;
-    
+
     private void Awake()
     {
         myPlayer = GetComponent<Player>();
-        myPlayer.special.onPress += () => TryToShoot();
-        rechargeAlarm = new(rechargeTime,false);
+        myPlayer.special.onPress += () => TryToShoot(); //this is anon because TryToShoot returns a bool
+        rechargeAlarm = new(rechargeTime, false);
         rechargeAlarm.Stop();
-        rechargeAlarm.onComplete = () =>
-        {
-            charge.Adjust(1);
-            if (!charge.IsFull)
-                rechargeAlarm.ResetAndPlay();
-        };
+        rechargeAlarm.onComplete = IncreaseCharge;
     }
 
     private void Start()
     {
         PlayerGun.main.onProfileChange += SetCurrentProfile;
+    }
+
+    private void Update()
+    {
+        rechargeAlarm.Tick(Time.deltaTime);
     }
 
     protected override void Shoot()
@@ -71,7 +71,7 @@ public class PlayerSpecialGun : Launcher
         _piercingLayer = gun.piercingLayer;
         _pinpointLayer = gun.pinpointLayer;
         _projectilePrefab = gun.projectilePrefab;
-        
+
     }
 
     protected override bool CanShoot()
@@ -90,5 +90,12 @@ public class PlayerSpecialGun : Launcher
         if (!rechargeAlarm.IsPlaying)
             rechargeAlarm.ResetAndPlay();
     }
-    
+
+    private void IncreaseCharge()
+    {
+        charge.Adjust(1);
+        if (!charge.IsFull)
+            rechargeAlarm.ResetAndPlay();
+    }
+
 }

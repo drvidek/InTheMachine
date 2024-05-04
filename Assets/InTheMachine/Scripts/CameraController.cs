@@ -70,6 +70,8 @@ public class CameraController : MonoBehaviour
         RoomManager.main.onPlayerMovedRoom += SetNewTarget;// SnapToRoom;
 
         SnapToRoom(RoomManager.main.currentRoom);
+
+        FindObjectOfType<Player>().onDieExit += () => SnapToRoom(RoomManager.main.currentRoom);
     }
 
     private void SetNewTarget(Vector3Int room)
@@ -77,8 +79,6 @@ public class CameraController : MonoBehaviour
         targetPosition = RoomManager.main.RoomGrid.CellToWorld(room) + cameraOffset;
         lastPosition = transform.position;
         targetChangeTime = Time.time;
-
-       
     }
 
     public void SetScrollingSpeed(float speed)
@@ -128,8 +128,8 @@ public class CameraController : MonoBehaviour
     {
         if (specialCamLock)
             return;
-
         transform.position = RoomManager.main.RoomGrid.CellToWorld(room) + cameraOffset;
+        lastPosition = transform.position;
         BoxCollider2D collider = FindCameraVolume() as BoxCollider2D;
         if (collider)
         {
@@ -145,7 +145,5 @@ public class CameraController : MonoBehaviour
     {
         return Physics2D.OverlapPoint(transform.position, 1 << 5);
     }
-
-
 
 }

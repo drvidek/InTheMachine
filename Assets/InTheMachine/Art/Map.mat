@@ -52,7 +52,7 @@ Material:
     - _BackgroundColorIn: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DoorColor: {r: 0, g: 0.4, b: 0, a: 1}
-    - _DoorColorIn: {r: 0.30588236, g: 0.34117648, b: 0.39607847, a: 1}
+    - _DoorColorIn: {r: 0.3019608, g: 0.3372549, b: 0.3921569, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _FogColor: {r: 0, g: 0, b: 0, a: 1}
     - _FogColorIn: {r: 1, g: 0, b: 1, a: 1}
