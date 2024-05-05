@@ -91,6 +91,7 @@ public class Cobweb : Debris, IFlammable
     {
         DouseFlame();
         burning = false;
+        burntOut = false;
         GetComponent<Collider2D>().enabled = true;
         transform.GetChild(0).gameObject.SetActive(true);
     }

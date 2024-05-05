@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3900106628136687897}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: SpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 1429656178202526306}
   - component: {fileID: 6761368974098649684}
   - component: {fileID: 1317073140797327475}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: SpiderNest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -227,17 +227,7 @@ MonoBehaviour:
   _grv: 0
   stunTimeMin: 0
   attackRange: 0
-  spawnAlarm:
-    _name: 
-    _id: 0
-    _timeRemaining: 0
-    _timeMax: 5
-    _timeScale: 1
-    _looping: 0
-    _paused: 0
-    _stopped: 0
-    _autoRelease: 0
-    _type: 0
+  spawnDelay: 4
   enemyToSpawn: {fileID: 7459019247964881301, guid: 187a81fb1f508064db6b213835bad289, type: 3}
   spawnPoint: {fileID: 3900106628136687897}
   waitToSpawn: 0
@@ -273,7 +263,7 @@ GameObject:
   - component: {fileID: 134789158024094494}
   - component: {fileID: 3401377350466229091}
   - component: {fileID: 2756354397471989565}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

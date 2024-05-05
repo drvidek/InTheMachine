@@ -35,18 +35,27 @@ public class MachineButton : LevelToggle
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        Debug.Log($"Found {collision.gameObject.name}");
+
         if (!RoomManager.main.InSameRoom(transform, Player.main.transform))
             return;
+
+        Debug.Log($"Same room as player");
 
         if (active && stayPressed)
             return;
 
+        Debug.Log($"Not yet active");
+
         if (Physics2D.OverlapBox(transform.position, Vector2.one*.75f, 0, blockingLayer))
             return;
+
+        Debug.Log($"No block");
 
         if (collision.isTrigger)
             return;
 
+        Debug.Log($"Valid collision");
 
         Rigidbody2D rb = collision.attachedRigidbody;
         if (rb)

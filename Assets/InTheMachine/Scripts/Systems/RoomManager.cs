@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using QKit;
+using System.Net.Sockets;
 
 public class RoomManager : MonoBehaviour
 {
@@ -79,7 +80,8 @@ public class RoomManager : MonoBehaviour
         Vector3Int room = GetRoom(transforms[0]);
         foreach (var item in transforms)
         {
-            if (GetRoom(item) != room)
+            Vector3Int itemRoom = GetRoom(item);
+            if (!IsSameRoom(room, itemRoom))
                 return false;
         }
         return true;
@@ -90,7 +92,8 @@ public class RoomManager : MonoBehaviour
         Vector3Int room = GetRoom(positions[0]);
         foreach (var item in positions)
         {
-            if (GetRoom(item) != room)
+            Vector3Int itemRoom = GetRoom(item);
+            if (!IsSameRoom(room, itemRoom))
                 return false;
         }
         return true;
@@ -120,7 +123,7 @@ public class RoomManager : MonoBehaviour
     {
         foreach (var secret in secretRooms)
         {
-            if (room.x == secret.x && room.y == secret.y)
+            if (IsSameRoom(room, secret))
                 return true;
         }
         return false;
@@ -148,9 +151,8 @@ public class RoomManager : MonoBehaviour
 
     }
 
-    private void OnGUI()
+    private static bool IsSameRoom(Vector3Int roomA, Vector3Int roomB)
     {
-        GUILayout.Box($"{currentRoom.x}/{currentRoom.y}");
+        return (roomA.x == roomB.x && roomA.y == roomB.y);
     }
-
 }

@@ -114,6 +114,8 @@ public class FireDrone : EnemyWalking
                 alarm.ResetAndPlay(burstAttackDelay);
                 alarm.onComplete = () =>
                 {
+                    if (!IsAlive)
+                        return;
                     onBurst?.Invoke();
                     burstCollider.enabled = true;
                     Alarm killCollider = AlarmPool.GetAndPlay(0.8f);

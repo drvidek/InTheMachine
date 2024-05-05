@@ -113,7 +113,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     public bool IsDead => CurrentState == PlayerState.Die;
     public bool IsBoosting => CurrentState == PlayerState.Boost || CurrentState == PlayerState.UltraBoost;
     public bool IFramesActive => iframesAlarm.IsPlaying;
-    public bool IsVulnerable => !IsBoosting && !IsStunned && !IFramesActive &&!IsDead;
+    public bool IsVulnerable => !IsBoosting && !IsStunned && !IFramesActive && !IsDead;
     public Meter PowerMeter => powerMeter;
     public bool OutOfPower => outOfPower;
     public Meter HealthMeter => healthMeter;
@@ -190,7 +190,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
 
         heal.onPress += () =>
         {
-            if (!IsStunned && !IsBoosting && !repairMeter.IsEmpty)
+            if (!IsDead && !IsStunned && !IsBoosting && !repairMeter.IsEmpty)
                 ChangeStateTo(PlayerState.Heal);
         };
 
@@ -913,7 +913,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     }
 
     /// <summary>
-    /// Called once when entering Heal state
+    /// Called once when entering Die state
     /// </summary>
     private void OnDieEnter()
     {
@@ -926,20 +926,15 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     }
 
     /// <summary>
-    /// Called every fixed update when in Heal state
+    /// Called every fixed update when in Die state
     /// </summary>
     private void OnDieStay()
     {
-        //set our next state to...
-        PlayerState nextState =
-            _currentState;
-        //trigger the next state
-
         FixedInput.EatAll();
     }
 
     /// <summary>
-    /// Called once when exiting Heal state
+    /// Called once when exiting Die state
     /// </summary>
     private void OnDieExit()
     {

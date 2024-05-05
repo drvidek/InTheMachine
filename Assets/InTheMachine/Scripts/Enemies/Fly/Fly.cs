@@ -16,6 +16,7 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
     protected Vector3 homePosition;
     protected CircleCollider2D circleCollider => _collider as CircleCollider2D;
 
+    protected bool isStuck;
     
     protected Vector3 targetDestination = Vector3.zero;
 
@@ -32,6 +33,9 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
         };
         stunAlarm = alarmBook.AddAlarm("Stun", stunTimeMin, false);
         stunAlarm.onComplete = () => { if (CurrentState == EnemyState.Stun) ChangeStateTo(EnemyState.Idle); };
+
+        alarmBook.AddAlarm("InWeb", 1f, false).onComplete = () => isStuck = false;
+
         RoomManager.main.onPlayerMovedRoom += CheckRespawnTimerReset;
         base.Start();
     }
@@ -74,7 +78,6 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
         {
             Move(QMath.Direction(transform.position, targetDestination),
                 moveSpeed * Mathf.Max(0.5f, Vector3.Distance(transform.position, targetDestination) / maxDistanceToNewDestination));
-
         }
         else
         {
@@ -126,11 +129,15 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
 
     }
 
+
+
     private void OnTriggerStay2D(Collider2D other)
     {
-        if (other.GetComponent<Cobweb>())
+        if (other.GetComponent<Cobweb>() && Vector3.Distance(other.transform.position, transform.position) < 0.3)
         {
             Halt();
+            isStuck = true;
+            alarmBook.GetAlarm("InWeb").ResetAndPlay();
         }
     }
 
@@ -165,6 +172,8 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
 
     protected override void Move(Vector3 direction, float speed)
     {
+        if (isStuck)
+            return;
         _targetVelocity = direction * speed;
     }
 

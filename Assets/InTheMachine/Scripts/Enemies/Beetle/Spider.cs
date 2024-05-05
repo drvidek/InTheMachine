@@ -14,7 +14,7 @@ public class Spider : Beetle
 
     protected override void Start()
     {
-        nextActionAlarm = alarmBook.AddAlarm("ActionDelay",actionDelay, false);
+        nextActionAlarm = alarmBook.AddAlarm("ActionDelay", actionDelay, false);
         nextActionAlarm.onComplete = DetermineAction;
         //cornerRounding /= 4f;
         base.Start();
@@ -36,7 +36,7 @@ public class Spider : Beetle
         nextActionAlarm.ResetAndPlay(3f + Random.Range(-0.5f, 0.5f));
 
         if (!firstAction)
-        base.OnWalkEnter();
+            base.OnWalkEnter();
 
         firstAction = true;
     }
@@ -58,9 +58,9 @@ public class Spider : Beetle
         if (ColliderAhead)
         {
             bool door = (ColliderAhead.GetComponent<Door>());
-            RotateAroundCorner(walkingRight ? NinetyDegrees : -NinetyDegrees); 
+            RotateAroundCorner(walkingRight ? NinetyDegrees : -NinetyDegrees);
             if (door)
-            transform.position -= transform.up * (1f / cornerRounding);
+                transform.position -= transform.up * (1f / cornerRounding);
         }
         if (EnemyAhead)
             walkingRight = !walkingRight;
@@ -103,31 +103,29 @@ public class Spider : Beetle
 
     protected void DetermineAction()
     {
-        if (CheckAttackCondition())
+        switch (CurrentState)
         {
-            ChangeStateTo(EnemyState.Ascend);
-        }
-        else
-        {
-            switch (CurrentState)
-            {
-                case EnemyState.Idle:
+            case EnemyState.Idle:
+                if (CheckAttackCondition())
+                    ChangeStateTo(EnemyState.Ascend);
+                else
                     ChangeStateTo(EnemyState.Walk);
-                    break;
-                case EnemyState.Walk:
+                break;
+            case EnemyState.Walk:
+                if (CheckAttackCondition())
+                    ChangeStateTo(EnemyState.Ascend);
+                else
                     ChangeStateTo(EnemyState.Idle);
-                    break;
-                case EnemyState.Fly:
-                case EnemyState.Ascend:
-                case EnemyState.Descend:
-                case EnemyState.Attack:
-                case EnemyState.Die:
-                case EnemyState.Stun:
-                case EnemyState.Burn:
-                default:
-                    break;
-            };
-        }
+                break;
+            case EnemyState.Descend:
+            case EnemyState.Fly:
+            case EnemyState.Ascend:
+            case EnemyState.Attack:
+            case EnemyState.Die:
+            case EnemyState.Stun:
+            case EnemyState.Burn:
+            default:
+                break;
+        };
     }
-
 }

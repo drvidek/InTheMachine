@@ -20,6 +20,7 @@ public class BabySpider : EnemyFlying, IFlammable
     {
         alarmBook.AddAlarmAndPlay("Idle", idleTime, true).onComplete = () =>
         {
+            alarmBook.GetAlarm("Idle").SetTimeMaximum(idleTime + Random.Range(-0.2f, 0.2f));
             if (CurrentState == EnemyState.Idle)
                 ChangeStateTo(EnemyState.Walk);
         };
@@ -32,6 +33,7 @@ public class BabySpider : EnemyFlying, IFlammable
         alarm.ResetAndPlay();
         alarm.onComplete = () =>
         {
+            alarmBook.GetAlarm("Idle").SetTimeMaximum(idleTime + Random.Range(-0.2f, 0.2f));
             if (CurrentState == EnemyState.Idle)
                 ChangeStateTo(EnemyState.Walk);
         };
