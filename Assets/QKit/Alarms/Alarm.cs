@@ -91,7 +91,7 @@ namespace QKit
         /// <summary>
         /// Start an alarm. Will not start an alarm with 0 time remaining.
         /// </summary>
-        public void Play()
+        public Alarm Play()
         {
             _paused = false;
             _stopped = false;
@@ -100,60 +100,65 @@ namespace QKit
             {
                 _stopped = true;
             }
+            return this;
         }
 
         /// <summary>
         /// Pause an alarm
         /// </summary>
-        public void Pause()
+        public Alarm Pause()
         {
             _paused = true;
+            return this;
         }
 
         /// <summary>
         /// Reset the remaining time of the alarm.
         /// </summary>
-        public void Reset()
+        public Alarm Reset()
         {
             _timeRemaining = _timeMax;
+            return this;
         }
 
         /// <summary>
         /// Reset the remaining time of the alarm using the new maximum value.
         /// </summary>
         /// <param name="newMax"></param>
-        public void Reset(float newMax)
+        public Alarm Reset(float newMax)
         {
             _timeMax = newMax;
             _timeRemaining = _timeMax;
+            return this;
         }
 
         /// <summary>
         /// Reset the alarm and play it.
         /// </summary>
-        public void ResetAndPlay()
+        public Alarm ResetAndPlay()
         {
             Reset();
-            Play();
+            return Play();
         }
 
         /// <summary>
         /// Reset the alarm to the new maximum amount and start it.
         /// </summary>
         /// <param name="newMax"></param>
-        public void ResetAndPlay(float newMax)
+        public Alarm ResetAndPlay(float newMax)
         {
             Reset(newMax);
-            Play();
+            return Play();
         }
 
         /// <summary>
         /// Stop an alarm and reduce its remaining time to 0
         /// </summary>
-        public void Stop()
+        public Alarm Stop()
         {
             _stopped = true;
             _timeRemaining = 0;
+            return this;
         }
 
 
@@ -162,37 +167,41 @@ namespace QKit
         /// Adds or subtracts t seconds, clamping between 0 and maximum. Hitting 0 will trigger Complete.
         /// </summary>
         /// <param name="t"></param>
-        public void AdjustTimeRemaining(float t)
+        public Alarm AdjustTimeRemaining(float t)
         {
             _timeRemaining = Mathf.Clamp(_timeRemaining + t, 0, _timeMax);
+            return this;
         }
 
         /// <summary>
         /// Sets the time remaining to t seconds, clamping between 0 and maximum.
         /// </summary>
         /// <param name="t"></param>
-        public void SetTimeRemaining(float t)
+        public Alarm SetTimeRemaining(float t)
         {
             _timeRemaining = Mathf.Clamp(t, 0, _timeMax);
+            return this;
         }
 
         /// <summary>
         /// Sets the maximum time for the alarm to t seconds. If time remaning is larger than t, it will be set to t.
         /// </summary>
         /// <param name="t"></param>
-        public void SetTimeMaximum(float t)
+        public Alarm SetTimeMaximum(float t)
         {
             _timeMax = t;
             _timeRemaining = Mathf.Clamp(_timeRemaining, 0, _timeMax);
+            return this;
         }
 
         /// <summary>
         /// Set whether the alarm loops automatically on completion.
         /// </summary>
         /// <param name="loop"></param>
-        public void SetLooping(bool loop)
+        public Alarm SetLooping(bool loop)
         {
             _looping = loop;
+            return this;
         }
 
         #endregion
