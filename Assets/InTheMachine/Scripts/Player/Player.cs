@@ -58,7 +58,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
 
     private Vector3 startPosition;
 
-    private float _currentGrav => _grav * Time.fixedDeltaTime;
+    private float _currentGrav => _grav * Time.deltaTime;
 
     private Vector2 _userInputDir;
 
@@ -259,7 +259,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             onIdleStay?.Invoke();
 
             //wait a frame
-            yield return waitForFixedUpdate;
+            yield return null;
         }
         //on exit
         OnIdleExit();
@@ -319,7 +319,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             OnWalkStay();
             onWalkStay?.Invoke();
             //wait a frame
-            yield return waitForFixedUpdate;
+            yield return null;
         }
         //on exit
         OnWalkExit();
@@ -382,7 +382,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             OnAscendStay();
             onAscendStay?.Invoke();
             //wait a frame
-            yield return waitForFixedUpdate;
+            yield return null;
         }
         //on exit
         OnAscendExit();
@@ -452,7 +452,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             OnHangStay();
             onHangStay?.Invoke();
             //wait a frame
-            yield return waitForFixedUpdate;
+            yield return null;
         }
         //on exit
         OnHangExit();
@@ -506,7 +506,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             OnDescendStay();
             onDescendStay?.Invoke();
             //wait a frame
-            yield return waitForFixedUpdate;
+            yield return null;
         }
         //on exit
         OnDescendExit();
@@ -561,7 +561,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             OnFlyStay();
             onFlyStay?.Invoke();
             //wait a frame
-            yield return waitForFixedUpdate;
+            yield return null;
         }
         //on exit
         OnFlyExit();
@@ -589,7 +589,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         MoveHorizontallyWithInput();
         MoveVerticallyWithInput();
 
-        if (!TryToUsePower(_flightCost * Time.fixedDeltaTime))
+        if (!TryToUsePower(_flightCost * Time.deltaTime))
             ChangeStateTo(PlayerState.Descend);
 
         if (IsGrounded && triedToJump.IsPlaying)
@@ -623,7 +623,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             OnBoostStay();
             onBoostStay?.Invoke();
             //wait a frame
-            yield return waitForFixedUpdate;
+            yield return null;
         }
         //on exit
         OnBoostExit();
@@ -682,7 +682,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             OnUltraBoostStay();
             onUltraBoostStay?.Invoke();
             //wait a frame
-            yield return waitForFixedUpdate;
+            yield return null;
         }
         //on exit
         OnUltraBoostExit();
@@ -708,7 +708,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     private void OnUltraBoostStay()
     {
         MoveInDirectionAtSpeed(boostDirection, boostSpeed * 1.25f);
-        if (!boost.Hold || !TryToUsePower(boostCost * 2f * Time.fixedDeltaTime))
+        if (!boost.Hold || !TryToUsePower(boostCost * 2f * Time.deltaTime))
             ChangeStateTo(PlayerState.Idle);
         //set our next state to...
         PlayerState nextState =
@@ -739,7 +739,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             OnStunStay();
             onStunStay?.Invoke();
             //wait a frame
-            yield return waitForFixedUpdate;
+            yield return null;
         }
         //on exit
         OnStunExit();
@@ -795,7 +795,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             OnBurnStay();
             onBurnStay?.Invoke();
             //wait a frame
-            yield return waitForFixedUpdate;
+            yield return null;
         }
         //on exit
         OnBurnExit();
@@ -847,7 +847,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             OnHealStay();
             onHealStay?.Invoke();
             //wait a frame
-            yield return waitForFixedUpdate;
+            yield return null;
         }
         //on exit
         OnHealExit();
@@ -903,7 +903,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             OnDieStay();
             onDieStay?.Invoke();
             //wait a frame
-            yield return waitForFixedUpdate;
+            yield return null;
         }
         //on exit
         OnDieExit();
@@ -956,7 +956,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         if (!IsGrounded && !IsFlying)
             change /= _airAccelPenalty;
 
-        _targetVelocity.x = Mathf.MoveTowards(_targetVelocity.x, (IsStunned || IsHealing ? 0 : _targetHorSpeed) * UserInputDir.x, change * Time.fixedDeltaTime);
+        _targetVelocity.x = Mathf.MoveTowards(_targetVelocity.x, (IsStunned || IsHealing ? 0 : _targetHorSpeed) * UserInputDir.x, change * Time.deltaTime);
 
     }
 
@@ -971,7 +971,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         if (UserInputDir.y != 0)
             change = Mathf.Max(_accel, change);
 
-        _targetVelocity.y = Mathf.MoveTowards(_targetVelocity.y, _airVertSpeed * UserInputDir.y, change * Time.fixedDeltaTime);
+        _targetVelocity.y = Mathf.MoveTowards(_targetVelocity.y, _airVertSpeed * UserInputDir.y, change * Time.deltaTime);
     }
 
     private void MoveVerticallyWithGravity()

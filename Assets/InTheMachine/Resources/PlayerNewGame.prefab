@@ -74118,7 +74118,7 @@ MonoBehaviour:
   _jumpPower: 14.5
   _jumpDecayRate: 0.75
   _jumpInputAllowance: 0.08
-  _coyoteSec: 0.135
+  _coyoteSec: 0.08
   _airAccelPenalty: 3
   stunTimeMin: 0.5
   _gravUp: 30

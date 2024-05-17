@@ -53,7 +53,7 @@ public class Hive : EnemyStatic, IFlammable
 
         if (currentEnemySpawned)
         {
-            currentEnemySpawned.onDieEnter -= spawnAlarm.ResetAndPlay;
+            currentEnemySpawned.onDieEnter -= RemoteResetSpawnTimer;
         }
 
         base.OnBurnEnter();
@@ -124,9 +124,14 @@ public class Hive : EnemyStatic, IFlammable
         if (!IsAlive)
             return;
         if (waitToSpawn)
-            currentEnemySpawned.onDieEnter += spawnAlarm.ResetAndPlay;
+            currentEnemySpawned.onDieEnter += RemoteResetSpawnTimer;
         else
             spawnAlarm.ResetAndPlay();
+    }
+
+    private void RemoteResetSpawnTimer()
+    {
+        spawnAlarm.ResetAndPlay();
     }
 
     public override void OnProjectileHit(Projectile projectile)
