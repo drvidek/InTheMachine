@@ -16,25 +16,36 @@ public class FireDrone : EnemyWalking
     }
 
     [SerializeField] private float chargeAttackSpeed, burstAttackDelay, burstAttackRecovery;
-
+    [SerializeField] private GameObject fireballPrefab;
+    [SerializeField] private Launcher fireballLauncher;
     [SerializeField] private Collider2D burstCollider;
     [SerializeField] private CapsuleCollider2D flamethrowerCollider;
     [SerializeField] private GameObject reward;
     [SerializeField] private UnityEvent killEvent;
 
-    public Action onFlamethrower, onBurst, onCharge;
+    public Action onFlamethrower, onBurst, onCharge, onFireball;
 
     private bool vulnerable;
+
+    private int fireballCount, fireballMax;
 
     private Attack currentAttack;
     public Attack CurrentAttack => currentAttack;
 
+    private Attack[] previousAttack = new Attack[2];
+
     private float maxLength = 4f;
+
+    private float WalkSpeed => _walkSpeed * (SecondPhase ? 2f : 1f);
+    private float ChargeAttackSpeed => chargeAttackSpeed * (SecondPhase ? 1.5f : 1f);
+
+    public bool SecondPhase => healthMeter.Percent <= 0.5f;
 
     public bool GroundAhead => Physics2D.Raycast(transform.position, new Vector2(CurrentDirection.x, -1), 1f, groundedMask);
 
     protected override void Start()
     {
+        alarmBook.AddAlarm("BurstCollider", 0.8f, false).onComplete = () => burstCollider.enabled = false;
         var idleAlarm = alarmBook.AddAlarm("Idle",0.5f, false);
         var attackAlarm = alarmBook.AddAlarm("Attack",burstAttackRecovery, false);
         idleAlarm.onComplete = () =>
@@ -49,6 +60,7 @@ public class FireDrone : EnemyWalking
             flamethrowerCollider.enabled = true;
             flamethrowerCollider.size = new(0, 0.5f);
         };
+        fireballLauncher = GetComponent<Launcher>();
         base.Start();
     }
 
@@ -94,7 +106,7 @@ public class FireDrone : EnemyWalking
         }
 
 
-        MoveWithGravity(CurrentDirection, _walkSpeed);
+        MoveWithGravity(CurrentDirection, WalkSpeed);
     }
 
     protected override void OnAttackEnter()
@@ -111,25 +123,19 @@ public class FireDrone : EnemyWalking
             case Attack.Burst:
                 onPreAttack?.Invoke();
                 var alarm = alarmBook.GetAlarm("Attack");
-                alarm.ResetAndPlay(burstAttackDelay);
-                alarm.onComplete = () =>
+                alarm.ResetAndPlay(burstAttackDelay).onComplete = () =>
                 {
                     if (!IsAlive)
                         return;
                     onBurst?.Invoke();
                     burstCollider.enabled = true;
-                    Alarm killCollider = AlarmPool.GetAndPlay(0.8f);
-                    killCollider.onComplete = () => burstCollider.enabled = false;
-                    alarm.ResetAndPlay(burstAttackRecovery);
-                    alarm.onComplete = () =>
-                        ChooseNewAttack();
+                    alarmBook.GetAlarm("BurstCollider").ResetAndPlay();
+                    alarm.ResetAndPlay(burstAttackRecovery).onComplete = 
+                        ChooseNewAttack;
                 };
                 break;
             case Attack.Fireball:
-                //attackAlarm.onComplete = () =>
-                //{
-                //
-                //};
+                onFireball?.Invoke();
                 break;
             default:
                 break;
@@ -141,7 +147,7 @@ public class FireDrone : EnemyWalking
         switch (currentAttack)
         {
             case Attack.Flamethrower:
-                MoveWithGravity(CurrentDirection, _walkSpeed);
+                MoveWithGravity(CurrentDirection, WalkSpeed);
                 float newX = Mathf.MoveTowards(flamethrowerCollider.size.x, maxLength, maxLength * Time.fixedDeltaTime);
                 UpdateFlamethrowerCollider(new(newX, 0.5f));
                 if (!GroundAhead || ColliderAhead)
@@ -155,10 +161,13 @@ public class FireDrone : EnemyWalking
                 }
                 break;
             case Attack.Fireball:
-                //ChooseNewAttack();
+                {
+                    walkingRight = Player.main.X > transform.position.x;
+                    _targetVelocity = Vector2.zero;
+                }
                 break;
             case Attack.Charge:
-                MoveWithGravity(CurrentDirection, chargeAttackSpeed);
+                MoveWithGravity(CurrentDirection, ChargeAttackSpeed);
                 if (!GroundAhead || ColliderAhead)
                 {
                     ExitAttack();
@@ -197,6 +206,12 @@ public class FireDrone : EnemyWalking
     private void ChooseNewAttack()
     {
         currentAttack = QMath.Choose<Attack>(Attack.Burst, Attack.Charge, Attack.Fireball, Attack.Flamethrower);
+        //if we used the same attack twice in a row, prevent it from being used again
+        if (previousAttack[0] == previousAttack[1] && previousAttack[1] == currentAttack)
+        {
+            ChooseNewAttack();
+            return;
+        }
         switch (currentAttack)
         {
             case Attack.Flamethrower:
@@ -212,12 +227,29 @@ public class FireDrone : EnemyWalking
                 ChangeStateTo(EnemyState.Walk);
                 break;
             case Attack.Fireball:
-                ChooseNewAttack();
-                //ChangeStateTo(EnemyState.Idle);
+                walkingRight = Player.main.X > transform.position.x;
+                fireballLauncher.TryToShoot();
+                fireballCount = 0;
+                fireballMax = UnityEngine.Random.Range(2, 4);
+                var alarm = alarmBook.GetAlarm("Attack");
+                alarm.ResetAndPlay(SecondPhase ? 0.5f : 1f).onComplete = () =>
+                {
+                    fireballLauncher.TryToShoot();
+                    fireballCount++;
+                    alarm.ResetAndPlay();
+                    if (fireballCount == fireballMax)
+                    {
+                        alarm.onComplete = ChooseNewAttack;
+                    }
+                };
+                ChangeStateTo(EnemyState.Attack);
                 break;
             default:
                 break;
         }
+        var attackTemp = previousAttack[0];
+        previousAttack[0] = currentAttack;
+        previousAttack[1] = attackTemp;
     }
 
     protected override void Move(Vector3 direction, float speed)

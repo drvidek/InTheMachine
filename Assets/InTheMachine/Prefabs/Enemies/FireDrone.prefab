@@ -353,6 +353,7 @@ GameObject:
   - component: {fileID: 5575828692447588015}
   - component: {fileID: 8003953559352737823}
   - component: {fileID: 4089832701203915021}
+  - component: {fileID: 4603895682751807244}
   m_Layer: 7
   m_Name: FireDrone
   m_TagString: Untagged
@@ -544,6 +545,8 @@ MonoBehaviour:
   chargeAttackSpeed: 6
   burstAttackDelay: 0.5
   burstAttackRecovery: 1.5
+  fireballPrefab: {fileID: 0}
+  fireballLauncher: {fileID: 0}
   burstCollider: {fileID: 3746705811911544294}
   flamethrowerCollider: {fileID: 2190023919339570748}
   reward: {fileID: 6448807981197934538, guid: b450bcd7b1e21a942b995db060d508a4, type: 3}
@@ -569,6 +572,35 @@ MonoBehaviour:
   damageFlashSpeed: 0.1
   psysFlamethrower: {fileID: 1112902994034871655}
   psysBurst: {fileID: 295953379958573123}
+--- !u!114 &4603895682751807244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6928623270469933793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d15bc351001580047a4cfd1243e8f7fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _size: 1
+  _speed: 12
+  _power: 1
+  _lifetime: 10
+  _count: 1
+  _spread: 0
+  _spawn: {fileID: 5815224686305187655}
+  _collidingLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  _piercingLayer:
+    serializedVersion: 2
+    m_Bits: 279040
+  _pinpointLayer:
+    serializedVersion: 2
+    m_Bits: 7424
+  _projectilePrefab: {fileID: 6914366302289154009, guid: 734f711360ff38a4fa2454ea912e90dd, type: 3}
 --- !u!1001 &1124275151579097457
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -138,7 +138,6 @@ public class RoomManager : MonoBehaviour
     private void Start()
     {
         lastRoom = GetRoom(Player.main.transform);
-        onPlayerMovedRoom += (room) => { Debug.LogAssertion($"Triggered room move:{onPlayerMovedRoom}"); };
         onPlayerMovedRoom?.Invoke(currentRoom);
     }
 

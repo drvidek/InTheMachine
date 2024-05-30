@@ -1209,6 +1209,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             {
                 if (collision.attachedRigidbody.TryGetComponent<EnemyMachine>(out EnemyMachine enemy))
                     TakeDamage(enemy.ContactDamage);
+                else
                 if (collision.attachedRigidbody.TryGetComponent<Projectile>(out Projectile p))
                     TakeDamage(p.Power);
 

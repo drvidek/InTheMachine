@@ -5,6 +5,7 @@ using UnityEngine;
 public class SpiderRoomEvent : RoomEvent
 {
     [SerializeField] private Transform webParent;
+    [SerializeField] private EventSpider spider;
 
     protected override bool CheckCondition()
     {
@@ -29,6 +30,14 @@ public class SpiderRoomEvent : RoomEvent
         }
 
         return count >= webParent.childCount / 2f;
+    }
+
+    public void ResetSpider()
+    {
+        if (spider)
+        {
+            spider.ResetForEvent();
+        }
     }
 
     public void ResetCobwebs(Transform parent)

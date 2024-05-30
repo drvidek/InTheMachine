@@ -9,10 +9,12 @@ public abstract class EnemyWalking : EnemyMachine
     Vector2 gravityDirection = Vector2.down;
 
     [SerializeField] protected bool walkingRight = true;
-    public bool WalkingRight => walkingRight;
+    public virtual bool WalkingRight => walkingRight;
+
+
     public Vector3 CurrentDirection => walkingRight ? transform.right : transform.right * -1;
     public virtual bool IsGrounded => StandingOn != null;
-    
+
     public virtual Collider2D StandingOn
     {
         get

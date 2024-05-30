@@ -33,6 +33,7 @@ public class FireDroneAnimator : EnemyAnimator
             psysFlamethrower.transform.localEulerAngles = new(0, 0, myDrone.CurrentDirection.x > 0 ? 0 : 180);
             psysFlamethrower.Play();
         };
+        myDrone.onFireball += () => animator.SetBool("Attack", true);
 
     }
 
