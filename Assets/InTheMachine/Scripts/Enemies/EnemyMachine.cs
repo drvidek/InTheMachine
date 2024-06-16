@@ -116,6 +116,10 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     /// </summary>
     protected virtual void ChangeStateTo(EnemyState state)
     {
+        if (showDebug)
+        {
+            Debug.Log($"{name} Changing State To {state}");
+        }
         _currentState = state;
     }
 

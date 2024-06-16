@@ -1,0 +1,100 @@
+using QKit;
+using UnityEngine;
+
+public class Heart : EnemyStatic
+{
+    [SerializeField] private bool aggro;
+    [SerializeField] GameObject laser;
+
+    Material material;
+
+    protected override void Start()
+    {
+        material = GetComponentInChildren<Renderer>().sharedMaterial;
+        alarmBook.AddAlarm("Laser", 5f, false).Reset().onComplete = TryToAttack;
+        alarmBook.AddAlarm("End", 5f, false).Reset().onComplete = EndAttack;
+        alarmBook.AddAlarm("Hit", 0.1f, false).onComplete = () => material.SetFloat("_OnDamage", 0);
+
+        onTakeDamage += (amount) =>
+        {
+            alarmBook.GetAlarm("Hit").ResetAndPlay();
+        };
+
+
+        base.Start();
+    }
+
+    protected override void TryToAttack()
+    {
+        Debug.Log($"{name} trying to attack");
+        base.TryToAttack();
+    }
+
+    protected override bool CheckAttackCondition()
+    {
+        return true;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        material.SetFloat("_DamageLerp", alarmBook.GetAlarm("Hit").PercentRemaining);
+    }
+
+    void EndAttack()
+    {
+        Debug.Log("EndAttacking");
+        ChangeStateTo(EnemyState.Idle);
+    }
+
+    protected override void CheckPlayerInRangeForLogic(Vector3Int room)
+    {
+        doingLogic = RoomManager.main.PlayerWithinRoomDistance(transform, 1);
+        //Debug.Log($"DoingLogic: {doingLogic}");
+        everDoneLogic = doingLogic || everDoneLogic;
+
+        if (CurrentState != EnemyState.Die)
+        {
+            rb.simulated = doingLogic;
+            if (agentAnimator)
+                agentAnimator.SetEnabled(doingLogic);
+        }
+
+        if (!doingLogic)
+        {
+            healthMeter.Fill();
+            aggro = false;
+            alarmBook.GetAlarm("Laser").Stop();
+            EndAttack();
+        }
+    }
+
+
+    protected override void OnAttackEnter()
+    {
+        laser.SetActive(true);
+        alarmBook.GetAlarm("End").ResetAndPlay();
+    }
+
+    protected override void OnAttackStay()
+    {
+        laser.transform.Rotate(Vector3.forward, 180 * Time.fixedDeltaTime);
+    }
+
+    protected override void OnAttackExit()
+    {
+        laser.SetActive(false);
+        if (aggro)
+        alarmBook.GetAlarm("Laser").ResetAndPlay();
+    }
+
+    public override void OnProjectileHit(Projectile projectile)
+    {
+        if (!aggro)
+        {
+            aggro = true;
+            alarmBook.GetAlarm("Laser").ResetAndPlay();
+        }
+        TakeDamage(projectile.Power);
+    }
+}

@@ -53,15 +53,20 @@ namespace QKit
         /// <summary>
         /// Returns the percent of time left in the alarm, starting at 1 and approaching 0 as the alarm runs
         /// </summary>
-        public float PercentRemaining { get => _timeRemaining / _timeMax; }
+        public float PercentRemaining { get => TimeRemaining / _timeMax; }
         /// <summary>
         /// Returns the percent of time completed in the alarm, starting at 0 and approaching 1 as the alarm runs
         /// </summary>
-        public float PercentComplete { get => 1 - _timeRemaining / _timeMax; }
+        public float PercentComplete { get => 1 - TimeRemaining / _timeMax; }
         #endregion
 
 
         #region Public Methods
+        public void Print()
+        {
+            Debug.Log($"Play {IsPlaying} | Stop {IsStopped} | {_timeRemaining}/{_timeMax}");
+        }
+
         /// <summary>
         /// Move the alarm towards 0 by time, and trigger its complete event. Does not affect paused or stopped alarms.
         /// </summary>
@@ -69,7 +74,9 @@ namespace QKit
         public void Tick(float time)
         {
             if (_paused || _stopped)
+            {
                 return;
+            }
 
             if (_timeRemaining <= 0)
             {
@@ -79,10 +86,10 @@ namespace QKit
                 }
                 else
                 {
-                    _timeRemaining = 0;
-                    _stopped = true;
+                    Stop();
                 }
-                onComplete?.Invoke();
+
+                 onComplete?.Invoke();
             }
 
             _timeRemaining -= time;
@@ -93,13 +100,14 @@ namespace QKit
         /// </summary>
         public Alarm Play()
         {
+            if (_timeRemaining <= 0)
+            {
+                return this;
+            }
+
             _paused = false;
             _stopped = false;
 
-            if (_timeRemaining <= 0)
-            {
-                _stopped = true;
-            }
             return this;
         }
 
@@ -138,7 +146,8 @@ namespace QKit
         public Alarm ResetAndPlay()
         {
             Reset();
-            return Play();
+            Play();
+            return this;
         }
 
         /// <summary>
@@ -148,7 +157,8 @@ namespace QKit
         public Alarm ResetAndPlay(float newMax)
         {
             Reset(newMax);
-            return Play();
+            Play();
+            return this;
         }
 
         /// <summary>
@@ -157,6 +167,7 @@ namespace QKit
         public Alarm Stop()
         {
             _stopped = true;
+            _paused = false;
             _timeRemaining = 0;
             return this;
         }
