@@ -4,14 +4,14 @@ using UnityEngine;
 public class Heart : EnemyStatic
 {
     [SerializeField] private bool aggro;
-    [SerializeField] GameObject laser;
+    [SerializeField] GameObject[] attacks;
 
     Material material;
 
     protected override void Start()
     {
         material = GetComponentInChildren<Renderer>().sharedMaterial;
-        alarmBook.AddAlarm("Laser", 5f, false).Reset().onComplete = TryToAttack;
+        alarmBook.AddAlarm("Attack", 5f, false).Reset().onComplete = TryToAttack;
         alarmBook.AddAlarm("End", 5f, false).Reset().onComplete = EndAttack;
         alarmBook.AddAlarm("Hit", 0.1f, false).onComplete = () => material.SetFloat("_OnDamage", 0);
 
@@ -64,7 +64,7 @@ public class Heart : EnemyStatic
         {
             healthMeter.Fill();
             aggro = false;
-            alarmBook.GetAlarm("Laser").Stop();
+            alarmBook.GetAlarm("Attack").Stop();
             EndAttack();
         }
     }
@@ -72,20 +72,23 @@ public class Heart : EnemyStatic
 
     protected override void OnAttackEnter()
     {
-        laser.SetActive(true);
+        attacks[Random.Range(0, attacks.Length)].SetActive(true);
         alarmBook.GetAlarm("End").ResetAndPlay();
     }
 
     protected override void OnAttackStay()
     {
-        laser.transform.Rotate(Vector3.forward, 180 * Time.fixedDeltaTime);
+        
     }
 
     protected override void OnAttackExit()
     {
-        laser.SetActive(false);
+        foreach (var attack in attacks)
+        {
+            attack.SetActive(false);
+        }
         if (aggro)
-        alarmBook.GetAlarm("Laser").ResetAndPlay();
+        alarmBook.GetAlarm("Attack").ResetAndPlay();
     }
 
     public override void OnProjectileHit(Projectile projectile)
@@ -93,7 +96,7 @@ public class Heart : EnemyStatic
         if (!aggro)
         {
             aggro = true;
-            alarmBook.GetAlarm("Laser").ResetAndPlay();
+            alarmBook.GetAlarm("Attack").ResetAndPlay();
         }
         TakeDamage(projectile.Power);
     }
