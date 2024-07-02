@@ -74129,6 +74129,8 @@ MonoBehaviour:
   _airAccel: 25
   _airFric: 6
   _flightCost: 8
+  _jetAccel: 35
+  _jetCost: 75
   boostSpeed: 15
   boostDistance: 3.75
   boostCost: 15

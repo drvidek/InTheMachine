@@ -13,9 +13,10 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
         Tractor,
         Special,
         Boost,
-        UltraBoost
+        UltraBoost,
+        Jet
     }
-    public enum PlayerState { Idle, Walk, Ascend, Hang, Descend, Fly, Boost, UltraBoost, Stun, Burn, Heal, Die }
+    public enum PlayerState { Idle, Walk, Ascend, Hang, Descend, Jet, Fly, Boost, UltraBoost, Stun, Burn, Heal, Die }
     [SerializeField] private PlayerState _currentState;
     [SerializeField] private List<Ability> abilities = new();
     [SerializeField] private bool allAbilities = false;
@@ -23,7 +24,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     [SerializeField] private bool noDamage = false;
     [SerializeField] private float _walkSpeed, _walkAccel, _walkFric, _jumpPower, _jumpDecayRate, _jumpInputAllowance, _coyoteSec, _airAccelPenalty, stunTimeMin = 1f;
     [SerializeField] private float _gravUp, _gravDown, _hangTime;
-    [SerializeField] private float _airVertSpeed, _airHorSpeed, _airAccel, _airFric, _flightCost;
+    [SerializeField] private float _airVertSpeed, _airHorSpeed, _airAccel, _airFric, _flightCost, _jetAccel, _jetCost;
     [SerializeField] private float boostSpeed, boostDistance, boostCost, postBoostVelocityRate;
     [SerializeField] private TractorBeam beam;
     [SerializeField] private float powerChargeTime;
@@ -81,6 +82,9 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     public Action onDescendEnter;
     public Action onDescendStay;
     public Action onDescendExit;
+    public Action onJetEnter;
+    public Action onJetStay;
+    public Action onJetExit;
     public Action onFlyEnter;
     public Action onFlyStay;
     public Action onFlyExit;
@@ -424,7 +428,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     /// </summary>
     private void OnAscendExit()
     {
-
+        if (jump.Hold) TryToJet();
     }
 
     IEnumerator Hang()
@@ -548,6 +552,72 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     {
 
     }
+
+IEnumerator Jet()
+    {
+        //on entry
+        OnJetEnter();
+        onJetEnter?.Invoke();
+        //every frame while we're in this state
+        while (_currentState == PlayerState.Jet)
+        {
+            //state behaviour here
+
+            OnJetStay();
+            onJetStay?.Invoke();
+            //wait a frame
+            yield return null;
+        }
+        //on exit
+        OnJetExit();
+        onJetExit?.Invoke();
+        //trigger the next state
+        NextState();
+    }
+
+    /// <summary>
+    /// Called once when entering Descend state
+    /// </summary>
+    private void OnJetEnter()
+    {
+
+    }
+
+    /// <summary>
+    /// Called every fixed update when in Descend state
+    /// </summary>
+    private void OnJetStay()
+    {
+        MoveHorizontallyWithInput();
+        
+        _targetVelocity.y = Mathf.Clamp(_targetVelocity.y + _jetAccel * Time.deltaTime, float.NegativeInfinity, 20f);
+
+        float cost = Mathf.Max(_jetCost * Time.deltaTime, powerMeter.Max * Time.deltaTime);
+
+
+        if (!TryToUsePower(cost) || !jump.Hold)
+        {
+            ChangeStateTo(PlayerState.Ascend);
+        }
+
+        //set our next state to...
+        PlayerState nextState =
+            IsGrounded ? PlayerState.Idle :
+            //stay as we are
+            _currentState;
+        //trigger the next state
+        ChangeStateTo(nextState);
+        FixedInput.EatAll();
+    }
+
+    /// <summary>
+    /// Called once when exiting Descend state
+    /// </summary>
+    private void OnJetExit()
+    {
+
+    }
+
     IEnumerator Fly()
     {
         //on entry
@@ -999,10 +1069,10 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             case PlayerState.Ascend:
             case PlayerState.Hang:
             case PlayerState.Descend:
-                TryToFly();
+                if (!TryToFly())
+                    TryToJet();
                 break;
             case PlayerState.Fly:
-
                 ChangeStateTo(PlayerState.Descend);
                 break;
             case PlayerState.Boost:
@@ -1041,10 +1111,26 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
             return false;
         }
 
-        if (!HasAbility(Ability.Flight))
+        if (!HasAbility(Ability.Flight) || OutOfPower)
             return false;
 
         ChangeStateTo(PlayerState.Fly);
+        return true;
+    }
+
+    private bool TryToJet()
+    {
+        if (coyoteTime.IsPlaying)
+        {
+            Debug.Log("Caught Coyote During Flight");
+            TryToJump(_jumpPower);
+            return false;
+        }
+
+        if (!HasAbility(Ability.Jet) || OutOfPower)
+            return false;
+
+        ChangeStateTo(PlayerState.Jet);
         return true;
     }
 

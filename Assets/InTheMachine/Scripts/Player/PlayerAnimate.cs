@@ -64,6 +64,8 @@ public class PlayerAnimate : AgentAnimator
         myPlayer.onIdleEnter += () => { animator.ResetTrigger("Rising"); animator.ResetTrigger("Falling"); };
         myPlayer.onAscendEnter += () => animator.SetTrigger("Rising");
         myPlayer.onDescendEnter += () => animator.SetTrigger("Falling");
+        myPlayer.onJetEnter += () => AnimatePakFlip(true);
+        myPlayer.onJetExit += () => { if (myPlayer.CurrentState != Player.PlayerState.Boost) AnimatePakFlip(false); };
         myPlayer.onFlyEnter += () => AnimatePakFlip(true);
         myPlayer.onFlyExit += () => { if (myPlayer.CurrentState != Player.PlayerState.Boost) AnimatePakFlip(false); };
         myPlayer.onUltraBoostExit += () => AnimatePakFlip(false);

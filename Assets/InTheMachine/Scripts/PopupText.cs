@@ -84,9 +84,14 @@ public class PopupText : MonoBehaviour
                 upgradeName = "POWERPAK";
                 upgradeInstruction = "PRESS CTRL FOR AIR CANNON";
                 break;
-            case Player.Ability.Flight:
+            case Player.Ability.Jet:
                 upgradeType = "POWERPAK UPGRADED:";
                 upgradeName = "JETPAK";
+                upgradeInstruction = "HOLD SPACE IN AIR";
+                break;
+            case Player.Ability.Flight:
+                upgradeType = "POWERPAK UPGRADED:";
+                upgradeName = "ANTI-GRAV";
                 upgradeInstruction = "PRESS SPACE IN AIR";
                 break;
             case Player.Ability.Tractor:

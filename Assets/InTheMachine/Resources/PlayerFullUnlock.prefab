@@ -62,7 +62,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8292531563423962523, guid: 06c8a00d348375a499a9fdc996cf4a3b, type: 3}
       propertyPath: repairMeter._max
-      value: 3
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8292531563423962523, guid: 06c8a00d348375a499a9fdc996cf4a3b, type: 3}
       propertyPath: powerMeter._value
@@ -74,7 +74,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8292531563423962523, guid: 06c8a00d348375a499a9fdc996cf4a3b, type: 3}
       propertyPath: repairMeter._value
-      value: 3
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8449538478884535574, guid: 06c8a00d348375a499a9fdc996cf4a3b, type: 3}
       propertyPath: gunProfile.Array.data[0]

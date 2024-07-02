@@ -61,6 +61,8 @@ public class PlayerParticles : MonoBehaviour
 
         player.onFlyEnter += () => _psysFly.Play();
         player.onFlyExit += () => _psysFly.Stop();
+        player.onJetEnter += () => _psysFly.Play();
+        player.onJetExit += () => _psysFly.Stop();
         player.onBoostEnter += () =>
         {
             var main = _psysBoost.main;
