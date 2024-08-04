@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class EnemyMachine : AgentMachine, IProjectileTarget
+public abstract class EnemyMachine : AgentMachine, IProjectileTarget, Machine.IPersist
 {
     public enum EnemyState { Idle, Walk, Fly, Ascend, Descend, Attack, Die, Stun, Burn }
     [SerializeField] private bool showDebug;
@@ -17,6 +17,10 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
     [SerializeField] protected float attackRange;
 
     protected AlarmBook<string> alarmBook = new();
+
+    private Vector3 homePosition;
+
+    private string SaveID => homePosition.ToString();
 
     #region Events
     public Action onIdleEnter;
@@ -69,6 +73,7 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
 
     protected override void Start()
     {
+        homePosition = transform.position;
         base.Start();
         RoomManager.main.onPlayerMovedRoom += CheckPlayerInRangeForLogic;
         healthMeter.onMin += () => { ChangeStateTo(EnemyState.Die); };
@@ -714,6 +719,21 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget
             {
                 Gizmos.DrawCube(hit.point, Vector3.one * 0.1f);
             }
+        }
+    }
+
+    public void Save()
+    {
+        string saveString = JsonUtility.ToJson(this, true);
+
+        DataPersistenceManager.Save<EnemyMachine>(saveString, SaveID);
+    }
+
+    public void Load()
+    {
+        if (DataPersistenceManager.TryToLoad<EnemyMachine>(out string loadString, SaveID))
+        {
+            JsonUtility.FromJsonOverwrite(loadString, this);
         }
     }
 }

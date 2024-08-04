@@ -9,7 +9,7 @@ public class SetPlayProfile
     private static GameObject prefabPlayerFullUnlock => Resources.Load("PlayerFullUnlock") as GameObject;
     private static GameObject prefabPlayerGodMode => Resources.Load("PlayerGodMode") as GameObject;
 
-    [MenuItem("Play Profiles/New Game",priority = 0)]
+    [MenuItem("Machine/Play Profiles/New Game",priority = 0)]
     public static void NewGame()
     {
         GameObject currentPlayer = Object.FindObjectOfType<Player>().gameObject;
@@ -17,7 +17,7 @@ public class SetPlayProfile
         playerPrefab.transform.position = GameObject.Find("StartPosition").transform.position;
         MonoBehaviour.DestroyImmediate(currentPlayer);
     }
-    [MenuItem("Play Profiles/Full Unlock", priority = 1)]
+    [MenuItem("Machine/Play Profiles/Full Unlock", priority = 1)]
     public static void FullUnlock()
     {
         GameObject currentPlayer = Object.FindObjectOfType<Player>().gameObject;
@@ -25,7 +25,7 @@ public class SetPlayProfile
         playerPrefab.transform.position = currentPlayer.transform.position;
         MonoBehaviour.DestroyImmediate(currentPlayer);
     }
-    [MenuItem("Play Profiles/God Mode", priority = 2)]
+    [MenuItem("Machine/Play Profiles/God Mode", priority = 2)]
     public static void GodMode()
     {
         GameObject currentPlayer = Object.FindObjectOfType<Player>().gameObject;

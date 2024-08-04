@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using QKit;
 
-public class Player : AgentMachine, IFlammable, IElectrocutable
+public class Player : AgentMachine, IFlammable, IElectrocutable, Machine.IPersist
 {
     public enum Ability
     {
@@ -37,6 +37,8 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
     private bool usingPower, outOfPower;
     private Vector3 boostDirection;
     private PlayerState returnFromBoost;
+
+    [SerializeField][HideInInspector] private Vector3 savePosition = Vector3.zero;
 
     private enum PlayerAlarm
     {
@@ -553,7 +555,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable
 
     }
 
-IEnumerator Jet()
+    IEnumerator Jet()
     {
         //on entry
         OnJetEnter();
@@ -589,7 +591,7 @@ IEnumerator Jet()
     private void OnJetStay()
     {
         MoveHorizontallyWithInput();
-        
+
         _targetVelocity.y = Mathf.Clamp(_targetVelocity.y + _jetAccel * Time.deltaTime, float.NegativeInfinity, 20f);
 
         float cost = Mathf.Max(_jetCost * Time.deltaTime, powerMeter.Max * Time.deltaTime);
@@ -1382,4 +1384,18 @@ IEnumerator Jet()
         healthMeter.Fill();
     }
 
+    public void Save()
+    {
+        savePosition = transform.position;
+        DataPersistenceManager.Save<Player>(JsonUtility.ToJson(this, true));
+    }
+
+    public void Load()
+    {
+        if (DataPersistenceManager.TryToLoad<Player>(out string load))
+        {
+            JsonUtility.FromJsonOverwrite(load, this);
+            transform.position = savePosition;
+        }
+    }
 }
