@@ -5,7 +5,7 @@ using QKit;
 
 public class FireDroneAnimator : EnemyAnimator
 {
-    [SerializeField] private ParticleSystem psysFlamethrower, psysBurst;
+    [SerializeField] private ParticleSystem psysFlamethrower, psysBurst, psysBurstBig;
 
     private FireDrone myDrone => myEnemy as FireDrone;
 
@@ -15,6 +15,12 @@ public class FireDroneAnimator : EnemyAnimator
         base.Start();
         myEnemy.onPreAttack += () => animator.SetTrigger("PreAttack");
 
+        myEnemy.onAttackStay += () =>
+        {
+            if (myDrone.CurrentAttack == FireDrone.Attack.PhaseChange)
+                Vibrate(pixelAligner, 1);
+        };
+
         myEnemy.onAttackExit += () =>
         {
             animator.SetBool("Attack", false);
@@ -23,7 +29,7 @@ public class FireDroneAnimator : EnemyAnimator
 
         myDrone.onBurst += () =>
         {
-            psysBurst.Play();
+            (myDrone.ChangingPhase ? psysBurstBig : psysBurst).Play();
             animator.SetBool("Attack", true);
         };
         myDrone.onCharge += () => animator.SetBool("Attack", true);

@@ -12,34 +12,38 @@ public class FireDrone : EnemyWalking
         Flamethrower,
         Burst,
         Fireball,
-        Charge
+        Charge,
+        PhaseChange
     }
 
     [SerializeField] private float chargeAttackSpeed, burstAttackDelay, burstAttackRecovery;
-    [SerializeField] private GameObject fireballPrefab;
     [SerializeField] private Launcher fireballLauncher;
-    [SerializeField] private Collider2D burstCollider;
+    [SerializeField] private Collider2D burstCollider, burstBigCollider;
     [SerializeField] private CapsuleCollider2D flamethrowerCollider;
     [SerializeField] private GameObject reward;
     [SerializeField] private UnityEvent killEvent;
 
-    public Action onFlamethrower, onBurst, onCharge, onFireball;
+    public Action onFlamethrower, onBurst, onCharge, onFireball, onPhaseTwo;
 
     private bool vulnerable;
 
     private int fireballCount, fireballMax;
 
     private Attack currentAttack;
+
     public Attack CurrentAttack => currentAttack;
 
     private Attack[] previousAttack = new Attack[2];
 
     private float maxLength = 4f;
 
-    private float WalkSpeed => _walkSpeed * (SecondPhase ? 2f : 1f);
-    private float ChargeAttackSpeed => chargeAttackSpeed * (SecondPhase ? 1.5f : 1f);
+    private float WalkSpeed => _walkSpeed * (InPhaseTwo ? 2f : 1f);
+    private float ChargeAttackSpeed => chargeAttackSpeed * (InPhaseTwo ? 1.5f : 1f);
 
-    public bool SecondPhase => healthMeter.Percent <= 0.5f;
+    private bool inPhaseTwo;
+    public bool InPhaseTwo => inPhaseTwo;
+    public bool ChangingPhase => CurrentAttack == Attack.PhaseChange;
+
 
     public bool GroundAhead => Physics2D.Raycast(transform.position, new Vector2(CurrentDirection.x, -1), 1f, groundedMask);
 
@@ -56,7 +60,11 @@ public class FireDrone : EnemyWalking
 
     protected override void Start()
     {
-        alarmBook.AddAlarm("BurstCollider", 0.8f, false).onComplete = () => burstCollider.enabled = false;
+        alarmBook.AddAlarm("BurstCollider", 0.8f, false).onComplete = () =>
+        {
+            burstCollider.enabled = false;
+            burstBigCollider.enabled = false;
+        };
         var idleAlarm = alarmBook.AddAlarm("Idle", 0.5f, false);
         var attackAlarm = alarmBook.AddAlarm("Attack", burstAttackRecovery, false);
         idleAlarm.onComplete = () =>
@@ -116,7 +124,10 @@ public class FireDrone : EnemyWalking
         rb.velocity = _targetVelocity;
         alarmBook.GetAlarm("Idle").ResetAndPlay();
         if (!playerInRoom && !doNotPersist)
+        {
+            inPhaseTwo = false;
             healthMeter.Fill();
+        }
     }
 
     protected override void OnIdleStay()
@@ -178,6 +189,19 @@ public class FireDrone : EnemyWalking
             case Attack.Fireball:
                 onFireball?.Invoke();
                 break;
+            case Attack.PhaseChange:
+                var burstAlarm = alarmBook.GetAlarm("Attack");
+                burstAlarm.ResetAndPlay(burstAttackDelay).onComplete = () =>
+                {
+                    if (!IsAlive)
+                        return;
+                    onBurst?.Invoke();
+                    burstBigCollider.enabled = true;
+                    alarmBook.GetAlarm("BurstCollider").ResetAndPlay();
+                    burstAlarm.ResetAndPlay(burstAttackRecovery).onComplete =
+                        ChooseNewAttack;
+                };
+                break;
             default:
                 break;
         }
@@ -216,6 +240,10 @@ public class FireDrone : EnemyWalking
                     ExitAttack();
                 }
                 break;
+            case Attack.PhaseChange:
+                _targetVelocity = Vector2.zero;
+                MoveWithGravity(Vector3.zero, 0f);
+                break;
             default:
                 break;
         }
@@ -248,7 +276,7 @@ public class FireDrone : EnemyWalking
 
     private void ChooseNewAttack()
     {
-        currentAttack = QMath.Choose<Attack>(Attack.Burst, Attack.Charge, Attack.Fireball, Attack.Flamethrower);
+        currentAttack = QMath.Choose(Attack.Burst, Attack.Charge, Attack.Fireball, Attack.Flamethrower);
         //if we used the same attack twice in a row, prevent it from being used again
         if (previousAttack[0] == previousAttack[1] && previousAttack[1] == currentAttack)
         {
@@ -275,7 +303,7 @@ public class FireDrone : EnemyWalking
                 fireballCount = 0;
                 fireballMax = UnityEngine.Random.Range(2, 4);
                 var alarm = alarmBook.GetAlarm("Attack");
-                alarm.ResetAndPlay(SecondPhase ? 0.5f : 1f).onComplete = () =>
+                alarm.ResetAndPlay(InPhaseTwo ? 0.5f : 1f).onComplete = () =>
                 {
                     fireballLauncher.TryToShoot();
                     fireballCount++;
@@ -324,4 +352,30 @@ public class FireDrone : EnemyWalking
     {
 
     }
+
+    public override void TakeDamage(float damage)
+    {
+        base.TakeDamage(damage);
+        if (IsAlive && !inPhaseTwo && healthMeter.Percent <= 0.5f)
+        {
+            OnPhaseTwo();
+        }
+    }
+
+    private void OnPhaseTwo()
+    {
+        inPhaseTwo = true;
+        currentAttack = Attack.PhaseChange;
+        if (IsAttacking)
+        {
+            OnAttackExit();
+            onAttackExit?.Invoke();
+            OnAttackEnter();
+            onAttackEnter?.Invoke();
+        }
+        else ChangeStateTo(EnemyState.Attack);
+        ChangeStateTo(EnemyState.Attack);
+        onPhaseTwo?.Invoke();
+    }
+
 }
