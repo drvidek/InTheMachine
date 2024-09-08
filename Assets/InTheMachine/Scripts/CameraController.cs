@@ -31,6 +31,7 @@ public class CameraController : MonoBehaviour
     private Vector3 lastPosition;
     private float targetChangeTime;
 
+    public bool SpecialCamActive => specialCamLock;
 
     #region Singleton + Awake
     private static CameraController _singleton;

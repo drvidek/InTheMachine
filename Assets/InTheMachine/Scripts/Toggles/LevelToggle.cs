@@ -5,9 +5,12 @@ using UnityEngine.Events;
 
 public abstract class LevelToggle : MonoBehaviour
 {
+    [SerializeField] protected bool showDebug;
     protected bool active;
     [SerializeField] public UnityEvent<bool> onActiveChanged;
     [SerializeField] protected Animator animator;
+
+    
 
     private void Start()
     {

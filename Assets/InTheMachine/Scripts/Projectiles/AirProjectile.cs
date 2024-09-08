@@ -36,7 +36,7 @@ public class AirProjectile : Projectile
     {
         bool doCollision = true;
         //if we hit a flammable object
-        if (collider.TryGetComponent<IFlammable>(out IFlammable flame) || collider.transform.parent.TryGetComponent<IFlammable>(out flame))
+        if (collider.TryGetComponent<IFlammable>(out IFlammable flame) || (collider.transform.parent && collider.transform.parent.TryGetComponent<IFlammable>(out flame)))
         {
             //if it's on enemy layer
             if (collider.gameObject.layer == 7)

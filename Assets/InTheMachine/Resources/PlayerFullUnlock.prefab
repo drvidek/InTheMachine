@@ -48,6 +48,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5315377840723816981, guid: 06c8a00d348375a499a9fdc996cf4a3b, type: 3}
+      propertyPath: charge._max
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5315377840723816981, guid: 06c8a00d348375a499a9fdc996cf4a3b, type: 3}
+      propertyPath: charge._value
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 8292531563423962523, guid: 06c8a00d348375a499a9fdc996cf4a3b, type: 3}
       propertyPath: allAbilities
       value: 1

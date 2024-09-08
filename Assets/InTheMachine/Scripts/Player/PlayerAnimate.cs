@@ -5,11 +5,20 @@ using UnityEngine;
 
 public class PlayerAnimate : AgentAnimator
 {
-   
+
     [SerializeField] private SpriteRenderer pakSprite;
     [SerializeField] private int pakAimUpYOffset;
     [SerializeField] private float pakXOffset;
-    private Player myPlayer => myAgent as Player;
+    private Player myPlayer
+    {
+        get
+        {
+            if (!myAgent)
+                myAgent = GetComponent<AgentMachine>();
+            return myAgent as Player;
+        }
+
+    }
     private PlayerGun myGun;
     private PixelAligner pakPixelAligner;
     private float pakOffsetBase;
@@ -93,7 +102,7 @@ public class PlayerAnimate : AgentAnimator
         AnimatePakForward(true);
 
         if (!Player.main.HasAbility(Player.Ability.Gun))
-        pakSprite.enabled = false;
+            pakSprite.enabled = false;
     }
 
     public void EnablePak()
@@ -130,7 +139,7 @@ public class PlayerAnimate : AgentAnimator
         }
     }
 
-    
+
     private void AnimatePakAimUp(bool aimUp)
     {
         if (aimUp)

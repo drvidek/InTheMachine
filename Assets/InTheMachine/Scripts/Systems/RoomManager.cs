@@ -75,6 +75,18 @@ public class RoomManager : MonoBehaviour
         return cell; //roomGrid.CellToWorld(cell);
     }
 
+    public Vector3 WorldToCellCentre(Vector3 position)
+    {
+        Vector3Int cell = environmentGrid.WorldToCell(position);
+        return environmentGrid.GetCellCenterWorld(cell);
+    }
+
+    public Vector3 WorldToCellHalfCentre(Vector3 position)
+    {
+        Vector3Int cell = interactiblesGrid.WorldToCell(position);
+        return interactiblesGrid.GetCellCenterWorld(cell);
+    }
+
     public bool InSameRoom(params Transform[] transforms)
     {
         Vector3Int room = GetRoom(transforms[0]);

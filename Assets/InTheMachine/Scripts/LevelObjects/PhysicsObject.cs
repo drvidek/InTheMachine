@@ -100,6 +100,7 @@ public class PhysicsObject : MonoBehaviour
         rb.velocity = Vector2.zero;
         slidingDirection = Vector2.zero;
         rb.gravityScale = 1;
+        transform.position = RoomManager.main.WorldToCellCentre(transform.position);
         //rb.mass = 1000f;
         QKit.Alarm alarm = QKit.AlarmPool.GetAndPlay(0.1f);
         alarm.onComplete = () => rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;

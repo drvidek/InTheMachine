@@ -74129,8 +74129,8 @@ MonoBehaviour:
   _airAccel: 25
   _airFric: 6
   _flightCost: 8
-  _jetAccel: 35
-  _jetCost: 75
+  _jetAccel: 15
+  _jetCost: 70
   boostSpeed: 15
   boostDistance: 3.75
   boostCost: 15
@@ -74218,6 +74218,7 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     _colorType: 0
+  savePosition: {x: 0, y: 0, z: 0}
 --- !u!114 &8449538478884535574
 MonoBehaviour:
   m_ObjectHideFlags: 0

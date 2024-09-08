@@ -532,6 +532,7 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     _colorType: 0
+  type: 0
   showDebug: 0
   _currentState: 0
   questID: 7
@@ -549,7 +550,7 @@ MonoBehaviour:
   fireballLauncher: {fileID: 0}
   burstCollider: {fileID: 3746705811911544294}
   flamethrowerCollider: {fileID: 2190023919339570748}
-  reward: {fileID: 6448807981197934538, guid: b450bcd7b1e21a942b995db060d508a4, type: 3}
+  reward: {fileID: 0}
   killEvent:
     m_PersistentCalls:
       m_Calls: []

@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using QKit;
+using Machine;
 
-public class PlayerGun : Launcher
+public class PlayerGun : Launcher, IPersist
 {
     [SerializeField] private GunProfile[] gunProfile;
     [SerializeField] private GunProfileType currentProfile;
@@ -204,5 +205,21 @@ public class PlayerGun : Launcher
     {
         gunProfile[(int)type] = gunProfile[(int)type].Upgrade();
         SetCurrentProfile(type, true);
+    }
+
+    public void Save()
+    {
+        DataPersistenceManager.Save<PlayerGun>(JsonUtility.ToJson(this, true));
+    }
+
+    public void Load()
+    {
+        if (DataPersistenceManager.TryToLoad<PlayerGun>(out string load))
+        {
+            JsonUtility.FromJsonOverwrite(load, this);
+            SetCurrentProfile(CurrentProfile);
+            Start();
+            _spawn = transform.GetChild(2);
+        }
     }
 }

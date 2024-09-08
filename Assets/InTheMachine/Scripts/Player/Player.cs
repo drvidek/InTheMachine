@@ -108,6 +108,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable, Machine.IPersis
     public Action onDieEnter;
     public Action onDieStay;
     public Action onDieExit;
+    public Action onRestart;
     #endregion
 
 
@@ -139,7 +140,16 @@ public class Player : AgentMachine, IFlammable, IElectrocutable, Machine.IPersis
     public FixedInput jump = new("Jump"), shoot = new("Shoot"), boost = new("Boost"), interact = new("Interact"), special = new("Special"), heal = new("Heal");
 
     public bool IsFlying => CurrentState == PlayerState.Fly;
-    public bool BeamActive => beam.Active;
+    public bool BeamActive
+    {
+        get
+        {
+            if (!beam)
+                beam = GetComponentInChildren<TractorBeam>();
+            return beam.Active;
+        }
+
+    }
     public float PowerRemaining => powerMeter.Value;
 
     public float RepairMax => repairMeter.Max;
@@ -430,7 +440,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable, Machine.IPersis
     /// </summary>
     private void OnAscendExit()
     {
-        if (jump.Hold) TryToJet();
+        if (jump.Hold && UserInputDir.y > 0) TryToJet();
     }
 
     IEnumerator Hang()
@@ -536,7 +546,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable, Machine.IPersis
     {
         MoveHorizontallyWithInput();
         MoveVerticallyWithGravity();
-
+        if (jump.Hold && UserInputDir.y > 0) TryToJet();
         //set our next state to...
         PlayerState nextState =
             IsGrounded ? PlayerState.Idle :
@@ -594,8 +604,7 @@ public class Player : AgentMachine, IFlammable, IElectrocutable, Machine.IPersis
 
         _targetVelocity.y = Mathf.Clamp(_targetVelocity.y + _jetAccel * Time.deltaTime, float.NegativeInfinity, 20f);
 
-        float cost = Mathf.Max(_jetCost * Time.deltaTime, powerMeter.Max * Time.deltaTime);
-
+        float cost = _jetCost * (Mathf.Max(1f, _targetVelocity.y) / 10f) * Time.deltaTime; //Mathf.Max(_jetCost * Time.deltaTime, powerMeter.Max * Time.deltaTime) * (_targetVelocity.y / 10f);
 
         if (!TryToUsePower(cost) || !jump.Hold)
         {
@@ -668,6 +677,8 @@ public class Player : AgentMachine, IFlammable, IElectrocutable, Machine.IPersis
         {
             TryToJump(_jumpPower);
         }
+        else
+        if (jump.Hold && UserInputDir.y > 0) TryToJet();
 
         FixedInput.EatAll();
     }
@@ -1381,7 +1392,11 @@ public class Player : AgentMachine, IFlammable, IElectrocutable, Machine.IPersis
         transform.position = Checkpoint.Current != null ? Checkpoint.Current.Position : startPosition;
         ChangeStateTo(PlayerState.Idle);
 
+        CashManager.main.ChargeCash(CashManager.main.Cash / 2f);
+
         healthMeter.Fill();
+
+        onRestart?.Invoke();
     }
 
     public void Save()

@@ -5,6 +5,8 @@ using System.IO;
 
 public class GameManager : MonoBehaviour
 {
+    private bool gameStarted;
+    public bool GameStarted => gameStarted;
     public static int pixelsPerUnit = 16;
 
     public static ColorPalette currentColorPalette;
@@ -25,7 +27,12 @@ public class GameManager : MonoBehaviour
     private static GameManager _singleton;
     public static GameManager main
     {
-        get => _singleton;
+        get
+        {
+            if (_singleton == null)
+                _singleton = FindObjectOfType<GameManager>();
+            return _singleton;
+        }
         private set
         {
             if (_singleton == null)
@@ -53,7 +60,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        
+        gameStarted = true;
         LoadColorPalette();
     }
 
@@ -62,7 +69,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetButtonDown("Pause"))
         {
             if (!Shop.main.IsOpen)
-                    PauseMenu.main.OpenPauseMenu();
+                PauseMenu.main.OpenPauseMenu();
             TogglePause();
         }
     }
@@ -77,7 +84,7 @@ public class GameManager : MonoBehaviour
         if (currentState == GameState.Play)
         {
             currentState = GameState.Pause;
-            
+
             Time.timeScale = 0;
         }
         else

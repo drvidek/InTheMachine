@@ -16,6 +16,8 @@ public abstract class AgentAnimator : MonoBehaviour
 
     [SerializeField] protected float damageFlashSpeed = 0.1f;
 
+    public bool IsVisible => spriteRenderer.isVisible;
+
 
     // Start is called before the first frame update
     protected virtual void Start()

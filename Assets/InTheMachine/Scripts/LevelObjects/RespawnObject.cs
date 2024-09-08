@@ -9,6 +9,8 @@ public class RespawnObject : MonoBehaviour, IActivate
     private GameObject objectInScene = null;
     private ParticleSystem psysActivate;
 
+    public bool ObjectCurrentlyInScene => objectInScene != null;
+
     private void Start()
     {
         psysActivate = GetComponentInChildren<ParticleSystem>();

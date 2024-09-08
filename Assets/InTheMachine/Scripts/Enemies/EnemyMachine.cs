@@ -2,11 +2,16 @@ using QKit;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public abstract class EnemyMachine : AgentMachine, IProjectileTarget, Machine.IPersist
 {
     public enum EnemyState { Idle, Walk, Fly, Ascend, Descend, Attack, Die, Stun, Burn }
+
+    [SerializeField] private EnemyList.Type type;
+    public EnemyList.Type Type => type;
+
     [SerializeField] private bool showDebug;
     [SerializeField] protected EnemyState _currentState;
     [SerializeField] protected QuestID questID;
@@ -21,6 +26,11 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget, Machine.IP
     private Vector3 homePosition;
 
     private string SaveID => homePosition.ToString();
+    private string LoadID => transform.position.ToString();
+
+    protected bool loadedDead;
+    protected bool doNotPersist;
+
 
     #region Events
     public Action onIdleEnter;
@@ -71,10 +81,16 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget, Machine.IP
 
     protected Coroutine currentStateCoroutine = null;
 
+    void Awake()
+    {
+        doNotPersist = GameManager.main.GameStarted;
+    }
+
     protected override void Start()
     {
         homePosition = transform.position;
         base.Start();
+        Player.main.onRestart += Respawn;
         RoomManager.main.onPlayerMovedRoom += CheckPlayerInRangeForLogic;
         healthMeter.onMin += () => { ChangeStateTo(EnemyState.Die); };
         NextState();
@@ -98,13 +114,12 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget, Machine.IP
 
         everDoneLogic = doingLogic || everDoneLogic;
 
-        if (CurrentState != EnemyState.Die)
+        if (IsAlive)
         {
             rb.simulated = doingLogic;
             if (agentAnimator)
                 agentAnimator.SetEnabled(doingLogic);
         }
-
 
     }
     #region State Machine
@@ -485,7 +500,7 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget, Machine.IP
         rb.simulated = false;
         if (rb.bodyType != RigidbodyType2D.Static)
             Halt();
-        if (questID != QuestID.Null)
+        if (!loadedDead && questID != QuestID.Null)
             QuestManager.main.CompleteQuest(questID);
 
         if (burnEffect)
@@ -513,7 +528,7 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget, Machine.IP
     /// </summary>
     protected virtual void OnDieExit()
     {
-
+        rb.simulated = true;
     }
     IEnumerator Stun()
     {
@@ -722,18 +737,48 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget, Machine.IP
         }
     }
 
+    private void Respawn()
+    {
+        if (doNotPersist)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        healthMeter.Fill();
+        transform.position = homePosition;
+        loadedDead = false;
+        ChangeStateTo(EnemyState.Idle);
+    }
+
     public void Save()
     {
-        string saveString = JsonUtility.ToJson(this, true);
-
+        if (doNotPersist)
+        return;
+        string saveString = IsAlive.ToString();
+        Debug.Log(saveString);
         DataPersistenceManager.Save<EnemyMachine>(saveString, SaveID);
     }
 
     public void Load()
     {
-        if (DataPersistenceManager.TryToLoad<EnemyMachine>(out string loadString, SaveID))
+        if (DataPersistenceManager.TryToLoad<EnemyMachine>(out string loadString, LoadID))
         {
-            JsonUtility.FromJsonOverwrite(loadString, this);
+            Debug.Log(SaveID + loadString);
+
+            bool isAlive = bool.Parse(loadString);
+            if (!isAlive)
+            {
+                loadedDead = true;
+                Debug.Log("Loaded dead? " + loadedDead);
+                ChangeStateTo(EnemyState.Die);
+            }
+            NextState();
         }
+    }
+
+    void OnDestroy()
+    {
+        Player.main.onRestart -= Respawn;
+        RoomManager.main.onPlayerMovedRoom -= CheckPlayerInRangeForLogic;
     }
 }

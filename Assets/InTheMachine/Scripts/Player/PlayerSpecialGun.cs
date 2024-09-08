@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using QKit;
 using System;
-public class PlayerSpecialGun : Launcher
+using Machine;
+public class PlayerSpecialGun : Launcher, IPersist
 {
 
     [SerializeField] private SpecialGunProfile[] gunProfile;
@@ -98,4 +99,17 @@ public class PlayerSpecialGun : Launcher
             rechargeAlarm.ResetAndPlay();
     }
 
+     public void Save()
+    {
+        DataPersistenceManager.Save<PlayerSpecialGun>(JsonUtility.ToJson(this, true));
+    }
+
+    public void Load()
+    {
+        if (DataPersistenceManager.TryToLoad<PlayerSpecialGun>(out string load))
+        {
+            JsonUtility.FromJsonOverwrite(load, this);
+            SetCurrentProfile(CurrentProfile);
+        }
+    }
 }

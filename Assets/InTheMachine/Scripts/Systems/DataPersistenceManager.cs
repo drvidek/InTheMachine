@@ -56,9 +56,11 @@ public class DataPersistenceManager : MonoBehaviour
         string classPath = Path.Combine(genericPath, typeof(T).ToString());
         string fileName = ID + ".txt";
         Directory.CreateDirectory(classPath);
-        StreamWriter writer = new(Path.Combine(classPath, fileName));
+        string finalPath = Path.Combine(classPath, fileName);
+        StreamWriter writer = new(finalPath);
         writer.Write(saveString);
         writer.Close();
+        //Debug.Log("Saved to " + finalPath);
     }
 
     /// <summary>

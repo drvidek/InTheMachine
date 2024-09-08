@@ -43,11 +43,22 @@ public class FireDrone : EnemyWalking
 
     public bool GroundAhead => Physics2D.Raycast(transform.position, new Vector2(CurrentDirection.x, -1), 1f, groundedMask);
 
+    public override Collider2D ColliderAhead
+    {
+        get
+        {
+            RaycastHit2D hit = Physics2D.BoxCast(transform.position, _collider.bounds.size, transform.localEulerAngles.z, CurrentDirection, 0.2f, groundedMask);
+            if (!hit)
+                return null;
+            return hit.collider;
+        }
+    }
+
     protected override void Start()
     {
         alarmBook.AddAlarm("BurstCollider", 0.8f, false).onComplete = () => burstCollider.enabled = false;
-        var idleAlarm = alarmBook.AddAlarm("Idle",0.5f, false);
-        var attackAlarm = alarmBook.AddAlarm("Attack",burstAttackRecovery, false);
+        var idleAlarm = alarmBook.AddAlarm("Idle", 0.5f, false);
+        var attackAlarm = alarmBook.AddAlarm("Attack", burstAttackRecovery, false);
         idleAlarm.onComplete = () =>
         {
             if (!GroundAhead || ColliderAhead)
@@ -64,6 +75,34 @@ public class FireDrone : EnemyWalking
         base.Start();
     }
 
+    protected override void CheckPlayerInRangeForLogic(Vector3Int room)
+    {
+        if (doNotPersist)
+        {
+            doingLogic = CameraController.main.SpecialCamActive;
+            if (!doingLogic)
+            {
+                Destroy(gameObject);
+                return;
+            }
+        }
+        else
+        {
+            if (everDoneLogic)
+                doingLogic = RoomManager.main.PlayerWithinRoomDistance(transform);
+            else
+                doingLogic = RoomManager.main.PlayerWithinRoomDistance(transform, 0);
+        }
+
+        everDoneLogic = doingLogic || everDoneLogic;
+
+        if (IsAlive)
+        {
+            rb.simulated = doingLogic;
+            if (agentAnimator)
+                agentAnimator.SetEnabled(doingLogic);
+        }
+    }
 
     protected virtual void SetVulnerable(float isVulnerable)
     {
@@ -76,14 +115,16 @@ public class FireDrone : EnemyWalking
         _targetVelocity = Vector2.zero;
         rb.velocity = _targetVelocity;
         alarmBook.GetAlarm("Idle").ResetAndPlay();
-        if (!playerInRoom)
+        if (!playerInRoom && !doNotPersist)
             healthMeter.Fill();
     }
 
     protected override void OnIdleStay()
     {
-        if (!playerInRoom)
+        if (!playerInRoom && !doNotPersist)
             alarmBook.GetAlarm("Idle").ResetAndPlay();
+
+        MoveWithGravity(Vector3.zero, 0f);
     }
 
     protected override void OnWalkEnter()
@@ -130,7 +171,7 @@ public class FireDrone : EnemyWalking
                     onBurst?.Invoke();
                     burstCollider.enabled = true;
                     alarmBook.GetAlarm("BurstCollider").ResetAndPlay();
-                    alarm.ResetAndPlay(burstAttackRecovery).onComplete = 
+                    alarm.ResetAndPlay(burstAttackRecovery).onComplete =
                         ChooseNewAttack;
                 };
                 break;
@@ -158,12 +199,14 @@ public class FireDrone : EnemyWalking
             case Attack.Burst:
                 {
                     _targetVelocity = Vector2.zero;
+                    MoveWithGravity(Vector3.zero, 0f);
                 }
                 break;
             case Attack.Fireball:
                 {
                     walkingRight = Player.main.X > transform.position.x;
                     _targetVelocity = Vector2.zero;
+                    MoveWithGravity(Vector3.zero, 0f);
                 }
                 break;
             case Attack.Charge:

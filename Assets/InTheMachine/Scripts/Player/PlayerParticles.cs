@@ -36,6 +36,7 @@ public class PlayerParticles : MonoBehaviour
         {
             var main = _psysTakeHit.main;
             main.startColor = f > 0 ? Color.red : new(.8f, .8f, .8f, 1);
+            _psysTakeHit.emission.SetBurst(0, new(0f, f > 0 ? 10 : 6));
             _psysTakeHit.Play();
         };
 

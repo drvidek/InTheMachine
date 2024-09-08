@@ -16,6 +16,11 @@ public class EnemyAnimator : AgentAnimator
         {
             spriteRenderer.enabled = false;
         };
+
+        myEnemy.onDieExit += () =>
+        {
+            spriteRenderer.enabled = true;
+        };
     }
 
 }

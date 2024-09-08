@@ -58,6 +58,7 @@ public class HeartLaserBig : EnemyStatic
 
     protected override void CheckPlayerInRangeForLogic(Vector3Int room)
     {
+        //force the laser on no matter what room the player is in
         doingLogic = true;
     }
 

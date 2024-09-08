@@ -1,3 +1,4 @@
+using System.Drawing;
 using QKit;
 using UnityEngine;
 
@@ -5,7 +6,7 @@ public class Heart : EnemyStatic
 {
     [SerializeField] private bool aggro;
     [SerializeField] GameObject[] attacks;
-
+    [SerializeField] private RespawnObject[] enemySpawners;
     Material material;
 
     protected override void Start()
@@ -37,6 +38,16 @@ public class Heart : EnemyStatic
 
     protected override void Update()
     {
+        if (aggro)
+        {
+            foreach (var spawn in enemySpawners)
+            {
+                if (!spawn.ObjectCurrentlyInScene)
+                {
+                    spawn.ToggleActive(true);
+                }
+            }
+        }
         base.Update();
         material.SetFloat("_DamageLerp", alarmBook.GetAlarm("Hit").PercentRemaining);
     }
