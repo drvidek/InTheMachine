@@ -24,10 +24,10 @@ MonoBehaviour:
   m_LightRenderTextureScale: 0.5
   m_LightBlendStyles:
   - name: Multiply
-    maskTextureChannel: 0
+    maskTextureChannel: 1
     blendMode: 1
   - name: Additive
-    maskTextureChannel: 0
+    maskTextureChannel: 1
     blendMode: 0
   - name: Multiply with Mask
     maskTextureChannel: 1

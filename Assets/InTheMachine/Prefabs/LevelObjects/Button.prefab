@@ -119,9 +119,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39cf62db34db5cc46b920671b00b0b68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showDebug: 0
   onActiveChanged:
     m_PersistentCalls:
       m_Calls: []
+  animator: {fileID: 0}
   stayPressed: 1
   buttonSprites:
   - {fileID: -1675052462, guid: 067b06f8c26745e41a7f578418385d8d, type: 3}
@@ -182,7 +184,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: d67ca9b0d809c6f4aaa11aea3e1c6262, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
