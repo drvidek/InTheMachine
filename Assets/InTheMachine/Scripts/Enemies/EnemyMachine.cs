@@ -1,8 +1,6 @@
 using QKit;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public abstract class EnemyMachine : AgentMachine, IProjectileTarget, Machine.IPersist
@@ -94,6 +92,12 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget, Machine.IP
         RoomManager.main.onPlayerMovedRoom += CheckPlayerInRangeForLogic;
         healthMeter.onMin += () => { ChangeStateTo(EnemyState.Die); };
         NextState();
+    }
+
+    protected virtual void OnDestroy()
+    {
+        Player.main.onRestart -= Respawn;
+        RoomManager.main.onPlayerMovedRoom -= CheckPlayerInRangeForLogic;
     }
 
     protected override void Update()
@@ -776,9 +780,4 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget, Machine.IP
         }
     }
 
-    void OnDestroy()
-    {
-        Player.main.onRestart -= Respawn;
-        RoomManager.main.onPlayerMovedRoom -= CheckPlayerInRangeForLogic;
-    }
 }

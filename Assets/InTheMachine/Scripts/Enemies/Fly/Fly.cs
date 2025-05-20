@@ -17,13 +17,13 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
     protected CircleCollider2D circleCollider => _collider as CircleCollider2D;
 
     protected bool isStuck;
-    
+
     protected Vector3 targetDestination = Vector3.zero;
 
     protected override void Start()
     {
         homePosition = transform.position;
-        idleAlarm = alarmBook.AddAlarm("Idle",idleTime, false);
+        idleAlarm = alarmBook.AddAlarm("Idle", idleTime, false);
         idleAlarm.onComplete += () => { targetDestination = FindValidStraightLineTarget(); ChangeStateTo(EnemyState.Fly); };
         respawnAlarm = alarmBook.AddAlarm("Respawn", 5f, false);
         respawnAlarm.onComplete += () =>
@@ -40,6 +40,12 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
         base.Start();
     }
 
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        RoomManager.main.onPlayerMovedRoom -= CheckRespawnTimerReset;
+    }
+
     private void CheckRespawnTimerReset(Vector3Int room)
     {
         if (IsFlaming())
@@ -51,7 +57,7 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
             return;
         }
 
-        if (!RoomManager.main.InSameRoom(transform.position,homePosition) && !respawnAlarm.IsPlaying)
+        if (!RoomManager.main.InSameRoom(transform.position, homePosition) && !respawnAlarm.IsPlaying)
         {
             respawnAlarm.ResetAndPlay();
         }
