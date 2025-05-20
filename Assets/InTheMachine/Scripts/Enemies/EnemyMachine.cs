@@ -21,7 +21,7 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget, Machine.IP
 
     protected AlarmBook<string> alarmBook = new();
 
-    private Vector3 homePosition;
+    protected Vector3 homePosition;
 
     private string SaveID => homePosition.ToString();
     private string LoadID => transform.position.ToString();
@@ -88,6 +88,7 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget, Machine.IP
     {
         homePosition = transform.position;
         base.Start();
+        doingLogic = false;
         Player.main.onRestart += Respawn;
         RoomManager.main.onPlayerMovedRoom += CheckPlayerInRangeForLogic;
         healthMeter.onMin += () => { ChangeStateTo(EnemyState.Die); };
@@ -120,7 +121,7 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget, Machine.IP
 
         if (IsAlive)
         {
-            rb.simulated = doingLogic;
+            //rb.simulated = doingLogic;
             if (agentAnimator)
                 agentAnimator.SetEnabled(doingLogic);
         }
@@ -132,6 +133,8 @@ public abstract class EnemyMachine : AgentMachine, IProjectileTarget, Machine.IP
     /// </summary>
     protected virtual void NextState()
     {
+        if (currentStateCoroutine != null)
+        StopCoroutine(currentStateCoroutine);
         //start the state coroutine based on the name of our _currentState enum
         currentStateCoroutine = StartCoroutine(_currentState.ToString());
     }

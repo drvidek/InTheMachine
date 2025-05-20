@@ -22,11 +22,6 @@ public class Door : MonoBehaviour, IActivate
 
     private bool initialTrigger = true;
 
-    private void OnValidate()
-    {
-        Initialise();
-    }
-
     private void Start()
     {
         Initialise();
@@ -61,10 +56,26 @@ public class Door : MonoBehaviour, IActivate
         while (doorParts.Length < doorLength)
         {
             Transform door = Instantiate(transform.GetChild(0), transform);
+            print(doorParts.Length);
             door.localPosition = Vector3.down * (doorParts.Length);
             doorParts = transform.GetComponentsInChildren<SpriteRenderer>();
         }
     }
+
+
+#if UNITY_EDITOR
+    [ContextMenu("Redraw")]
+    public void Redraw()
+    {
+        for (int i = 2; i < transform.childCount; i++)
+        {
+            DestroyImmediate(transform.GetChild(i).gameObject);
+            i--;
+        }
+        doorParts = null;
+        Initialise();
+    }
+#endif
 
     private void Update()
     {

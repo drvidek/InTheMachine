@@ -61,9 +61,13 @@ public class Beetle : EnemyWalking, IFlammable
 
     protected override void OnWalkEnter()
     {
+        print(homePosition);
+
         //hardCollider.enabled = false;
         walkingRight = QMath.Choose<bool>(true, false);
         transform.position = new Vector3(transform.position.x, QMath.RoundToNearestFraction(transform.position.y, 1f / cornerRounding), transform.position.z);
+        print(transform.position);
+
         if (ColliderAhead)
         {
             RotateAroundCorner(walkingRight ? NinetyDegrees : -NinetyDegrees);

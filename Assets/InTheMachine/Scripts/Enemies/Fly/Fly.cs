@@ -13,7 +13,7 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
     private Alarm idleAlarm;
     private Alarm respawnAlarm;
 
-    protected Vector3 homePosition;
+    protected Vector3 spawnPosition;
     protected CircleCollider2D circleCollider => _collider as CircleCollider2D;
 
     protected bool isStuck;
@@ -22,13 +22,13 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
 
     protected override void Start()
     {
-        homePosition = transform.position;
+        spawnPosition = transform.position;
         idleAlarm = alarmBook.AddAlarm("Idle", idleTime, false);
         idleAlarm.onComplete += () => { targetDestination = FindValidStraightLineTarget(); ChangeStateTo(EnemyState.Fly); };
         respawnAlarm = alarmBook.AddAlarm("Respawn", 5f, false);
         respawnAlarm.onComplete += () =>
         {
-            transform.position = homePosition;
+            transform.position = spawnPosition;
             ChangeStateTo(EnemyState.Idle);
         };
         stunAlarm = alarmBook.AddAlarm("Stun", stunTimeMin, false);
@@ -57,7 +57,7 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
             return;
         }
 
-        if (!RoomManager.main.InSameRoom(transform.position, homePosition) && !respawnAlarm.IsPlaying)
+        if (!RoomManager.main.InSameRoom(transform.position, spawnPosition) && !respawnAlarm.IsPlaying)
         {
             respawnAlarm.ResetAndPlay();
         }
@@ -150,15 +150,15 @@ public class Fly : EnemyFlying, IFlammable, IElectrocutable
     protected Vector3 FindValidStraightLineTarget()
     {
         //determine if we should start from our current position, or our home position
-        Vector3 baseDestination = Vector3.Distance(transform.position, homePosition) > maxDistanceFromHome ? homePosition : transform.position;
+        Vector3 baseDestination = Vector3.Distance(transform.position, spawnPosition) > maxDistanceFromHome ? spawnPosition : transform.position;
         //Roll our new destination using our base position
         Vector3 newDestination = RollNewDestination(baseDestination, maxDistanceToNewDestination);
         int loops = 0;
         //while there is a block between our destinations, a block near our new destination, our destination is too far from home, or we're in our home room and our new destination is not
         while (Physics2D.Raycast(baseDestination, QMath.Direction(baseDestination, newDestination), Vector3.Distance(baseDestination, newDestination), groundedMask) ||
             Physics2D.OverlapCircle(newDestination, circleCollider.radius * 1.1f, groundedMask) ||
-            Vector3.Distance(newDestination, homePosition) > maxDistanceFromHome ||
-            RoomManager.main.InSameRoom(transform.position, homePosition) && !RoomManager.main.InSameRoom(homePosition, newDestination))
+            Vector3.Distance(newDestination, spawnPosition) > maxDistanceFromHome ||
+            RoomManager.main.InSameRoom(transform.position, spawnPosition) && !RoomManager.main.InSameRoom(spawnPosition, newDestination))
         {
             //roll a new destination
             newDestination = RollNewDestination(baseDestination, maxDistanceToNewDestination);

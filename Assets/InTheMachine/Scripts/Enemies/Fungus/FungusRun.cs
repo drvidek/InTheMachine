@@ -9,7 +9,7 @@ public class FungusRun : Fungus
 
     private float currentSpeed, currentJumpPower;
 
-    private Vector3 homePosition;
+    private Vector3 spawnPosition;
 
     private BoxCollider2D hardCollider;
 
@@ -74,12 +74,12 @@ public class FungusRun : Fungus
 
     protected override void Start()
     {
-        homePosition = transform.position;
+        spawnPosition = transform.position;
         hardCollider = transform.GetChild(1).GetComponent<BoxCollider2D>();
         returnAlarm = alarmBook.AddAlarm("Return",5f, false);
         returnAlarm.onComplete = () =>
         {
-            transform.position = homePosition;
+            transform.position = spawnPosition;
             rb.velocity = Vector2.zero;
             _targetVelocity = Vector2.zero;
             ChangeStateTo(EnemyState.Idle);

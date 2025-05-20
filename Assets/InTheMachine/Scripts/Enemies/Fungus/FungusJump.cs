@@ -9,7 +9,7 @@ public class FungusJump : Fungus
 
     private EnemyMachine stem;
 
-    private Vector3 homePosition;
+    private Vector3 spawnPosition;
 
     private float currentSpeed;
 
@@ -17,7 +17,7 @@ public class FungusJump : Fungus
 
     protected override void Start()
     {
-        homePosition = transform.position;
+        spawnPosition = transform.position;
         foreach (var item in Physics2D.OverlapBoxAll(transform.position, Vector2.one, 0, 1 << 7))
         {
             if (item.TryGetComponent<FungusStem>(out FungusStem e))
@@ -38,7 +38,7 @@ public class FungusJump : Fungus
     protected override void OnIdleStay()
     {
         rb.velocity = Vector3.zero;
-        transform.position = homePosition;
+        transform.position = spawnPosition;
         if (CheckAttackCondition())
             ChangeStateTo(EnemyState.Ascend);
 
@@ -73,7 +73,7 @@ public class FungusJump : Fungus
         {
             if (Vector2.Distance(transform.position, stem.transform.position) < homeTolerance)
             {
-                transform.position = homePosition;
+                transform.position = spawnPosition;
                 ChangeStateTo(EnemyState.Idle);
             }
 

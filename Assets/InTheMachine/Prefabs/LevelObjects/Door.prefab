@@ -53,7 +53,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: d67ca9b0d809c6f4aaa11aea3e1c6262, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -232,20 +232,20 @@ CompositeCollider2D:
   m_ColliderPaths:
   - m_Collider: {fileID: 4830404521187078216}
     m_ColliderPaths:
-    - - X: 2500000
+    - - X: 2500001
+        Y: 4999999
+      - X: -2499999
         Y: 5000000
-      - X: -2500000
-        Y: 5000000
-      - X: -2500000
-        Y: -5000000
-      - X: 2500000
+      - X: -2500001
+        Y: -4999999
+      - X: 2499999
         Y: -5000000
   m_CompositePaths:
     m_Paths:
-    - - {x: 0.2499707, y: -0.5}
-      - {x: 0.2499707, y: 0.5}
-      - {x: -0.25, y: 0.4999707}
-      - {x: -0.2499707, y: -0.5}
+    - - {x: 0.2499706, y: -0.5}
+      - {x: 0.24997081, y: 0.4999999}
+      - {x: -0.2499999, y: 0.4999707}
+      - {x: -0.24997081, y: -0.4999999}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
   m_UseDelaunayMesh: 0

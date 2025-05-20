@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.Drawing.Printing;
 
 public class MaterialSwapper : EditorWindow
 {
@@ -33,19 +34,21 @@ public class MaterialSwapper : EditorWindow
 
     void DoPrefabs()
     {
-        List<Renderer> renderers = new();
-        foreach (string GUID in AssetDatabase.FindAssets("t:gameobject"))
+        foreach (string GUID in AssetDatabase.FindAssets("t:GameObject"))
         {
-            GameObject asset = AssetDatabase.LoadAssetAtPath<GameObject>(GUID);
+            GameObject asset = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(GUID));
 
-            foreach (Renderer spriteRenderer in asset.GetComponentsInChildren<Renderer>())
-                renderers.Add(spriteRenderer);
-        }
-
-        foreach (Renderer renderer in renderers)
-        {
-            if (renderer.material == source)
-                renderer.material = replace;
+            if (asset)
+            {
+                foreach (SpriteRenderer renderer in asset.GetComponentsInChildren<SpriteRenderer>())
+                {
+                    if (renderer.sharedMaterial == source)
+                    {
+                        Debug.Log($"Replacing material for {asset.name}");
+                        renderer.sharedMaterial = replace;
+                    }
+                }
+            }
         }
 
         AssetDatabase.SaveAssets();

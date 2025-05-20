@@ -84,7 +84,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: d67ca9b0d809c6f4aaa11aea3e1c6262, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -319,6 +319,7 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     _colorType: 0
+  type: 0
   showDebug: 0
   _currentState: 0
   questID: 2
@@ -327,17 +328,7 @@ MonoBehaviour:
   _grv: 0
   stunTimeMin: 0
   attackRange: 0
-  spawnAlarm:
-    _name: 
-    _id: 0
-    _timeRemaining: 0
-    _timeMax: 2
-    _timeScale: 1
-    _looping: 0
-    _paused: 0
-    _stopped: 1
-    _autoRelease: 0
-    _type: 0
+  spawnDelay: 4
   enemyToSpawn: {fileID: 1522394521968319194, guid: e5ffaa13c5496f04f8e4a8a989f5203d, type: 3}
   spawnPoint: {fileID: 5941951745946214325}
   waitToSpawn: 1
